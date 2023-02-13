@@ -1,0 +1,182 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 893ebc18d674e455bb9c4d389ef1b792, type: 3}
+  m_Name: GameConfig
+  m_EditorClassIdentifier: 
+  Input:
+    ReverseInput: 0
+    Joystick:
+      IsShowVisuals: 1
+      IsStatic: 0
+      IsResetDirection: 1
+      Radius: 0.4
+      HandleRadiusMultiplier: 0.3
+  Movement:
+    MoveSpeed: 100
+    JumpSpeed: 500
+    JumpThreshold: 0.1
+    MaxSpeed: 10
+    GravityScale: 3
+    HangingStartDuration: 0.25
+    HangingSpeed: 3
+    HangingCheckMinSpeed: 0.5
+    DashDataDictionary:
+      keyData: 00000000010000000200000003000000
+      valueData:
+      - Direction: {x: 0, y: 1}
+        DashSpeed: 20
+        DashAmount: 4
+        DashEase: 1
+        DashCurve:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: 0
+            inSlope: 2
+            outSlope: 2
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 0.7
+            value: 1
+            inSlope: 1.0512327
+            outSlope: 1.0512327
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0.05315619
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
+      - Direction: {x: 0, y: -1}
+        DashSpeed: 20
+        DashAmount: 4
+        DashEase: 1
+        DashCurve:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: 0
+            inSlope: 2
+            outSlope: 2
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 0.7
+            value: 1
+            inSlope: 1.0512327
+            outSlope: 1.0512327
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0.05315619
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
+      - Direction: {x: 1, y: 0}
+        DashSpeed: 20
+        DashAmount: 4
+        DashEase: 1
+        DashCurve:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: 0
+            inSlope: 2
+            outSlope: 2
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 0.7
+            value: 1
+            inSlope: 1.0512327
+            outSlope: 1.0512327
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0.05315619
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
+      - Direction: {x: -1, y: 0}
+        DashSpeed: 20
+        DashAmount: 4
+        DashEase: 1
+        DashCurve:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: 0
+            inSlope: 2
+            outSlope: 2
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 0.7
+            value: 1
+            inSlope: 1.0512327
+            outSlope: 1.0512327
+            tangentMode: 0
+            weightedMode: 0
+            inWeight: 0.05315619
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
+    ColorVars:
+      DarkenSpeed: 0.25
+      BrightenSpeed: 0.0075
+      BrightnessCurve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0
+          inSlope: 316.4456
+          outSlope: 316.4456
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0.13645168
+        - serializedVersion: 3
+          time: 0.058062904
+          value: 7.3910728
+          inSlope: 36.99568
+          outSlope: 36.99568
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0.937447
+          outWeight: 0.05408705
+        - serializedVersion: 3
+          time: 1
+          value: 30
+          inSlope: 21.669626
+          outSlope: 21.669626
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0.05147828
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
