@@ -6,17 +6,18 @@ using UnityEngine;
 
 public class PlayerMovement : Singleton<PlayerMovement>
 {
-    [ShowInInspector] private bool m_IsDashing;
-    [ShowInInspector] private bool m_IsHanging;
-
+    private bool         m_IsDashing;
+    private bool         m_IsHanging;
+    private float        m_SideWallTimer;
     private RaycastHit[] m_MoveCheckCast = new RaycastHit[1];
 
-    [ShowInInspector] private float m_SideWallTimer;
-
-    public float Velocity => m_Rb.velocity.sqrMagnitude;
+    public bool  IsOnManaFillSpeed => Velocity > m_Movement.ManaFillMinVelocity;
+    public float Velocity     => m_Rb.velocity.sqrMagnitude;
 
     private MovementVariables m_Movement => GameConfig.Instance.Movement;
     private Vector2           m_MoveDir  => InputManager.Instance.JoystickDirection;
+
+#region Refs
 
     [FoldoutGroup("Refs")] [SerializeField]
     private Rigidbody2D m_Rb;
@@ -27,30 +28,46 @@ public class PlayerMovement : Singleton<PlayerMovement>
     [FoldoutGroup("Refs")] [SerializeField]
     private LayerMask m_GroundLayer;
 
+#endregion
+
+#region Unity Methods
+
     private void OnEnable()
     {
-        InputManager.OnInputActionDown   += onInputActionDown;
-        InputManager.OnInputActionSwiped += onInputActionSwiped;
+        InputManager.OnInputActionDown   += OnInputActionDown;
+        InputManager.OnInputActionSwiped += OnInputActionSwiped;
 
         m_Rb.gravityScale = m_Movement.GravityScale;
     }
 
     private void OnDisable()
     {
-        InputManager.OnInputActionDown   -= onInputActionDown;
-        InputManager.OnInputActionSwiped -= onInputActionSwiped;
+        InputManager.OnInputActionDown   -= OnInputActionDown;
+        InputManager.OnInputActionSwiped -= OnInputActionSwiped;
+    }
+    
+    private void FixedUpdate()
+    {
+        move();
+        checkToHang();
     }
 
-    private void onInputActionDown(Vector2 vec)
+#endregion
+
+#region Events
+
+    private void OnInputActionDown(Vector2 vec)
     {
         if (Mathf.Abs(m_Rb.velocity.y) < m_Movement.JumpThreshold && !m_IsDashing) m_Rb.AddForce(Vector2.up * m_Movement.JumpSpeed);
     }
 
-    private void onInputActionSwiped(InputManager.eSwipeDirections direction)
+    private void OnInputActionSwiped(InputManager.eSwipeDirections direction)
     {
         dashDirection(direction);
     }
 
+#endregion
+    
     private void dashDirection(InputManager.eSwipeDirections direction)
     {
         if (m_IsDashing) return;
@@ -86,12 +103,6 @@ public class PlayerMovement : Singleton<PlayerMovement>
                             var movementVel = Vector2.right * Mathf.Lerp(0, Mathf.Sign(m_MoveDir.x), Mathf.Abs(m_MoveDir.x));
                             m_Rb.velocity = (dashData.Direction + movementVel) * m_Movement.MaxSpeed;
                         });
-    }
-
-    private void FixedUpdate()
-    {
-        move();
-        checkToHang();
     }
 
     private void move()

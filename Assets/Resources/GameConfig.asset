@@ -30,9 +30,12 @@ MonoBehaviour:
     HangingSpeed: 3
     HangingCheckMinSpeed: 0.5
     DashManaCost: 0.2
-    DashManaDecreaseSpeed: 1
-    DashManaDecreaseEase: 9
+    DashManaDrainSpeed: 0.5
+    DashManaDrainEase: 9
     ManaFillAmount: 0.1
+    ManaDrainAmount: 0.1
+    ManaFillMinVelocity: 110
+    ManaDrainMinIdleDuration: 1.5
     DashDataDictionary:
       keyData: 00000000010000000200000003000000
       valueData:

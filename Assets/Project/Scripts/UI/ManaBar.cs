@@ -4,9 +4,12 @@ using UnityEngine.UI;
 
 public class ManaBar : Singleton<ManaBar>
 {
-    private bool    m_ManaDecreasing;
+    private bool    m_OnDashManaDecrease;
     private float   m_ManaAmount = 1;
+    private float   m_IdleSpeedTimer;
     private Tweener m_TwBarDecrease;
+
+    private MovementVariables m_Movement => GameConfig.Instance.Movement;
 
     [SerializeField] private Image m_ManaBarFill;
 
@@ -14,7 +17,7 @@ public class ManaBar : Singleton<ManaBar>
 
     private void Update()
     {
-        if(!m_ManaDecreasing) fillMana();
+        if (!m_OnDashManaDecrease) updateManaAmount();
         updateBar();
     }
 
@@ -24,24 +27,31 @@ public class ManaBar : Singleton<ManaBar>
     {
         var cost = GameConfig.Instance.Movement.DashManaCost;
         if (m_ManaAmount < cost) return false;
-        if (m_ManaDecreasing) m_TwBarDecrease.Kill();
+        if (m_OnDashManaDecrease) m_TwBarDecrease.Kill();
 
-        m_ManaDecreasing = true;
+        m_OnDashManaDecrease = true;
         var newMana = m_ManaAmount - cost;
-        m_TwBarDecrease = DOTween.To(() => m_ManaAmount, x => m_ManaAmount = x, newMana, GameConfig.Instance.Movement.DashManaDecreaseSpeed)
+        m_TwBarDecrease = DOTween.To(() => m_ManaAmount, x => m_ManaAmount = x, newMana, m_Movement.DashManaDrainSpeed)
                                  .SetSpeedBased()
-                                 .SetEase(GameConfig.Instance.Movement.DashManaDecreaseEase)
+                                 .SetEase(m_Movement.DashManaDrainEase)
                                  .OnKill(() =>
                                          {
-                                             m_ManaAmount     = newMana;
-                                             m_ManaDecreasing = false;
+                                             m_ManaAmount         = newMana;
+                                             m_OnDashManaDecrease = false;
                                          });
         return true;
     }
 
-    private void fillMana()
+    private void updateManaAmount()
     {
-        if(!m_ManaDecreasing) m_ManaAmount += GameConfig.Instance.Movement.ManaFillAmount * Time.deltaTime;
+        var onManaFillSpeed = PlayerMovement.Instance.IsOnManaFillSpeed;
+        if (!onManaFillSpeed) m_IdleSpeedTimer += Time.deltaTime;
+        else m_IdleSpeedTimer                  =  0;
+
+        var onManaDecreaseIdle = m_IdleSpeedTimer > m_Movement.ManaDrainMinIdleDuration;
+
+        var delta = onManaFillSpeed ? m_Movement.ManaFillAmount : onManaDecreaseIdle ? -m_Movement.ManaDrainAmount : 0;
+        m_ManaAmount += delta * Time.deltaTime;
     }
 
     private void updateBar()
