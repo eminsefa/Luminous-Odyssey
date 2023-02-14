@@ -1,56 +1,55 @@
-using System;
 using Enums;
 using Managers;
 using Sirenix.OdinInspector;
 using UI;
 using UnityEngine;
-using UnityEngine.UI;
 using Util;
 
 public class HUDManager : Singleton<HUDManager>
 {
-    private bool           isInputReverse;
-    private Vector2        dummyVector2;
-    public  Vector2        JoystickInputPos => isInputReverse ? leftInputButton.InputPosition : rghtInputButton.InputPosition;
-    public  Vector2        ActionInputPos   => isInputReverse ? rghtInputButton.InputPosition : leftInputButton.InputPosition;
-    private InputVariables inputVars        => GameConfig.Instance.Input;
+    private float   m_ManaAmount;
+    
+    private bool    m_IsInputReverse;
+    public  Vector2 JoystickInputPos => m_IsInputReverse ? m_LeftInputButton.InputPosition : m_RightInputButton.InputPosition;
+    public  Vector2 ActionInputPos   => m_IsInputReverse ? m_RightInputButton.InputPosition : m_LeftInputButton.InputPosition;
 
 #region Refs
-    
-    [SerializeField, ReadOnly] private InputButton leftInputButton;
-    [SerializeField, ReadOnly] private InputButton rghtInputButton;
+
+    [SerializeField, ReadOnly] private InputButton m_LeftInputButton;
+    [SerializeField, ReadOnly] private InputButton m_RightInputButton;
 
 #if UNITY_EDITOR
 
     [Button]
     public void SetRefs()
     {
-        leftInputButton = transform.FindDeepChild<InputButton>("Left Button");
-        rghtInputButton = transform.FindDeepChild<InputButton>("Right Button");
+        m_LeftInputButton = transform.FindDeepChild<InputButton>("Left Button");
+        m_RightInputButton = transform.FindDeepChild<InputButton>("Right Button");
     }
+    
 #endif
 
 #endregion
 
-#region Init
+#region UnityMethods
 
     private void OnEnable()
     {
         StorageManager.OnInputReverseChanged += OnInputReverseChanged;
-        leftInputButton.OnButtonDown         += OnInputDown;
-        leftInputButton.OnButtonUp           += OnInputUp;
-        rghtInputButton.OnButtonDown         += OnInputDown;
-        rghtInputButton.OnButtonUp           += OnInputUp;
+        m_LeftInputButton.OnButtonDown         += OnInputDown;
+        m_LeftInputButton.OnButtonUp           += OnInputUp;
+        m_RightInputButton.OnButtonDown         += OnInputDown;
+        m_RightInputButton.OnButtonUp           += OnInputUp;
         Init();
     }
 
     private void OnDisable()
     {
         StorageManager.OnInputReverseChanged -= OnInputReverseChanged;
-        leftInputButton.OnButtonDown         -= OnInputDown;
-        leftInputButton.OnButtonUp           -= OnInputUp;
-        rghtInputButton.OnButtonDown         -= OnInputDown;
-        rghtInputButton.OnButtonUp           -= OnInputUp;
+        m_LeftInputButton.OnButtonDown         -= OnInputDown;
+        m_LeftInputButton.OnButtonUp           -= OnInputUp;
+        m_RightInputButton.OnButtonDown         -= OnInputDown;
+        m_RightInputButton.OnButtonUp           -= OnInputUp;
     }
 
 #endregion
@@ -64,12 +63,12 @@ public class HUDManager : Singleton<HUDManager>
         bool right = button.ButtonType == eButtonType.InputMove;
         if (right)
         {
-            if (!isInputReverse) joystickInputDown(button.InputPosition);
+            if (!m_IsInputReverse) joystickInputDown(button.InputPosition);
             else actionInputDown(button.InputPosition);
         }
         else
         {
-            if (isInputReverse) joystickInputDown(button.InputPosition);
+            if (m_IsInputReverse) joystickInputDown(button.InputPosition);
             else actionInputDown(button.InputPosition);
         }
     }
@@ -79,19 +78,19 @@ public class HUDManager : Singleton<HUDManager>
         bool right = button.ButtonType == eButtonType.InputMove;
         if (right)
         {
-            if (!isInputReverse) joystickInputUp(button.InputPosition);
+            if (!m_IsInputReverse) joystickInputUp(button.InputPosition);
             else actionInputUp(button.InputPosition);
         }
         else
         {
-            if (isInputReverse) joystickInputUp(button.InputPosition);
+            if (m_IsInputReverse) joystickInputUp(button.InputPosition);
             else actionInputUp(button.InputPosition);
         }
     }
 
     private void OnInputReverseChanged(bool reversed)
     {
-        isInputReverse = reversed;
+        m_IsInputReverse = reversed;
     }
 
 #endregion
@@ -100,7 +99,7 @@ public class HUDManager : Singleton<HUDManager>
 
     private void Init()
     {
-        isInputReverse = StorageManager.Instance.IsInputReverse;
+        m_IsInputReverse = StorageManager.Instance.IsInputReverse;
     }
     
 #region Input

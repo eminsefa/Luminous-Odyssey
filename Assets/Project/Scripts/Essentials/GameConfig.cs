@@ -39,16 +39,26 @@ public class InputVariables
 [Serializable]
 public class MovementVariables
 {
-    public float              MoveSpeed;
-    public float              JumpSpeed;
-    public float              JumpThreshold;
-    public float              MaxSpeed;
-    public float              GravityScale;
-    public float              HangingStartDuration;
-    public float              HangingSpeed;
-    public float              HangingCheckMinSpeed;
-    public DashDataDictionary DashDataDictionary;
-    public ColorVariables     ColorVars;
+    
+    [BoxGroup("Movement")] public float              MoveSpeed;
+    [BoxGroup("Movement")] public float              JumpSpeed;
+    [BoxGroup("Movement")] public float              JumpThreshold;
+    [BoxGroup("Movement")] public float              MaxSpeed;
+    [BoxGroup("Movement")] public float              GravityScale;
+    
+    [BoxGroup("Hanging")]  public float              HangingStartDuration;
+    [BoxGroup("Hanging")]  public float              HangingSpeed;
+    [BoxGroup("Hanging")]  public float              HangingCheckMinSpeed;
+    
+    [BoxGroup("Dash")] public float              DashManaCost;
+    [BoxGroup("Dash")] public float              DashManaDecreaseSpeed;
+    [BoxGroup("Dash")] public Ease              DashManaDecreaseEase;
+    [BoxGroup("Dash")] public float              ManaFillAmount;
+    [BoxGroup("Dash")] public DashDataDictionary DashDataDictionary;
+    
+    [Space(20)]
+    
+    public                        ColorVariables     ColorVars;
 }
 
 [Serializable]

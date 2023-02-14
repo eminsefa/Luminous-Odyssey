@@ -55,6 +55,8 @@ public class PlayerMovement : Singleton<PlayerMovement>
     {
         if (m_IsDashing) return;
 
+        if(!ManaBar.Instance.IsManaEnough()) return;
+        
         var dashData = m_Movement.DashDataDictionary[direction];
         m_IsDashing = true;
         m_IsHanging = false;
