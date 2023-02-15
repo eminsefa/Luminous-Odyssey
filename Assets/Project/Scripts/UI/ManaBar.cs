@@ -1,4 +1,5 @@
 using DG.Tweening;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,7 +12,7 @@ public class ManaBar : Singleton<ManaBar>
 
     private MovementVariables m_Movement => GameConfig.Instance.Movement;
 
-    [SerializeField] private Image m_ManaBarFill;
+    [FoldoutGroup("Refs")] [SerializeField] private Image m_ManaBarFill;
 
 #region Unity Methods
 

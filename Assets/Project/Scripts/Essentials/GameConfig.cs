@@ -18,6 +18,9 @@ public class InputVariables
     [OnValueChanged(nameof(OnInputReversed))]
     public bool ReverseInput;
 
+    public bool  KeyboardInput;
+    public float KeyboardInputSensitivity;
+
     public JoystickData Joystick;
 
     [Serializable]

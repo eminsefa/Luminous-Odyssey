@@ -10,13 +10,13 @@ namespace Managers
     public class InputManager : Singleton<InputManager>
     {
         public static event Action<eSwipeDirections> OnInputActionSwiped;
-        
-        public static event Action<Vector2>          OnInputActionDown;
-        public static event Action<Vector2>          OnInputActionUp;
-        public static event Action<Vector2>          OnInputJoystickDown;
-        public static event Action<Vector2>          OnInputJoystickUp;
-        
-        private InputVariables inputVars  => GameConfig.Instance.Input;
+
+        public static event Action<Vector2> OnInputActionDown;
+        public static event Action<Vector2> OnInputActionUp;
+        public static event Action<Vector2> OnInputJoystickDown;
+        public static event Action<Vector2> OnInputJoystickUp;
+
+        private InputVariables inputVars => GameConfig.Instance.Input;
 
         [SerializeField]            private bool       logScreen;
         [ShowInInspector, ReadOnly] public  ScreenData ScreenData;
@@ -28,7 +28,7 @@ namespace Managers
             Right,
             Left,
         }
-        
+
     #region Joystick
 
         private Vector2 joystickPositionFromMousePosAndDirection => HUDManager.Instance.JoystickInputPos - JoystickDirection * inputVars.Joystick.Radius * ScreenData.FinalDPI;
@@ -66,19 +66,62 @@ namespace Managers
 
         private void Update()
         {
-            keyboardInput();
+            if (inputVars.KeyboardInput)
+            {
+                keyboardMovementInput();
+                keyboardActionInput();
+                return;
+            }
+
             if (!IsJoystickDown) return;
 
             computeJoystick();
         }
 
-        private void keyboardInput()
+        private void keyboardActionInput()
         {
-            if(Input.GetKeyDown(KeyCode.W)) OnInputActionSwiped?.Invoke(eSwipeDirections.Up);
-            else if(Input.GetKeyDown(KeyCode.S)) OnInputActionSwiped?.Invoke(eSwipeDirections.Down);
-            else if(Input.GetKeyDown(KeyCode.D)) OnInputActionSwiped?.Invoke(eSwipeDirections.Right);
-            else if(Input.GetKeyDown(KeyCode.A)) OnInputActionSwiped?.Invoke(eSwipeDirections.Left);
-            else if(Input.GetKeyDown(KeyCode.Q)) OnInputActionDown?.Invoke(Vector2.zero);
+            if (Input.GetKeyDown(KeyCode.W)) OnInputActionSwiped?.Invoke(eSwipeDirections.Up);
+            else if (Input.GetKeyDown(KeyCode.S)) OnInputActionSwiped?.Invoke(eSwipeDirections.Down);
+            else if (Input.GetKeyDown(KeyCode.D)) OnInputActionSwiped?.Invoke(eSwipeDirections.Right);
+            else if (Input.GetKeyDown(KeyCode.A)) OnInputActionSwiped?.Invoke(eSwipeDirections.Left);
+            else if (Input.GetKeyDown(KeyCode.Space)) OnInputActionDown?.Invoke(Vector2.zero);
+        }
+
+        private void keyboardMovementInput()
+        {
+            if (Input.GetKeyDown(KeyCode.RightArrow)    || Input.GetKeyDown(KeyCode.LeftArrow)) OnInputJoystickDown?.Invoke(Vector2.zero);
+            else if (Input.GetKeyUp(KeyCode.RightArrow) || Input.GetKeyUp(KeyCode.LeftArrow)) OnInputJoystickUp?.Invoke(Vector2.zero);
+
+            var dir = JoystickDirection;
+
+            bool isInputDown = false;
+            bool onRightKey  = true;
+
+            if (Input.GetKey(KeyCode.RightArrow))
+            {
+                isInputDown = true;
+            }
+            else if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                onRightKey  = false;
+                isInputDown = true;
+            }
+
+            IsJoystickDown = isInputDown;
+            
+            if (isInputDown)
+            {
+                if ((dir.x > 0 && !onRightKey) || (dir.x < 0 && onRightKey)) dir.x = 0;
+
+                dir.x             += inputVars.KeyboardInputSensitivity * Time.deltaTime * (onRightKey ? 1 : -1);
+                dir.x             =  Mathf.Clamp(dir.x, -1, 1);
+            }
+            else
+            {
+                dir.x = 0;
+            }
+
+            JoystickDirection = dir;
         }
 
         public void InputActionDown()

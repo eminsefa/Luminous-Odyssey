@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Input:
     ReverseInput: 0
+    KeyboardInput: 1
+    KeyboardInputSensitivity: 2
     Joystick:
       IsShowVisuals: 1
       IsStatic: 0
@@ -34,7 +36,7 @@ MonoBehaviour:
     DashManaDrainEase: 9
     ManaFillAmount: 0.1
     ManaDrainAmount: 0.1
-    ManaFillMinVelocity: 110
+    ManaFillMinVelocity: 100
     ManaDrainMinIdleDuration: 1.5
     DashDataDictionary:
       keyData: 00000000010000000200000003000000
