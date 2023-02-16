@@ -15,13 +15,13 @@ public class GameConfig : SingletonScriptableObject<GameConfig>
 [Serializable]
 public class InputVariables
 {
-    [OnValueChanged(nameof(OnInputReversed))]
+    [HideIf(nameof(KeyboardInput))][OnValueChanged(nameof(OnInputReversed))]
     public bool ReverseInput;
 
     public bool  KeyboardInput;
     public float KeyboardInputSensitivity;
 
-    public JoystickData Joystick;
+    [HideIf(nameof(KeyboardInput))] public JoystickData Joystick;
 
     [Serializable]
     public class JoystickData
@@ -36,7 +36,10 @@ public class InputVariables
         public float HandleRadiusMultiplier;
     }
 
-    public void OnInputReversed() => StorageManager.Instance.IsInputReverse = ReverseInput;
+    public void OnInputReversed()
+    {
+        if(!KeyboardInput) StorageManager.Instance.IsInputReverse = ReverseInput;
+    }
 }
 
 [Serializable]
@@ -62,15 +65,16 @@ public class MovementVariables
 
     [BoxGroup("Dash")] public DashDataDictionary DashDataDictionary;
 
-    [Space(20)] public ColorVariables ColorVars;
+    [Space(20)] public LightVariables LightVars;
 }
 
 [Serializable]
-public class ColorVariables
+public class LightVariables
 {
-    public float          DarkenSpeed;
-    public float          BrightenSpeed;
-    public AnimationCurve BrightnessCurve;
+    public                float          DarkenSpeed;
+    public                float          BrightenSpeed;
+    public                AnimationCurve BrightnessCurve;
+    [Range(0, 25)] public float          VisibilityFalloff = 1;
 }
 
 [Serializable]

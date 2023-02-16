@@ -17,7 +17,7 @@ MonoBehaviour:
     KeyboardInput: 1
     KeyboardInputSensitivity: 2
     Joystick:
-      IsShowVisuals: 1
+      IsShowVisuals: 0
       IsStatic: 0
       IsResetDirection: 1
       Radius: 0.4
