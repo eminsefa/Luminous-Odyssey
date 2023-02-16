@@ -211,7 +211,7 @@ GameObject:
   m_Component:
   - component: {fileID: 113983051}
   - component: {fileID: 113983050}
-  - component: {fileID: 113983049}
+  - component: {fileID: 113983053}
   - component: {fileID: 113983052}
   m_Layer: 6
   m_Name: Player
@@ -220,20 +220,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &113983049
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 113983048}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6cef2f06117641fb9141b2d6e7b33d4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Brightness: 1
-  m_Light: {fileID: 2019156366}
 --- !u!114 &113983050
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -264,7 +250,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 534160957}
-  - {fileID: 2019156367}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -289,6 +274,19 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &113983053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 113983048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6cef2f06117641fb9141b2d6e7b33d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_LightEffectedMat: {fileID: 2100000, guid: 0f205e454cbb44a50b91e90bfec1021d, type: 2}
 --- !u!1 &199440120
 GameObject:
   m_ObjectHideFlags: 0
@@ -3156,7 +3154,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1970256864
 Transform:
   m_ObjectHideFlags: 0
@@ -3344,7 +3342,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2019156366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3464,8 +3462,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 113983051}
-  m_RootOrder: 1
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2077498740
 GameObject:

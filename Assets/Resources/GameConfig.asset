@@ -153,39 +153,40 @@ MonoBehaviour:
           m_PreInfinity: 2
           m_PostInfinity: 2
           m_RotationOrder: 4
-    ColorVars:
-      DarkenSpeed: 0.25
-      BrightenSpeed: 0.0075
+    LightVars:
+      DarkenSpeed: 0.15
+      BrightenSpeed: 0.0025
       BrightnessCurve:
         serializedVersion: 2
         m_Curve:
         - serializedVersion: 3
           time: 0
           value: 0
-          inSlope: 316.4456
-          outSlope: 316.4456
+          inSlope: 2
+          outSlope: 2
           tangentMode: 0
           weightedMode: 0
           inWeight: 0
-          outWeight: 0.13645168
+          outWeight: 0
         - serializedVersion: 3
-          time: 0.058062904
-          value: 7.3910728
-          inSlope: 36.99568
-          outSlope: 36.99568
+          time: 0.114842035
+          value: 8.47581
+          inSlope: 25.157839
+          outSlope: 25.157839
           tangentMode: 0
           weightedMode: 0
-          inWeight: 0.937447
-          outWeight: 0.05408705
+          inWeight: 0.33333334
+          outWeight: 0.05659324
         - serializedVersion: 3
           time: 1
           value: 30
-          inSlope: 21.669626
-          outSlope: 21.669626
+          inSlope: 11.416631
+          outSlope: 11.416631
           tangentMode: 0
           weightedMode: 0
-          inWeight: 0.05147828
+          inWeight: 0.060326684
           outWeight: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
+      VisibilityFalloff: 0.8
