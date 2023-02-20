@@ -95,7 +95,7 @@
                 visibility = pow(visibility, _VisibilityFalloff);
                 UNITY_APPLY_FOG(i.fogCoord, col);
 				
-				o.color = tex2D(_MainTex, i.uv) * lerp(_Color1, _Color2, r) * i.color * (1-lerp(1, visibility, dist / _LightRange));
+				o.color = tex2D(_MainTex, i.uv) * lerp(_Color1, _Color2, r) * i.color * (1-visibility);
 			}
 			ENDCG
 		} // Pass

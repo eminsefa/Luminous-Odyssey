@@ -11,7 +11,7 @@ public class PlayerMovement : Singleton<PlayerMovement>
     private float        m_SideWallTimer;
     private RaycastHit[] m_MoveCheckCast = new RaycastHit[1];
 
-    public bool  IsOnManaFillSpeed => Velocity > m_Movement.ManaFillMinVelocity;
+    public bool  IsOnManaFillSpeed => Velocity > GameConfig.Instance.Mana.ManaFillMinVelocity;
     public float Velocity     => m_Rb.velocity.sqrMagnitude;
 
     private MovementVariables m_Movement => GameConfig.Instance.Movement;
@@ -72,7 +72,7 @@ public class PlayerMovement : Singleton<PlayerMovement>
     {
         if (m_IsDashing) return;
 
-        if(!ManaBar.Instance.IsManaEnough()) return;
+        if(!ManaManager.Instance.IsManaEnough()) return;
         
         var dashData = m_Movement.DashDataDictionary[direction];
         m_IsDashing = true;

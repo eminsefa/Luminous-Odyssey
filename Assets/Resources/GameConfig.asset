@@ -31,13 +31,7 @@ MonoBehaviour:
     HangingStartDuration: 0.25
     HangingSpeed: 3
     HangingCheckMinSpeed: 0.5
-    DashManaCost: 0.2
-    DashManaDrainSpeed: 0.5
-    DashManaDrainEase: 9
-    ManaFillAmount: 0.1
-    ManaDrainAmount: 0.1
-    ManaFillMinVelocity: 100
-    ManaDrainMinIdleDuration: 1.5
+    DashManaCost: 1
     DashDataDictionary:
       keyData: 00000000010000000200000003000000
       valueData:
@@ -190,3 +184,10 @@ MonoBehaviour:
         m_PostInfinity: 2
         m_RotationOrder: 4
       VisibilityFalloff: 0.8
+  Mana:
+    ManaFillAmount: 0.1
+    ManaDrainAmount: 0.1
+    ManaDrainMinIdleDuration: 1.5
+    ManaStackedClearSpeed: 0.25
+    ManaStackedClearDelay: 0.1
+    ManaFillMinVelocity: 100

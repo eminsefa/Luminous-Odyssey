@@ -1,10 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using PaintIn3D;
-using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 
 public class LightSetter : Singleton<LightSetter>
 {
@@ -17,8 +12,8 @@ public class LightSetter : Singleton<LightSetter>
     private float    m_ScreenHeight;
     private float    m_Brightness = 1;
     public  Material LightReverseEffectedMat { get; set; }
-    
-    public  float    BrightnessFactor        => m_LightVars.BrightnessCurve.Evaluate(m_Brightness);
+
+    public float BrightnessFactor => m_LightVars.BrightnessCurve.Evaluate(m_Brightness);
 
     [SerializeField] private P3dPaintSphere m_PaintSphere;
     [SerializeField] private Material       m_LightEffectedMat;
@@ -45,22 +40,22 @@ public class LightSetter : Singleton<LightSetter>
 
     private void setLight()
     {
-        m_LightEffectedMat.SetVector(s_LightPos, transform.position-Vector3.up*(m_ScreenHeight/4f-12));
+        m_LightEffectedMat.SetVector(s_LightPos, transform.position - Vector3.up * (m_ScreenHeight / 4f - 12));
         m_LightEffectedMat.SetFloat(s_LightRange,        BrightnessFactor * 300);
         m_LightEffectedMat.SetFloat(s_VisibilityFalloff, m_LightVars.VisibilityFalloff);
 
         if (LightReverseEffectedMat != null)
         {
-            LightReverseEffectedMat.SetVector(s_LightPos, transform.position+Vector3.up*3);
+            LightReverseEffectedMat.SetVector(s_LightPos, transform.position + Vector3.up * 3);
             LightReverseEffectedMat.SetFloat(s_LightRange, BrightnessFactor * 10);
         }
     }
 
     private void setPaint()
     {
-        m_PaintSphere.Radius = BrightnessFactor * 7.5f;
+        m_PaintSphere.Radius = Mathf.Max(BrightnessFactor * 7.5f, 0.01f); //paints all when it gets to 0
     }
-    
+
     private void OnApplicationQuit()
     {
         m_Brightness       = 1;

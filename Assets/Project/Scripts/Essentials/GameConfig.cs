@@ -8,8 +8,16 @@ using UnityEngine.Serialization;
 [CreateAssetMenu(fileName = "GameConfig")]
 public class GameConfig : SingletonScriptableObject<GameConfig>
 {
+    public UIVariables       UI       = new();
     public InputVariables    Input    = new();
     public MovementVariables Movement = new();
+    public ManaVariables     Mana = new();
+}
+
+[Serializable]
+public class UIVariables
+{
+    
 }
 
 [Serializable]
@@ -55,17 +63,22 @@ public class MovementVariables
     [BoxGroup("Hanging")] public float HangingSpeed;
     [BoxGroup("Hanging")] public float HangingCheckMinSpeed;
 
-    [BoxGroup("Mana")] public float DashManaCost;
-    [BoxGroup("Mana")] public float DashManaDrainSpeed;
-    [BoxGroup("Mana")] public Ease  DashManaDrainEase;
-    [BoxGroup("Mana")] public float ManaFillAmount;
-    [BoxGroup("Mana")] public float ManaDrainAmount;
-    [BoxGroup("Mana")] public float ManaFillMinVelocity;
-    [BoxGroup("Mana")] public float ManaDrainMinIdleDuration;
-
+    [BoxGroup("Dash")] public int                DashManaCost;
     [BoxGroup("Dash")] public DashDataDictionary DashDataDictionary;
+    
 
     [Space(20)] public LightVariables LightVars;
+}
+
+[Serializable]
+public class ManaVariables
+{
+    public float ManaFillAmount;
+    public float ManaDrainAmount;
+    public float ManaDrainMinIdleDuration;
+    public float ManaStackedClearSpeed = 0.25f;
+    public float ManaStackedClearDelay = 0.1f;
+    public float ManaFillMinVelocity;
 }
 
 [Serializable]
