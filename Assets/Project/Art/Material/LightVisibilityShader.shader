@@ -1,10 +1,10 @@
-Shader "Custom/CircleVisibilityShader"
+Shader "Custom/LightVisibility"
 {
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
         _LightPos ("Light Position", Vector) = (0.5, 0.5, 0, 0)
-        _LightRange ("Light Range", Range(0,100)) = 0.5
+        _LightRange ("Light Range", Range(0,10000)) = 0.5
         _VisibilityFalloff ("Visibility Falloff", Range(0, 25)) = 1
     }
 
@@ -18,6 +18,7 @@ Shader "Custom/CircleVisibilityShader"
 
         Pass
         {
+
             CGPROGRAM
             #include "UnityCG.cginc"
 
