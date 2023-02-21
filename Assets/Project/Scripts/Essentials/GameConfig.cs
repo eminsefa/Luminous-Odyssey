@@ -58,6 +58,7 @@ public class MovementVariables
     [BoxGroup("Movement")] public float JumpThreshold;
     [BoxGroup("Movement")] public float MaxSpeed;
     [BoxGroup("Movement")] public float GravityScale;
+    [BoxGroup("Movement")] public float AnimMaxWalkSpeed;
 
     [BoxGroup("Hanging")] public float HangingStartDuration;
     [BoxGroup("Hanging")] public float HangingSpeed;

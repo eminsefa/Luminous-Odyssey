@@ -6,10 +6,13 @@ using UnityEngine;
 
 public class PlayerMovement : Singleton<PlayerMovement>
 {
-    private bool         m_IsDashing;
-    private bool         m_IsHanging;
-    private float        m_SideWallTimer;
-    private RaycastHit[] m_MoveCheckCast = new RaycastHit[1];
+    private static readonly int          s_IsWalking = Animator.StringToHash("IsWalking");
+    private static readonly int          s_WalkSpeed = Animator.StringToHash("WalkSpeed");
+    
+    private                 bool         m_IsDashing;
+    private                 bool         m_IsHanging;
+    private                 float        m_SideWallTimer;
+    private                 RaycastHit[] m_MoveCheckCast = new RaycastHit[1];
 
     public bool  IsOnManaFillSpeed => Velocity > GameConfig.Instance.Mana.ManaFillMinVelocity;
     public float Velocity     => m_Rb.velocity.sqrMagnitude;
@@ -20,6 +23,9 @@ public class PlayerMovement : Singleton<PlayerMovement>
 #region Refs
 
     [FoldoutGroup("Refs")] [SerializeField]
+    private Animator m_Animator;
+    
+    [FoldoutGroup("Refs")] [SerializeField]
     private Rigidbody2D m_Rb;
 
     [FoldoutGroup("Refs")] [SerializeField]
@@ -27,6 +33,7 @@ public class PlayerMovement : Singleton<PlayerMovement>
 
     [FoldoutGroup("Refs")] [SerializeField]
     private LayerMask m_GroundLayer;
+
 
 #endregion
 
@@ -113,7 +120,10 @@ public class PlayerMovement : Singleton<PlayerMovement>
             var vel = m_Rb.velocity;
             vel.x         = Mathf.Clamp(vel.x, -m_Movement.MaxSpeed, m_Movement.MaxSpeed);
             m_Rb.velocity = vel;
+            m_Animator.SetBool(s_IsWalking,true);
+            m_Animator.SetFloat(s_WalkSpeed, Mathf.Lerp(0, m_Movement.AnimMaxWalkSpeed,vel.x/m_Movement.MaxSpeed));
         }
+        else m_Animator.SetBool(s_IsWalking, false);
     }
 
     private void checkToHang()

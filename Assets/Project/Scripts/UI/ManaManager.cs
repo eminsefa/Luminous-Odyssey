@@ -37,7 +37,7 @@ public class ManaManager : Singleton<ManaManager>
         var delta = onManaFillSpeed ? m_ManaVars.ManaFillAmount : onManaDecreaseIdle ? -m_ManaVars.ManaDrainAmount : 0;
         m_ManaBarFill.fillAmount += delta * Time.deltaTime;
 
-        if (m_ManaBarFill.fillAmount >= 0.99f)
+        if (m_ManaBarFill.fillAmount >= 0.99f && m_ManaStackCount < m_ManaStacks.Length)
         {
             m_Wait = true;
             clearBar();

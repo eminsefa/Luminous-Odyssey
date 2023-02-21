@@ -28,6 +28,7 @@ MonoBehaviour:
     JumpThreshold: 0.1
     MaxSpeed: 10
     GravityScale: 3
+    AnimMaxWalkSpeed: 1
     HangingStartDuration: 0.25
     HangingSpeed: 3
     HangingCheckMinSpeed: 0.5
