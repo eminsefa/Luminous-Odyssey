@@ -29,6 +29,7 @@ MonoBehaviour:
     MaxSpeed: 10
     GravityScale: 3
     AnimMaxWalkSpeed: 1
+    WalkThreshold: 4
     HangingStartDuration: 0.25
     HangingSpeed: 3
     HangingCheckMinSpeed: 0.5
@@ -151,6 +152,8 @@ MonoBehaviour:
     LightVars:
       DarkenSpeed: 0.15
       BrightenSpeed: 0.0025
+      LightRange: 10
+      PaintRangeMult: 0.9
       BrightnessCurve:
         serializedVersion: 2
         m_Curve:

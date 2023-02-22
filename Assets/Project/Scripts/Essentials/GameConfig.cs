@@ -59,6 +59,7 @@ public class MovementVariables
     [BoxGroup("Movement")] public float MaxSpeed;
     [BoxGroup("Movement")] public float GravityScale;
     [BoxGroup("Movement")] public float AnimMaxWalkSpeed;
+    [BoxGroup("Movement")] public float WalkThreshold = 0.1f;
 
     [BoxGroup("Hanging")] public float HangingStartDuration;
     [BoxGroup("Hanging")] public float HangingSpeed;
@@ -85,10 +86,12 @@ public class ManaVariables
 [Serializable]
 public class LightVariables
 {
-    public                float          DarkenSpeed;
-    public                float          BrightenSpeed;
-    public                AnimationCurve BrightnessCurve;
-    [Range(0, 25)] public float          VisibilityFalloff = 1;
+    public               float          DarkenSpeed;
+    public               float          BrightenSpeed;
+    public               float          LightRange     = 10;
+    public               float          PaintRangeMult = 0.8f;
+    public               AnimationCurve BrightnessCurve;
+    [Range(0, 2)] public float          VisibilityFalloff = 0.8f;
 }
 
 [Serializable]

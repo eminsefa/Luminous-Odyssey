@@ -9,20 +9,14 @@ public class LightSetter : Singleton<LightSetter>
 
     private LightVariables m_LightVars => GameConfig.Instance.Movement.LightVars;
 
-    private float    m_ScreenHeight;
     private float    m_Brightness = 1;
     public  Material LightReverseEffectedMat { get; set; }
 
     public float BrightnessFactor => m_LightVars.BrightnessCurve.Evaluate(m_Brightness);
 
+    [SerializeField] private Transform      m_LightCenter;
     [SerializeField] private P3dPaintSphere m_PaintSphere;
     [SerializeField] private Material       m_LightEffectedMat;
-
-    public override void Awake()
-    {
-        base.Awake();
-        m_ScreenHeight = Screen.height;
-    }
 
     private void Update()
     {
@@ -40,20 +34,20 @@ public class LightSetter : Singleton<LightSetter>
 
     private void setLight()
     {
-        m_LightEffectedMat.SetVector(s_LightPos, transform.position - Vector3.up * (m_ScreenHeight / 4f - 12));
-        m_LightEffectedMat.SetFloat(s_LightRange,        BrightnessFactor * 300);
+        m_LightEffectedMat.SetVector(s_LightPos, m_LightCenter.position);
+        m_LightEffectedMat.SetFloat(s_LightRange,        BrightnessFactor * m_LightVars.LightRange);
         m_LightEffectedMat.SetFloat(s_VisibilityFalloff, m_LightVars.VisibilityFalloff);
 
         if (LightReverseEffectedMat != null)
         {
-            LightReverseEffectedMat.SetVector(s_LightPos, transform.position + Vector3.up * 3);
-            LightReverseEffectedMat.SetFloat(s_LightRange, BrightnessFactor * 10);
+            LightReverseEffectedMat.SetVector(s_LightPos, m_LightCenter.position);
+            LightReverseEffectedMat.SetFloat(s_LightRange, BrightnessFactor * m_LightVars.LightRange);
         }
     }
 
     private void setPaint()
     {
-        m_PaintSphere.Radius = Mathf.Max(BrightnessFactor * 7.5f, 0.01f); //paints all when it gets to 0
+        m_PaintSphere.Radius = Mathf.Max(BrightnessFactor * m_LightVars.LightRange*m_LightVars.PaintRangeMult, 0.01f); //paints all when it gets to 0
     }
 
     private void OnApplicationQuit()
