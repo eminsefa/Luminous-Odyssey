@@ -52,7 +52,7 @@ public class ManaManager : Singleton<ManaManager>
     {
         var amount = m_ManaBarFill.fillAmount;
 
-        m_ManaBarFill.transform.DOPunchScale(Vector3.one * 0.25f, m_ManaVars.ManaStackedClearDelay + m_ManaVars.ManaStackedClearSpeed);
+        m_ManaBarFill.transform.parent.DOPunchScale(Vector3.one * 0.25f, m_ManaVars.ManaStackedClearDelay + m_ManaVars.ManaStackedClearSpeed);
         DOTween.To(() => amount, x => amount = x, 0, m_ManaVars.ManaStackedClearSpeed)
                .SetDelay(m_ManaVars.ManaStackedClearDelay)
                .OnStart(() =>
@@ -77,11 +77,12 @@ public class ManaManager : Singleton<ManaManager>
 
     private void updateStacks()
     {
-        var color = m_ManaStacks[0].color;
+        // var color = m_ManaStacks[0].color;
         for (int i = 0; i < m_ManaStacks.Length; i++)
         {
-            color.a               = i < m_ManaStackCount ? 1 : 0;
-            m_ManaStacks[i].color = color;
+            // color.a               = i < m_ManaStackCount ? 1 : 0;
+            // m_ManaStacks[i].color = color;
+            m_ManaStacks[i].gameObject.SetActive(i < m_ManaStackCount);
         }
     }
 }

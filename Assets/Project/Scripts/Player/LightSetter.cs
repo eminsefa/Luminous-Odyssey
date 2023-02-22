@@ -1,4 +1,5 @@
 using PaintIn3D;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class LightSetter : Singleton<LightSetter>
@@ -14,10 +15,11 @@ public class LightSetter : Singleton<LightSetter>
 
     public float BrightnessFactor => m_LightVars.BrightnessCurve.Evaluate(m_Brightness);
 
-    [SerializeField] private Transform      m_LightCenter;
-    [SerializeField] private P3dPaintSphere m_PaintSphere;
-    [SerializeField] private Material       m_LightEffectedMat;
+    [FoldoutGroup("Refs")][SerializeField] private Transform      m_LightCenter;
+    [FoldoutGroup("Refs")][SerializeField] private P3dPaintSphere m_PaintSphere;
+    [FoldoutGroup("Refs")][SerializeField] private Material       m_LightEffectedMat;
 
+    
     private void Update()
     {
         calculateBrightness();

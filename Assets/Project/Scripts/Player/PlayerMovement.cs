@@ -31,7 +31,7 @@ public class PlayerMovement : Singleton<PlayerMovement>
 #region Refs
 
     [FoldoutGroup("Refs")] [SerializeField]
-    private Transform m_Model;
+    private SpriteRenderer m_Renderer;
 
     [FoldoutGroup("Refs")] [SerializeField]
     private Animator m_Animator;
@@ -136,10 +136,10 @@ public class PlayerMovement : Singleton<PlayerMovement>
         else if (Mathf.Abs(m_Rb.velocity.x) < m_Movement.WalkThreshold) m_Animator.SetBool(s_IsWalking, false);
 
         var velX  = m_Rb.velocity.x;
-        var scale = m_Model.transform.localScale;
+        var scale = m_Renderer.transform.localScale;
         scale.x = velX < 0 ? -1 : velX > 0 ? 1 : scale.x;
 
-        m_Model.transform.localScale = scale;
+        m_Renderer.transform.localScale = scale;
 
         // m_SpriteRenderer.flipX = velX < 0 || (!(velX > 0) && m_SpriteRenderer.flipX);
         m_Animator.SetFloat(s_WalkSpeed, Mathf.Lerp(0, m_Movement.AnimMaxWalkSpeed, (Mathf.Abs(velX) - m_Movement.WalkThreshold) / m_Movement.MaxSpeed));
