@@ -33,122 +33,35 @@ MonoBehaviour:
     HangingStartDuration: 0.25
     HangingSpeed: 3
     HangingCheckMinSpeed: 0.5
-    DashManaCost: 1
-    DashDataDictionary:
-      keyData: 00000000010000000200000003000000
-      valueData:
-      - Direction: {x: 0, y: 1}
-        DashSpeed: 20
-        DashAmount: 4
-        DashEase: 1
-        DashCurve:
-          serializedVersion: 2
-          m_Curve:
-          - serializedVersion: 3
-            time: 0
-            value: 0
-            inSlope: 2
-            outSlope: 2
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0
-            outWeight: 0
-          - serializedVersion: 3
-            time: 0.7
-            value: 1
-            inSlope: 1.0512327
-            outSlope: 1.0512327
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.05315619
-            outWeight: 0
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
-      - Direction: {x: 0, y: -1}
-        DashSpeed: 20
-        DashAmount: 4
-        DashEase: 1
-        DashCurve:
-          serializedVersion: 2
-          m_Curve:
-          - serializedVersion: 3
-            time: 0
-            value: 0
-            inSlope: 2
-            outSlope: 2
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0
-            outWeight: 0
-          - serializedVersion: 3
-            time: 0.7
-            value: 1
-            inSlope: 1.0512327
-            outSlope: 1.0512327
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.05315619
-            outWeight: 0
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
-      - Direction: {x: 1, y: 0}
-        DashSpeed: 20
-        DashAmount: 4
-        DashEase: 1
-        DashCurve:
-          serializedVersion: 2
-          m_Curve:
-          - serializedVersion: 3
-            time: 0
-            value: 0
-            inSlope: 2
-            outSlope: 2
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0
-            outWeight: 0
-          - serializedVersion: 3
-            time: 0.7
-            value: 1
-            inSlope: 1.0512327
-            outSlope: 1.0512327
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.05315619
-            outWeight: 0
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
-      - Direction: {x: -1, y: 0}
-        DashSpeed: 20
-        DashAmount: 4
-        DashEase: 1
-        DashCurve:
-          serializedVersion: 2
-          m_Curve:
-          - serializedVersion: 3
-            time: 0
-            value: 0
-            inSlope: 2
-            outSlope: 2
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0
-            outWeight: 0
-          - serializedVersion: 3
-            time: 0.7
-            value: 1
-            inSlope: 1.0512327
-            outSlope: 1.0512327
-            tangentMode: 0
-            weightedMode: 0
-            inWeight: 0.05315619
-            outWeight: 0
-          m_PreInfinity: 2
-          m_PostInfinity: 2
-          m_RotationOrder: 4
+    DashManaCost: 0
+    DashData:
+      DashSpeed: 20
+      DashAmount: 4
+      DashEase: 1
+      DashCurve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0
+          inSlope: 2
+          outSlope: 2
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 0.7
+          value: 1
+          inSlope: 1.0512327
+          outSlope: 1.0512327
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0.05315619
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
     LightVars:
       DarkenSpeed: 0.15
       BrightenSpeed: 0.0025

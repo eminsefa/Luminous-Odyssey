@@ -8,7 +8,6 @@ using UnityEngine.Serialization;
 [CreateAssetMenu(fileName = "GameConfig")]
 public class GameConfig : SingletonScriptableObject<GameConfig>
 {
-    public UIVariables       UI       = new();
     public InputVariables    Input    = new();
     public MovementVariables Movement = new();
     public ManaVariables     Mana = new();
@@ -23,31 +22,33 @@ public class UIVariables
 [Serializable]
 public class InputVariables
 {
-    [HideIf(nameof(KeyboardInput))][OnValueChanged(nameof(OnInputReversed))]
-    public bool ReverseInput;
+    
+#region Joystick
 
-    public bool  KeyboardInput;
-    public float KeyboardInputSensitivity;
+    // [OnValueChanged(nameof(OnInputReversed))]
+    // public bool ReverseInput;
 
-    [HideIf(nameof(KeyboardInput))] public JoystickData Joystick;
+    // public JoystickData Joystick;
+    //
+    // [Serializable]
+    // public class JoystickData
+    // {
+    //     public bool IsShowVisuals;
+    //
+    //     public bool IsStatic;
+    //
+    //     public bool IsResetDirection;
+    //
+    //     public float Radius;
+    //     public float HandleRadiusMultiplier;
+    // }
 
-    [Serializable]
-    public class JoystickData
-    {
-        public bool IsShowVisuals;
+    // public void OnInputReversed()
+    // {
+    //     if(!KeyboardInput) StorageManager.Instance.IsInputReverse = ReverseInput;
+    // }
 
-        public bool IsStatic;
-
-        public bool IsResetDirection;
-
-        public float Radius;
-        public float HandleRadiusMultiplier;
-    }
-
-    public void OnInputReversed()
-    {
-        if(!KeyboardInput) StorageManager.Instance.IsInputReverse = ReverseInput;
-    }
+#endregion
 }
 
 [Serializable]
@@ -66,7 +67,7 @@ public class MovementVariables
     [BoxGroup("Hanging")] public float HangingCheckMinSpeed;
 
     [BoxGroup("Dash")] public int                DashManaCost;
-    [BoxGroup("Dash")] public DashDataDictionary DashDataDictionary;
+    [BoxGroup("Dash")] public DashData DashData;
     
 
     [Space(20)] public LightVariables LightVars;
@@ -97,11 +98,10 @@ public class LightVariables
 [Serializable]
 public class DashData
 {
-    public Vector2        Direction;
     public float          DashSpeed;
     public float          DashAmount;
     public Ease           DashEase;
     public AnimationCurve DashCurve;
 }
 
-[Serializable] public class DashDataDictionary : UnitySerializedDictionary<InputManager.eSwipeDirections, DashData> { }
+// [Serializable] public class DashDataDictionary : UnitySerializedDictionary<InputManager.eSwipeDirections, DashData> { }

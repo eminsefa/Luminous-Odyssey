@@ -3,46 +3,25 @@ using Attributes;
 using Enums;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Managers
 {
     [ExecutionOrder(eExecutionOrder.InputManager)]
     public class InputManager : Singleton<InputManager>
     {
-        public static event Action<eSwipeDirections> OnInputActionSwiped;
+        public static event Action OnJumpInput;
+        public static event Action OnDashInput;
 
-        public static event Action<Vector2> OnInputActionDown;
-        public static event Action<Vector2> OnInputActionUp;
-        public static event Action<Vector2> OnInputJoystickDown;
-        public static event Action<Vector2> OnInputJoystickUp;
-
-        private InputVariables inputVars => GameConfig.Instance.Input;
+        [field: SerializeField] public InputAction PlayerMovement { get; set; }
+        [field: SerializeField] public InputAction PlayerAction   { get; set; }
 
         [SerializeField]            private bool       logScreen;
         [ShowInInspector, ReadOnly] public  ScreenData ScreenData;
 
-        public enum eSwipeDirections
+
+        protected override void OnAwakeEvent()
         {
-            Up,
-            Down,
-            Right,
-            Left,
-        }
-
-    #region Joystick
-
-        private Vector2 joystickPositionFromMousePosAndDirection => HUDManager.Instance.JoystickInputPos - JoystickDirection * inputVars.Joystick.Radius * ScreenData.FinalDPI;
-
-        public bool    IsJoystickDown              { get; private set; }
-        public Vector2 JoystickPosition            { get; private set; } = Vector2.zero;
-        public Vector2 JoystickDirection           { get; private set; } = Vector2.zero;
-        public Vector2 JoystickHandleLocalPosition { get; private set; } = Vector2.zero;
-
-    #endregion
-
-        public override void Awake()
-        {
-            base.Awake();
             ScreenData.CalculateData(logScreen);
         }
 
@@ -50,154 +29,152 @@ namespace Managers
         {
             GameManager.OnLevelStarted += OnLevelStarted;
             OnLevelStarted();
+
+            PlayerMovement.Enable();
+            PlayerAction.Enable();
+
+            PlayerAction.performed += OnActionInput;
         }
 
         private void OnDisable()
         {
             GameManager.OnLevelStarted -= OnLevelStarted;
+
+            PlayerMovement.Disable();
+            PlayerAction.Disable();
+
+            PlayerAction.performed -= OnActionInput;
         }
 
-        private void OnLevelStarted()
-        {
-            JoystickDirection           = Vector2.zero;
-            JoystickPosition            = Vector2.zero;
-            JoystickHandleLocalPosition = Vector2.zero;
-        }
+        private void OnLevelStarted() { }
 
-        private void Update()
+        private void OnActionInput(InputAction.CallbackContext context)
         {
-            if (inputVars.KeyboardInput)
+            if (context.control == PlayerAction.controls[0]) //Jump
             {
-                keyboardMovementInput();
-                keyboardActionInput();
-                return;
+                OnJumpInput?.Invoke();
             }
 
-            if (!IsJoystickDown) return;
-
-            computeJoystick();
-        }
-
-        private void keyboardActionInput()
-        {
-            if (Input.GetKeyDown(KeyCode.W)) OnInputActionSwiped?.Invoke(eSwipeDirections.Up);
-            else if (Input.GetKeyDown(KeyCode.S)) OnInputActionSwiped?.Invoke(eSwipeDirections.Down);
-            else if (Input.GetKeyDown(KeyCode.D)) OnInputActionSwiped?.Invoke(eSwipeDirections.Right);
-            else if (Input.GetKeyDown(KeyCode.A)) OnInputActionSwiped?.Invoke(eSwipeDirections.Left);
-            else if (Input.GetKeyDown(KeyCode.Space)) OnInputActionDown?.Invoke(Vector2.zero);
-        }
-
-        private void keyboardMovementInput()
-        {
-            if (Input.GetKeyDown(KeyCode.RightArrow)    || Input.GetKeyDown(KeyCode.LeftArrow)) OnInputJoystickDown?.Invoke(Vector2.zero);
-            else if (Input.GetKeyUp(KeyCode.RightArrow) || Input.GetKeyUp(KeyCode.LeftArrow)) OnInputJoystickUp?.Invoke(Vector2.zero);
-
-            var dir = JoystickDirection;
-
-            bool isInputDown = false;
-            bool onRightKey  = true;
-
-            if (Input.GetKey(KeyCode.RightArrow))
+            if (context.control == PlayerAction.controls[1]) //Dash
             {
-                isInputDown = true;
+                OnDashInput?.Invoke();
             }
-            else if (Input.GetKey(KeyCode.LeftArrow))
-            {
-                onRightKey  = false;
-                isInputDown = true;
-            }
-
-            IsJoystickDown = isInputDown;
-            
-            if (isInputDown)
-            {
-                if ((dir.x > 0 && !onRightKey) || (dir.x < 0 && onRightKey)) dir.x = 0;
-
-                dir.x             += inputVars.KeyboardInputSensitivity * Time.deltaTime * (onRightKey ? 1 : -1);
-                dir.x             =  Mathf.Clamp(dir.x, -1, 1);
-            }
-            else
-            {
-                dir.x = 0;
-            }
-
-            JoystickDirection = dir;
         }
-
-        public void InputActionDown()
-        {
-            OnInputActionDown?.Invoke(HUDManager.Instance.ActionInputPos);
-        }
-
-        public void InputActionUp()
-        {
-            OnInputActionUp?.Invoke(HUDManager.Instance.ActionInputPos);
-        }
-
-        public void InputJoystickDown()
-        {
-            IsJoystickDown = true;
-            resetJoystick();
-            OnInputJoystickDown?.Invoke(HUDManager.Instance.JoystickInputPos);
-        }
-
-        public void InputJoystickUp()
-        {
-            IsJoystickDown = false;
-            resetJoystick();
-
-            OnInputJoystickUp?.Invoke(HUDManager.Instance.JoystickInputPos);
-        }
-
 
     #region Joystick
 
-        private void resetJoystick()
-        {
-            if (inputVars.Joystick.IsResetDirection)
-            {
-                if (JoystickDirection != Vector2.zero)
-                {
-                    JoystickDirection = JoystickDirection.normalized * 0.05f;
-                    JoystickPosition  = JoystickHandleLocalPosition = HUDManager.Instance.JoystickInputPos - JoystickDirection;
-                }
-                else
-                {
-                    JoystickDirection = Vector2.zero;
-                    JoystickPosition  = JoystickHandleLocalPosition = HUDManager.Instance.JoystickInputPos;
-                }
-            }
-            else
-            {
-                JoystickPosition            = joystickPositionFromMousePosAndDirection;
-                JoystickHandleLocalPosition = JoystickDirection;
-            }
+        // private InputVariables inputVars => GameConfig.Instance.Input;
 
-            computeJoystick();
-        }
+        // public static event Action<eSwipeDirections> OnInputActionSwiped;
+        // public static event Action<Vector2> OnInputActionDown;
+        // public static event Action<Vector2> OnInputActionUp;
+        // public static event Action<Vector2> OnInputJoystickDown;
+        // public static event Action<Vector2> OnInputJoystickUp;
 
-        private void computeJoystick()
-        {
-            JoystickDirection = (HUDManager.Instance.JoystickInputPos - JoystickPosition) / (inputVars.Joystick.Radius * ScreenData.FinalDPI);
+        // private Vector2 joystickPositionFromMousePosAndDirection => HUDManager.Instance.JoystickInputPos - JoystickDirection * inputVars.Joystick.Radius * ScreenData.FinalDPI;
+        //
+        // public bool    IsJoystickDown              { get; private set; }
+        // public Vector2 JoystickPosition            { get; private set; } = Vector2.zero;
+        // public Vector2 JoystickDirection           { get; private set; } = Vector2.zero;
+        // public Vector2 JoystickHandleLocalPosition { get; private set; } = Vector2.zero;
+        //
+        // public enum eSwipeDirections
+        // {
+        //     Up,
+        //     Down,
+        //     Right,
+        //     Left,
+        //     UpRight,
+        //     UpLeft,
+        //     DownRight,
+        //     DownLeft,
+        // }
 
-            if (inputVars.Joystick.IsStatic)
-            {
-                if (JoystickDirection.magnitude > 1)
-                {
-                    JoystickDirection = JoystickDirection.normalized;
-                }
-            }
-            else
-            {
-                if (JoystickDirection.magnitude > 1)
-                {
-                    JoystickDirection = JoystickDirection.normalized;
-                    JoystickPosition  = joystickPositionFromMousePosAndDirection;
-                }
-            }
+        // private void OnLevelStarted()
+        // {
+        //     JoystickDirection           = Vector2.zero;
+        //     JoystickPosition            = Vector2.zero;
+        //     JoystickHandleLocalPosition = Vector2.zero;
+        // }
 
-            JoystickHandleLocalPosition = JoystickDirection;
-        }
+        // private void Update()
+        // {
+        //     if (!IsJoystickDown) return;
+        //
+        //     computeJoystick();
+        // }
+
+        // public void InputActionDown()
+        // {
+        //     OnInputActionDown?.Invoke(HUDManager.Instance.ActionInputPos);
+        // }
+        //
+        // public void InputActionUp()
+        // {
+        //     OnInputActionUp?.Invoke(HUDManager.Instance.ActionInputPos);
+        // }
+        //
+        // public void InputJoystickDown()
+        // {
+        //     IsJoystickDown = true;
+        //     resetJoystick();
+        //     OnInputJoystickDown?.Invoke(HUDManager.Instance.JoystickInputPos);
+        // }
+        //
+        // public void InputJoystickUp()
+        // {
+        //     IsJoystickDown = false;
+        //     resetJoystick();
+        //
+        //     OnInputJoystickUp?.Invoke(HUDManager.Instance.JoystickInputPos);
+        // }
+
+        // private void resetJoystick()
+        // {
+        //     if (inputVars.Joystick.IsResetDirection)
+        //     {
+        //         if (JoystickDirection != Vector2.zero)
+        //         {
+        //             JoystickDirection = JoystickDirection.normalized * 0.05f;
+        //             JoystickPosition  = JoystickHandleLocalPosition = HUDManager.Instance.JoystickInputPos - JoystickDirection;
+        //         }
+        //         else
+        //         {
+        //             JoystickDirection = Vector2.zero;
+        //             JoystickPosition  = JoystickHandleLocalPosition = HUDManager.Instance.JoystickInputPos;
+        //         }
+        //     }
+        //     else
+        //     {
+        //         JoystickPosition            = joystickPositionFromMousePosAndDirection;
+        //         JoystickHandleLocalPosition = JoystickDirection;
+        //     }
+        //
+        //     computeJoystick();
+        // }
+        //
+        // private void computeJoystick()
+        // {
+        //     JoystickDirection = (HUDManager.Instance.JoystickInputPos - JoystickPosition) / (inputVars.Joystick.Radius * ScreenData.FinalDPI);
+        //
+        //     if (inputVars.Joystick.IsStatic)
+        //     {
+        //         if (JoystickDirection.magnitude > 1)
+        //         {
+        //             JoystickDirection = JoystickDirection.normalized;
+        //         }
+        //     }
+        //     else
+        //     {
+        //         if (JoystickDirection.magnitude > 1)
+        //         {
+        //             JoystickDirection = JoystickDirection.normalized;
+        //             JoystickPosition  = joystickPositionFromMousePosAndDirection;
+        //         }
+        //     }
+        //
+        //     JoystickHandleLocalPosition = JoystickDirection;
+        // }
 
     #endregion
     }
