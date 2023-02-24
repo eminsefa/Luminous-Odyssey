@@ -95,7 +95,7 @@ Material:
     - _ClearCoatSmoothness: 0
     - _Col: 1.25
     - _Cull: 2
-    - _Cutoff: 0.5
+    - _Cutoff: 0
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
@@ -118,6 +118,7 @@ Material:
     - _Surface: 0
     - _VisibilityFalloff: 0.8
     - _WorkflowMode: 1
+    - _ZTest: 2
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}

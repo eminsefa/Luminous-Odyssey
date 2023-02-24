@@ -56,7 +56,6 @@ public class MovementVariables
 {
     [BoxGroup("Movement")] public float MoveSpeed;
     [BoxGroup("Movement")] public float JumpSpeed;
-    [BoxGroup("Movement")] public float JumpThreshold;
     [BoxGroup("Movement")] public float MaxSpeed;
     [BoxGroup("Movement")] public float GravityScale;
     [BoxGroup("Movement")] public float AnimMaxWalkSpeed;

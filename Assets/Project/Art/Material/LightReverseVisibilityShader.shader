@@ -10,19 +10,18 @@
         _Shift("Shift", Float) = 1.0
         _Brightness("Brightness", Float) = 1.0
         _LightPos ("Light Position", Vector) = (0.5, 0.5, 0, 0)
-        _LightRange ("Light Range", Range(0,10000)) = 0.5
+        _LightRange ("Light Range", Range(0,50)) = 0.5
         _VisibilityFalloff ("Visibility Falloff", Range(0, 25)) = 1
     }
 
     SubShader
     {
         Blend One One
-        Cull Off
         Zwrite Off
 
         Tags
         {
-            "Queue" = "Transparent" "DisableBatching" = "True"
+            "RenderType"="Opaque" "Queue"="Geometry"
         }
 
         Pass
@@ -93,6 +92,7 @@
                 UNITY_APPLY_FOG(i.fogCoord, col);
 
                 o.color = tex2D(_MainTex, i.uv) * lerp(_Color1, _Color2, r) * i.color * (1 - visibility);
+                // o.color = tex2D(_MainTex, i.uv)  * (1 - visibility);
             }
             ENDCG
         } 

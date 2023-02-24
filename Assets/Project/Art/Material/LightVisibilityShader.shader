@@ -4,7 +4,7 @@ Shader "Custom/LightVisibility"
     {
         _MainTex ("Texture", 2D) = "white" {}
         _LightPos ("Light Position", Vector) = (0.5, 0.5, 0, 0)
-        _LightRange ("Light Range", Range(0,10000)) = 0.5
+        _LightRange ("Light Range", Range(0,50)) = 0.5
         _VisibilityFalloff ("Visibility Falloff", Range(0, 25)) = 1
     }
 
@@ -14,7 +14,9 @@ Shader "Custom/LightVisibility"
         {
             "RenderType"="Opaque" "Queue"="Geometry"
         }
-        Blend SrcAlpha OneMinusSrcAlpha
+
+        Blend One OneMinusSrcAlpha
+        Zwrite Off
 
         Pass
         {
@@ -60,11 +62,10 @@ Shader "Custom/LightVisibility"
                 float3 diff = i.worldPos - float3(_LightPos.xy, 0);
                 float dist = length(diff);
                 float visRange = _LightRange * _LightRange;
-                float visibility = saturate(1 - dot(diff,diff) / visRange);
+                float visibility = saturate(1 - dot(diff, diff) / visRange);
                 visibility = pow(visibility, _VisibilityFalloff);
-                
-                fixed4 col = tex2D(_MainTex, i.uv);
-                col.a = lerp(1, visibility, dist / _LightRange);
+
+                fixed4 col = tex2D(_MainTex, i.uv) * lerp(1, visibility, dist / _LightRange);
                 
                 UNITY_APPLY_FOG(i.fogCoord, col);
                 return col;
