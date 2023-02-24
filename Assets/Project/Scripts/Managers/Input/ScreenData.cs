@@ -8,7 +8,7 @@ public struct ScreenData
 {
     public Vector2 ScreenSizeInch => screenSizeInch;
 
-    [ShowInInspector, ReadOnly] private Vector2 originalRes;
+    [field:ShowInInspector, ReadOnly] public Vector2 OriginalRes;
     [ShowInInspector, ReadOnly] private float originalDPI;
 
     [ShowInInspector, ReadOnly] private Vector2 finalRes;
@@ -23,13 +23,13 @@ public struct ScreenData
     
     public void CalculateIfScreenChanges()
     {
-        if (originalRes != new Vector2(Screen.width, Screen.height))
+        if (OriginalRes != new Vector2(Screen.width, Screen.height))
             CalculateData();
     }
 
     public void CalculateData(bool debugLog=false)
     {
-        originalRes = new Vector2(Screen.width, Screen.height);
+        OriginalRes = new Vector2(Screen.width, Screen.height);
         originalDPI = Screen.dpi;
 
 #if UNITY_EDITOR
@@ -55,7 +55,7 @@ public struct ScreenData
 
         if(debugLog)
         {
-            Debug.LogError("Original Resolution - " + originalRes);
+            Debug.LogError("Original Resolution - " + OriginalRes);
             Debug.LogError("Original DPI - "        + originalDPI);
             Debug.LogError("Resolution - "          + finalRes);
             Debug.LogError("DPI - "                 + FinalDPI);
