@@ -88,8 +88,9 @@ public class LightVariables
 {
     public               float          DarkenSpeed;
     public               float          BrightenSpeed;
-    public               float          LightRange     = 10;
-    public               float          PaintRangeMult = 0.8f;
+    public               float          LightRange            = 10;
+    public               float          PaintRangeMult        = 0.8f;
+    public               float          ReverseLightRangeMult = 0.9f;
     public               AnimationCurve BrightnessCurve;
     [Range(0, 2)] public float          VisibilityFalloff = 0.8f;
 }

@@ -530,6 +530,7 @@ MonoBehaviour:
   m_GroundLayer:
     serializedVersion: 2
     m_Bits: 128
+  m_AnimEventSender: {fileID: 405258978}
 --- !u!4 &113983051
 Transform:
   m_ObjectHideFlags: 0
@@ -595,7 +596,7 @@ GameObject:
   - component: {fileID: 186171154}
   - component: {fileID: 186171153}
   m_Layer: 0
-  m_Name: Map Camera
+  m_Name: Memory Paint Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -819,7 +820,7 @@ GameObject:
   - component: {fileID: 232827813}
   - component: {fileID: 232827812}
   m_Layer: 0
-  m_Name: Memory Cam
+  m_Name: Memory Render Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1293,6 +1294,7 @@ GameObject:
   - component: {fileID: 405258976}
   - component: {fileID: 405258975}
   - component: {fileID: 405258977}
+  - component: {fileID: 405258978}
   m_Layer: 6
   m_Name: Sprite
   m_TagString: Untagged
@@ -1435,6 +1437,18 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+--- !u!114 &405258978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 405258973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b82975badae54148aa88d923f460502, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -4515,8 +4529,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1969474919}
   - component: {fileID: 1969474920}
-  - component: {fileID: 1969474927}
-  - component: {fileID: 1969474926}
   - component: {fileID: 1969474925}
   m_Layer: 6
   m_Name: Painter
@@ -4568,7 +4580,7 @@ MonoBehaviour:
     Kernel: 1
     Channels: {x: 1, y: 1, z: 1, w: 1}
   color: {r: 1, g: 1, b: 1, a: 1}
-  opacity: 1
+  opacity: 0.5
   angle: 0
   scale: {x: 1, y: 1, z: 1}
   radius: 8
@@ -4609,56 +4621,6 @@ MonoBehaviour:
     hitLimit: 30
     connectHits: 0
     clipConnected: 0
---- !u!114 &1969474926
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1969474918}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ccca60e24951ea4458c62facfc3ddcac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  group:
-    index: 0
-  blendMode:
-    Index: 0
-    Color: {r: 1, g: 1, b: 1, a: 1}
-    Texture: {fileID: 0}
-    Kernel: 1
-    Channels: {x: 1, y: 1, z: 1, w: 1}
-  texture: {fileID: 0}
-  color: {r: 1, g: 1, b: 1, a: 1}
-  opacity: 1
-  minimum: 0
-  modifiers:
-    modifiers: []
-  references:
-    version: 2
-    RefIds: []
---- !u!114 &1969474927
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1969474918}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f87bcada1e417224e920be02e95a52c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  group:
-    index: 0
-  texture: {fileID: 0}
-  color: {r: 1, g: 1, b: 1, a: 1}
-  modifiers:
-    modifiers: []
-  references:
-    version: 2
-    RefIds: []
 --- !u!1 &1994625080
 GameObject:
   m_ObjectHideFlags: 0

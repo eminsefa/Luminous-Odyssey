@@ -12,20 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 893ebc18d674e455bb9c4d389ef1b792, type: 3}
   m_Name: GameConfig
   m_EditorClassIdentifier: 
-  Input:
-    ReverseInput: 0
-    KeyboardInput: 1
-    KeyboardInputSensitivity: 2
-    Joystick:
-      IsShowVisuals: 0
-      IsStatic: 0
-      IsResetDirection: 1
-      Radius: 0.4
-      HandleRadiusMultiplier: 0.3
   Movement:
     MoveSpeed: 100
     JumpSpeed: 500
-    JumpThreshold: 0.1
     MaxSpeed: 10
     GravityScale: 3
     AnimMaxWalkSpeed: 1
@@ -66,7 +55,8 @@ MonoBehaviour:
       DarkenSpeed: 0.15
       BrightenSpeed: 0.0025
       LightRange: 10
-      PaintRangeMult: 0.9
+      PaintRangeMult: 1
+      ReverseLightRangeMult: 1
       BrightnessCurve:
         serializedVersion: 2
         m_Curve:
@@ -100,7 +90,7 @@ MonoBehaviour:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-      VisibilityFalloff: 0.8
+      VisibilityFalloff: 0.4
   Mana:
     ManaFillAmount: 0.1
     ManaDrainAmount: 0.1

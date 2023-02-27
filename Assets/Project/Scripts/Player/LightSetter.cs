@@ -43,7 +43,7 @@ public class LightSetter : Singleton<LightSetter>
         if (LightReverseEffectedMat != null)
         {
             LightReverseEffectedMat.SetVector(s_LightPos, m_LightCenter.position);
-            LightReverseEffectedMat.SetFloat(s_LightRange, BrightnessFactor * m_LightVars.LightRange);
+            LightReverseEffectedMat.SetFloat(s_LightRange, BrightnessFactor * m_LightVars.LightRange*m_LightVars.ReverseLightRangeMult);
         }
     }
 

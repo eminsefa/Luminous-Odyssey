@@ -14,22 +14,22 @@ public class PlayerMovement : Singleton<PlayerMovement>
     private static readonly int s_Dash      = Animator.StringToHash("Dash");
 
     [ShowInInspector] private eCharacterState m_CharacterState;
-    private                   float           m_HangTimer;
-    private                   Tweener         m_TwDash;
-    private                   RaycastHit[]    m_MoveCheckCast = new RaycastHit[1];
+    private float           m_HangTimer;
+    private Tweener         m_TwDash;
+    private RaycastHit[]    m_MoveCheckCast = new RaycastHit[1];
 
     public bool  IsOnManaFillSpeed => Velocity > GameConfig.Instance.Mana.ManaFillMinVelocity;
     public float Velocity          => m_Rb.velocity.sqrMagnitude;
 
     private MovementVariables m_Movement => GameConfig.Instance.Movement;
 
-    // private Vector2           m_MoveDir  => InputManager.Instance.JoystickDirection;
     private Vector2 m_MoveDir => InputManager.Instance.PlayerMovement.ReadValue<Vector2>();
 
     private enum eCharacterState
     {
         Idle,
         Walk,
+        Jump,
         OnAir,
         Dash,
         Hang
@@ -52,29 +52,28 @@ public class PlayerMovement : Singleton<PlayerMovement>
     [FoldoutGroup("Refs")] [SerializeField]
     private LayerMask m_GroundLayer;
 
+    [FoldoutGroup("Refs")] [SerializeField]
+    private AnimationEventSender m_AnimEventSender;
+
 #endregion
 
 #region Unity Methods
 
     private void OnEnable()
     {
-        // InputManager.OnInputActionDown   += OnInputActionDown;
-        // InputManager.OnInputActionSwiped += OnInputActionSwiped;
+        InputManager.OnJumpInput            += OnJumpInput;
+        InputManager.OnDashInput            += OnDashInput;
+        m_AnimEventSender.JumpAnimCompleted += OnJumpCompleted;
 
-        InputManager.OnJumpInput += OnJumpInput;
-        InputManager.OnDashInput += OnDashInput;
-        
-        m_Rb.gravityScale        =  m_Movement.GravityScale;
-        m_CharacterState         =  eCharacterState.Idle;
+        m_Rb.gravityScale = m_Movement.GravityScale;
+        m_CharacterState  = eCharacterState.Idle;
     }
 
     private void OnDisable()
     {
-        // InputManager.OnInputActionDown   -= OnInputActionDown;
-        // InputManager.OnInputActionSwiped -= OnInputActionSwiped;
-        
-        InputManager.OnJumpInput -= OnJumpInput;
-        InputManager.OnDashInput -= OnDashInput;
+        InputManager.OnJumpInput            -= OnJumpInput;
+        InputManager.OnDashInput            -= OnDashInput;
+        m_AnimEventSender.JumpAnimCompleted -= OnJumpCompleted;
     }
 
     private void FixedUpdate()
@@ -89,10 +88,10 @@ public class PlayerMovement : Singleton<PlayerMovement>
 
     private void OnJumpInput()
     {
-        // if (Mathf.Abs(m_Rb.velocity.y) < m_Movement.JumpThreshold && m_CharacterState != eCharacterState.Dash)
-        if (m_CharacterState != eCharacterState.Dash && m_CharacterState != eCharacterState.OnAir)
+        if (m_CharacterState is eCharacterState.Idle or eCharacterState.Walk or eCharacterState.Hang)
         {
-            m_Animator.SetTrigger(s_Jump);
+            m_Animator.SetBool(s_Jump,true);
+            m_CharacterState = eCharacterState.Jump;
             m_Rb.AddForce(Vector2.up * m_Movement.JumpSpeed);
         }
     }
@@ -100,6 +99,12 @@ public class PlayerMovement : Singleton<PlayerMovement>
     private void OnDashInput()
     {
         dash();
+    }
+
+    private void OnJumpCompleted()
+    {
+        m_CharacterState = eCharacterState.Idle;
+        checkState();
     }
 
 #endregion
@@ -128,7 +133,7 @@ public class PlayerMovement : Singleton<PlayerMovement>
                                 {
                                     m_Rb.gravityScale = 0;
                                     m_Rb.velocity     = Vector2.zero;
-                                    
+
                                     var scale = m_Renderer.transform.localScale;
                                     scale.x = m_MoveDir.x < 0 ? -1 : m_MoveDir.x > 0 ? 1 : scale.x;
 
@@ -170,7 +175,7 @@ public class PlayerMovement : Singleton<PlayerMovement>
         {
             m_CharacterState = eCharacterState.Dash;
         }
-        else
+        else if (m_CharacterState != eCharacterState.Jump)
         {
             if (m_Col.IsTouchingLayers(m_GroundLayer)) //Touching Wall
             {
@@ -191,7 +196,7 @@ public class PlayerMovement : Singleton<PlayerMovement>
                         m_CharacterState = eCharacterState.Walk;
                     }
 
-                    if (Mathf.Abs(m_Rb.velocity.x) < m_Movement.WalkThreshold)
+                    if (Mathf.Abs(m_Rb.velocity.x) < m_Movement.WalkThreshold && Mathf.Abs(m_MoveDir.x) <=0)
                     {
                         m_CharacterState = eCharacterState.Idle;
                     }
@@ -204,9 +209,20 @@ public class PlayerMovement : Singleton<PlayerMovement>
             }
         }
 
+        m_Animator.SetBool(s_Jump,  m_CharacterState == eCharacterState.Jump);
         m_Animator.SetBool(s_Dash,  m_CharacterState == eCharacterState.Dash);
         m_Animator.SetBool(s_Hang,  m_CharacterState == eCharacterState.Hang);
         m_Animator.SetBool(s_OnAir, m_CharacterState == eCharacterState.OnAir);
         m_Animator.SetBool(s_Walk,  m_CharacterState == eCharacterState.Walk);
     }
+
+#region Joystick
+
+    // private Vector2           m_MoveDir  => InputManager.Instance.JoystickDirection;
+    // InputManager.OnInputActionDown   += OnInputActionDown;
+    // InputManager.OnInputActionSwiped += OnInputActionSwiped;
+    // InputManager.OnInputActionDown   -= OnInputActionDown;
+    // InputManager.OnInputActionSwiped -= OnInputActionSwiped;
+
+#endregion
 }
