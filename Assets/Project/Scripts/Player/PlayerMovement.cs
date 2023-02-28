@@ -4,7 +4,6 @@ using System.Linq;
 using DG.Tweening;
 using Managers;
 using Sirenix.OdinInspector;
-using UnityEditor;
 using UnityEngine;
 
 public class PlayerMovement : Singleton<PlayerMovement>
@@ -15,12 +14,13 @@ public class PlayerMovement : Singleton<PlayerMovement>
     private static readonly int s_Hang      = Animator.StringToHash("Hang");
     private static readonly int s_Jump      = Animator.StringToHash("Jump");
     private static readonly int s_Dash      = Animator.StringToHash("Dash");
+    private static readonly int s_Idle      = Animator.StringToHash("Idle");
 
     [ShowInInspector] private eCharacterState m_CharacterState;
     private                   float           m_HangTimer;
+    private                   Vector2         m_LastDashDir;
     private                   Tweener         m_TwDash;
-    private                   RaycastHit[]    m_MoveCheckCast    = new RaycastHit[1];
-    private                   Collider2D[]    m_ColliderContacts = new Collider2D[4];
+    private                   RaycastHit2D[]  m_MoveCheckCast = new RaycastHit2D[4];
 
     public bool  IsOnManaFillSpeed => Velocity > GameConfig.Instance.Mana.ManaFillMinVelocity;
     public float Velocity          => m_Rb.velocity.sqrMagnitude;
@@ -51,7 +51,7 @@ public class PlayerMovement : Singleton<PlayerMovement>
     private Rigidbody2D m_Rb;
 
     [FoldoutGroup("Refs")] [SerializeField]
-    private Collider2D m_Col;
+    private CapsuleCollider2D m_Col;
 
     [FoldoutGroup("Refs")] [SerializeField]
     private LayerMask m_GroundLayer;
@@ -83,7 +83,31 @@ public class PlayerMovement : Singleton<PlayerMovement>
     private void FixedUpdate()
     {
         checkState();
+        setAnimation();
         move();
+    }
+
+    private void OnCollisionEnter2D(Collision2D col)
+    {
+        switch (m_CharacterState)
+        {
+            case eCharacterState.Dash:
+                var angle = Vector2.Angle(m_LastDashDir, col.GetContact(0).normal);
+                if (angle > 90)
+                {
+                    m_TwDash.Kill();
+                    m_Animator.CrossFade(s_Idle, 0.05f);
+                }
+
+                break;
+            case eCharacterState.Jump:
+                m_CharacterState = eCharacterState.Idle;
+                m_Animator.CrossFade(s_Idle, 0.05f);
+                break;
+        }
+
+        checkState();
+        setAnimation();
     }
 
 #endregion
@@ -128,16 +152,10 @@ public class PlayerMovement : Singleton<PlayerMovement>
 
         if (!ManaManager.Instance.IsManaEnough()) return;
 
+        m_LastDashDir = m_MoveDir;
         var dashData = m_Movement.DashData;
 
-        var dashAmount = dashData.DashAmount;
-        var count      = Physics.RaycastNonAlloc(m_Rb.position, m_MoveDir, m_MoveCheckCast, dashAmount, m_GroundLayer);
-        if (count > 0)
-        {
-            dashAmount = (m_MoveCheckCast[0].point - transform.position).magnitude;
-        }
-
-        m_TwDash = m_Rb.DOMove(m_MoveDir * dashAmount, dashData.DashSpeed)
+        m_TwDash = m_Rb.DOMove(m_LastDashDir * dashData.DashAmount, dashData.DashSpeed)
                        .SetSpeedBased()
                        .SetUpdate(UpdateType.Fixed)
                        .SetRelative(true)
@@ -148,7 +166,7 @@ public class PlayerMovement : Singleton<PlayerMovement>
                                     m_Rb.velocity     = Vector2.zero;
 
                                     var scale = m_Model.transform.localScale;
-                                    scale.x = m_MoveDir.x < 0 ? -1.5f : m_MoveDir.x > 0 ? 1.5f : scale.x;
+                                    scale.x = m_LastDashDir.x < 0 ? -1.5f : m_LastDashDir.x > 0 ? 1.5f : scale.x;
 
                                     m_Model.transform.localScale = scale;
                                 })
@@ -156,31 +174,30 @@ public class PlayerMovement : Singleton<PlayerMovement>
                                {
                                    m_TwDash          = null;
                                    m_Rb.gravityScale = m_Movement.GravityScale;
-                                   var movementVel = Vector2.right * Mathf.Lerp(0, Mathf.Sign(m_MoveDir.x), Mathf.Abs(m_MoveDir.x));
-                                   m_Rb.velocity = (m_MoveDir + movementVel) * m_Movement.MaxSpeed;
+                                   var movementVel = Vector2.right * Mathf.Lerp(0, Mathf.Sign(m_LastDashDir.x), Mathf.Abs(m_LastDashDir.x));
+                                   m_Rb.velocity = (m_LastDashDir + movementVel) * m_Movement.MaxSpeed;
                                });
     }
 
     private void move()
     {
         var vel = m_Rb.velocity;
-        switch (m_CharacterState)
+        if (m_CharacterState != eCharacterState.Dash)
         {
-            case eCharacterState.Idle or eCharacterState.Walk or eCharacterState.OnAir:
+            if (m_CharacterState != eCharacterState.Hang)
             {
-                // m_Rb.AddForce(Vector2.right * (m_MoveDir.x * m_Movement.MoveSpeed));
                 var newVelX = vel.x + m_MoveDir.x * m_Movement.MoveSpeed * Time.fixedDeltaTime;
                 vel.x         = Mathf.Clamp(newVelX, -m_Movement.MaxSpeed, m_Movement.MaxSpeed);
                 m_Rb.velocity = vel;
 
 
                 m_Animator.SetFloat(s_WalkSpeed, Mathf.Lerp(0, m_Movement.AnimMaxWalkSpeed, (Mathf.Abs(vel.x) - m_Movement.WalkThreshold) / m_Movement.MaxSpeed));
-                break;
             }
-            case eCharacterState.Hang:
+            else
+            {
                 vel.y         = Mathf.Max(vel.y, -m_Movement.HangingSpeed);
                 m_Rb.velocity = vel;
-                break;
+            }
         }
 
         var scale = m_Model.transform.localScale;
@@ -199,43 +216,33 @@ public class PlayerMovement : Singleton<PlayerMovement>
         {
             if (m_Col.IsTouchingLayers(m_GroundLayer)) //Touching Wall
             {
-                Array.Clear(m_ColliderContacts, 0, m_ColliderContacts.Length);
-                m_Col.GetContacts(m_ColliderContacts);
-
-                bool touchingSideWall = true;
-                for (var i = 0; i < m_ColliderContacts.Length; i++)
-                {
-                    if (m_ColliderContacts[i] == null) continue;
-                    var dist = (m_ColliderContacts[i].ClosestPoint(transform.position) - (Vector2) transform.position).sqrMagnitude;
-                    if (dist < m_Movement.WalkingColMinDist)
-                    {
-                        touchingSideWall = false;
-                        break;
-                    }
-                }
-
-                if (touchingSideWall)
-                {
-                    m_HangTimer += Time.fixedDeltaTime;
-                    if (m_HangTimer > m_Movement.HangingStartDuration)
-                    {
-                        // if (m_CharacterState == eCharacterState.OnAir) m_Animator.CrossFade(s_Hang, 0.1f);
-                        m_CharacterState = eCharacterState.Hang;
-                    }
-                    else m_CharacterState = eCharacterState.OnAir;
-                }
-                else //Touching Ground
+                var count = Physics2D.RaycastNonAlloc(m_Rb.position, Vector2.down, m_MoveCheckCast, 0.5f, m_GroundLayer);
+                if (count > 0) //Touching Ground
                 {
                     m_HangTimer = 0;
                     if (m_MoveDir.sqrMagnitude > 0)
                     {
-                        // if (m_CharacterState == eCharacterState.OnAir) m_Animator.CrossFade(s_Walk, 0.1f);
+                        if (m_CharacterState == eCharacterState.OnAir) m_Animator.CrossFade(s_Walk, 0.05f);
                         m_CharacterState = eCharacterState.Walk;
                     }
 
                     if (Mathf.Abs(m_Rb.velocity.x) < m_Movement.WalkThreshold && Mathf.Abs(m_MoveDir.x) <= 0)
                     {
                         m_CharacterState = eCharacterState.Idle;
+                    }
+                }
+                else
+                {
+                    var countHang = Physics2D.RaycastNonAlloc(m_Col.bounds.center, Vector2.right * Mathf.Sign(m_Model.localScale.x), m_MoveCheckCast, m_Col.size.x - 0.1f, m_GroundLayer);
+                    if (countHang > 0)
+                    {
+                        m_HangTimer += Time.fixedDeltaTime;
+                        if (m_HangTimer > m_Movement.HangingStartDuration)
+                        {
+                            if (m_CharacterState == eCharacterState.OnAir) m_Animator.CrossFade(s_Hang, 0.05f);
+                            m_CharacterState = eCharacterState.Hang;
+                        }
+                        else m_CharacterState = eCharacterState.OnAir;
                     }
                 }
             }
@@ -245,7 +252,10 @@ public class PlayerMovement : Singleton<PlayerMovement>
                 m_CharacterState = eCharacterState.OnAir;
             }
         }
+    }
 
+    private void setAnimation()
+    {
         m_Animator.SetBool(s_Jump,  m_CharacterState == eCharacterState.Jump);
         m_Animator.SetBool(s_Dash,  m_CharacterState == eCharacterState.Dash);
         m_Animator.SetBool(s_Hang,  m_CharacterState == eCharacterState.Hang);

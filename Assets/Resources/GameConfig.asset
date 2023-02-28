@@ -19,13 +19,13 @@ MonoBehaviour:
     GravityScale: 3
     AnimMaxWalkSpeed: 1
     WalkThreshold: 4
-    HangingStartDuration: 0
+    HangingStartDuration: 0.05
     HangingSpeed: 3
     WalkingColMinDist: 1
-    WallJumpMinHangTime: 0.05
+    WallJumpMinHangTime: 1
     DashManaCost: 0
     DashData:
-      DashSpeed: 20
+      DashSpeed: 35
       DashAmount: 5
       DashCurve:
         serializedVersion: 2
