@@ -8,7 +8,7 @@ public class LightSetter : Singleton<LightSetter>
     private static readonly int s_LightRange        = Shader.PropertyToID("_LightRange");
     private static readonly int s_VisibilityFalloff = Shader.PropertyToID("_VisibilityFalloff");
 
-    private LightVariables m_LightVars => GameConfig.Instance.Movement.LightVars;
+    private LightVariables m_LightVars => GameConfig.Instance.LightVars;
 
     private float    m_Brightness = 1;
     public  Material LightReverseEffectedMat { get; set; }

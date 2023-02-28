@@ -8,21 +8,17 @@ using UnityEngine.Serialization;
 [CreateAssetMenu(fileName = "GameConfig")]
 public class GameConfig : SingletonScriptableObject<GameConfig>
 {
-    public InputVariables    Input    = new();
-    public MovementVariables Movement = new();
-    public ManaVariables     Mana = new();
+    public InputVariables    Input     = new();
+    public MovementVariables Movement  = new();
+    public ManaVariables     Mana      = new();
+    public LightVariables    LightVars = new();
 }
 
-[Serializable]
-public class UIVariables
-{
-    
-}
+[Serializable] public class UIVariables { }
 
 [Serializable]
 public class InputVariables
 {
-    
 #region Joystick
 
     // [OnValueChanged(nameof(OnInputReversed))]
@@ -63,13 +59,11 @@ public class MovementVariables
 
     [BoxGroup("Hanging")] public float HangingStartDuration;
     [BoxGroup("Hanging")] public float HangingSpeed;
-    [BoxGroup("Hanging")] public float HangingCheckMinSpeed;
+    [BoxGroup("Hanging")] public float WalkingColMinDist;
+    [BoxGroup("Hanging")] public float WallJumpMinHangTime;
 
-    [BoxGroup("Dash")] public int                DashManaCost;
+    [BoxGroup("Dash")] public int      DashManaCost;
     [BoxGroup("Dash")] public DashData DashData;
-    
-
-    [Space(20)] public LightVariables LightVars;
 }
 
 [Serializable]
@@ -100,7 +94,6 @@ public class DashData
 {
     public float          DashSpeed;
     public float          DashAmount;
-    public Ease           DashEase;
     public AnimationCurve DashCurve;
 }
 

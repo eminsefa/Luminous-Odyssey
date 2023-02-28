@@ -14,19 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Movement:
     MoveSpeed: 100
-    JumpSpeed: 500
+    JumpSpeed: 650
     MaxSpeed: 10
     GravityScale: 3
     AnimMaxWalkSpeed: 1
     WalkThreshold: 4
-    HangingStartDuration: 0.25
+    HangingStartDuration: 0
     HangingSpeed: 3
-    HangingCheckMinSpeed: 0.5
+    WalkingColMinDist: 1
+    WallJumpMinHangTime: 0.05
     DashManaCost: 0
     DashData:
       DashSpeed: 20
-      DashAmount: 4
-      DashEase: 1
+      DashAmount: 5
       DashCurve:
         serializedVersion: 2
         m_Curve:
@@ -51,46 +51,6 @@ MonoBehaviour:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-    LightVars:
-      DarkenSpeed: 0.15
-      BrightenSpeed: 0.0025
-      LightRange: 10
-      PaintRangeMult: 1
-      ReverseLightRangeMult: 1
-      BrightnessCurve:
-        serializedVersion: 2
-        m_Curve:
-        - serializedVersion: 3
-          time: 0
-          value: 0
-          inSlope: 2
-          outSlope: 2
-          tangentMode: 0
-          weightedMode: 0
-          inWeight: 0
-          outWeight: 0
-        - serializedVersion: 3
-          time: 0.06909249
-          value: 0.31706968
-          inSlope: 1.5496225
-          outSlope: 1.5496225
-          tangentMode: 0
-          weightedMode: 0
-          inWeight: 0.33333334
-          outWeight: 0.094130136
-        - serializedVersion: 3
-          time: 1
-          value: 1
-          inSlope: 0.42743832
-          outSlope: 0.42743832
-          tangentMode: 0
-          weightedMode: 0
-          inWeight: 0.11734902
-          outWeight: 0
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
-      VisibilityFalloff: 0.4
   Mana:
     ManaFillAmount: 0.1
     ManaDrainAmount: 0.1
@@ -98,3 +58,43 @@ MonoBehaviour:
     ManaStackedClearSpeed: 0.25
     ManaStackedClearDelay: 0.1
     ManaFillMinVelocity: 100
+  LightVars:
+    DarkenSpeed: 0.15
+    BrightenSpeed: 0.0025
+    LightRange: 10
+    PaintRangeMult: 1
+    ReverseLightRangeMult: 1
+    BrightnessCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 2
+        outSlope: 2
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.06909249
+        value: 0.5
+        inSlope: 0.76606023
+        outSlope: 0.76606023
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.05723534
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0.42743832
+        outSlope: 0.42743832
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.11734902
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    VisibilityFalloff: 0.4
