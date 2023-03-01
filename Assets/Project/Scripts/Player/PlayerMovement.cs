@@ -20,6 +20,7 @@ public class PlayerMovement : Singleton<PlayerMovement>
     private                   float           m_HangTimer;
     private                   Vector2         m_LastDashDir;
     private                   Tweener         m_TwDash;
+    private                   Tweener         m_TwDashRotate;
     private                   RaycastHit2D[]  m_MoveCheckCast = new RaycastHit2D[4];
 
     public bool  IsOnManaFillSpeed => Velocity > GameConfig.Instance.Mana.ManaFillMinVelocity;
@@ -95,14 +96,13 @@ public class PlayerMovement : Singleton<PlayerMovement>
                 var angle = Vector2.Angle(m_LastDashDir, col.GetContact(0).normal);
                 if (angle > 90)
                 {
-                    m_TwDash.Kill();
-                    m_Animator.CrossFade(s_Idle, 0.05f);
+                    m_TwDash?.Kill();
+                    m_CharacterState = eCharacterState.Idle;
                 }
 
                 break;
             case eCharacterState.Jump:
                 m_CharacterState = eCharacterState.Idle;
-                m_Animator.CrossFade(s_Idle, 0.05f);
                 break;
         }
 
@@ -126,7 +126,7 @@ public class PlayerMovement : Singleton<PlayerMovement>
             if (wallJump)
             {
                 var scale = m_Model.transform.localScale;
-                force += Vector2.right * Mathf.Sign(scale.x * -1) * m_Movement.JumpSpeed;
+                force += Vector2.right * Mathf.Sign(scale.x * -1) * m_Movement.JumpSpeed*1.5f;
             }
 
             m_Rb.AddForce(force);
@@ -152,8 +152,15 @@ public class PlayerMovement : Singleton<PlayerMovement>
 
         if (!ManaManager.Instance.IsManaEnough()) return;
 
-        m_LastDashDir = m_MoveDir;
+        m_LastDashDir = m_MoveDir.sqrMagnitude > 0.05f ? m_MoveDir.normalized : Vector2.right * Mathf.Sign(m_Model.localScale.x);
         var dashData = m_Movement.DashData;
+
+        if (m_MoveDir.x != 0)
+        {
+            var rot = dashData.RotateAmount * -Mathf.Sign(m_MoveDir.x);
+            m_TwDashRotate = m_Model.DOLocalRotate(new Vector3(0f, 0f, rot), dashData.RotateDuration)
+                                    .SetUpdate(UpdateType.Fixed);
+        }
 
         m_TwDash = m_Rb.DOMove(m_LastDashDir * dashData.DashAmount, dashData.DashSpeed)
                        .SetSpeedBased()
@@ -172,11 +179,21 @@ public class PlayerMovement : Singleton<PlayerMovement>
                                 })
                        .OnKill(() =>
                                {
-                                   m_TwDash          = null;
-                                   m_Rb.gravityScale = m_Movement.GravityScale;
-                                   var movementVel = Vector2.right * Mathf.Lerp(0, Mathf.Sign(m_LastDashDir.x), Mathf.Abs(m_LastDashDir.x));
-                                   m_Rb.velocity = (m_LastDashDir + movementVel) * m_Movement.MaxSpeed;
-                               });
+                                   m_TwDash = null;
+                                   dashCompleted(true);
+                               })
+                       .OnComplete(() => dashCompleted(false));
+    }
+
+    private void dashCompleted(bool isKilled)
+    {
+        m_Rb.gravityScale = m_Movement.GravityScale;
+        var movementVel = Vector2.right * Mathf.Lerp(0, Mathf.Sign(m_LastDashDir.x), Mathf.Abs(m_LastDashDir.x));
+        m_Rb.velocity = (m_LastDashDir + movementVel) * m_Movement.MaxSpeed;
+
+        m_TwDashRotate?.Kill();
+        m_TwDashRotate = m_Model.DOLocalRotate(Vector3.zero, isKilled ? 0 : m_Movement.DashData.RotateDuration)
+                                .SetUpdate(UpdateType.Fixed);
     }
 
     private void move()
@@ -189,8 +206,6 @@ public class PlayerMovement : Singleton<PlayerMovement>
                 var newVelX = vel.x + m_MoveDir.x * m_Movement.MoveSpeed * Time.fixedDeltaTime;
                 vel.x         = Mathf.Clamp(newVelX, -m_Movement.MaxSpeed, m_Movement.MaxSpeed);
                 m_Rb.velocity = vel;
-
-
                 m_Animator.SetFloat(s_WalkSpeed, Mathf.Lerp(0, m_Movement.AnimMaxWalkSpeed, (Mathf.Abs(vel.x) - m_Movement.WalkThreshold) / m_Movement.MaxSpeed));
             }
             else
@@ -220,29 +235,27 @@ public class PlayerMovement : Singleton<PlayerMovement>
                 if (count > 0) //Touching Ground
                 {
                     m_HangTimer = 0;
-                    if (m_MoveDir.sqrMagnitude > 0)
+                    if (Mathf.Abs(m_MoveDir.x) > 0 || Mathf.Abs(m_Rb.velocity.x) > m_Movement.WalkThreshold)
                     {
                         if (m_CharacterState == eCharacterState.OnAir) m_Animator.CrossFade(s_Walk, 0.05f);
                         m_CharacterState = eCharacterState.Walk;
                     }
-
-                    if (Mathf.Abs(m_Rb.velocity.x) < m_Movement.WalkThreshold && Mathf.Abs(m_MoveDir.x) <= 0)
+                    else
                     {
                         m_CharacterState = eCharacterState.Idle;
                     }
                 }
                 else
                 {
-                    var countHang = Physics2D.RaycastNonAlloc(m_Col.bounds.center, Vector2.right * Mathf.Sign(m_Model.localScale.x), m_MoveCheckCast, m_Col.size.x - 0.1f, m_GroundLayer);
-                    if (countHang > 0)
+                    var countHang = Physics2D.RaycastNonAlloc(m_Col.bounds.center, Vector2.right * Mathf.Sign(m_Model.localScale.x), m_MoveCheckCast, m_Col.size.x + 0.1f, m_GroundLayer);
+                    if (countHang > 0) //Touching Side Wall
                     {
                         m_HangTimer += Time.fixedDeltaTime;
-                        if (m_HangTimer > m_Movement.HangingStartDuration)
+                        if (m_HangTimer >= m_Movement.HangingStartDuration)
                         {
                             if (m_CharacterState == eCharacterState.OnAir) m_Animator.CrossFade(s_Hang, 0.05f);
                             m_CharacterState = eCharacterState.Hang;
                         }
-                        else m_CharacterState = eCharacterState.OnAir;
                     }
                 }
             }

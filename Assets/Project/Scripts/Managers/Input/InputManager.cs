@@ -18,12 +18,8 @@ namespace Managers
 
         [SerializeField]            private bool       logScreen;
         [ShowInInspector, ReadOnly] public  ScreenData ScreenData;
-
-
-        protected override void OnAwakeEvent()
-        {
-            ScreenData.CalculateData(logScreen);
-        }
+        
+    #region Unity Methods
 
         private void OnEnable()
         {
@@ -46,8 +42,17 @@ namespace Managers
             PlayerAction.performed -= OnActionInput;
         }
 
-        private void OnLevelStarted() { }
+    #endregion
+        
+    #region Events
 
+        protected override void OnAwakeEvent()
+        {
+            ScreenData.CalculateData(logScreen);
+        }
+        
+        private void OnLevelStarted() { }
+        
         private void OnActionInput(InputAction.CallbackContext context)
         {
             if (context.control == PlayerAction.controls[0]) //Jump
@@ -60,6 +65,8 @@ namespace Managers
                 OnDashInput?.Invoke();
             }
         }
+
+    #endregion
 
     #region Joystick
 

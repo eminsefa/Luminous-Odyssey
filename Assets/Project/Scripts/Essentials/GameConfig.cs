@@ -94,6 +94,8 @@ public class DashData
 {
     public float          DashSpeed;
     public float          DashAmount;
+    public float          RotateDuration;
+    public float          RotateAmount;
     public AnimationCurve DashCurve;
 }
 
