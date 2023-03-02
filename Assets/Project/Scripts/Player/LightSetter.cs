@@ -15,11 +15,15 @@ public class LightSetter : Singleton<LightSetter>
 
     public float BrightnessFactor => m_LightVars.BrightnessCurve.Evaluate(m_Brightness);
 
-    [FoldoutGroup("Refs")][SerializeField] private Transform      m_LightCenter;
     [FoldoutGroup("Refs")][SerializeField] private P3dPaintSphere m_PaintSphere;
     [FoldoutGroup("Refs")][SerializeField] private Material       m_LightEffectedMat;
 
-    
+    protected override void OnAwakeEvent()
+    {
+        base.OnAwakeEvent();
+        setLight();
+    }
+
     private void Update()
     {
         calculateBrightness();
@@ -36,13 +40,13 @@ public class LightSetter : Singleton<LightSetter>
 
     private void setLight()
     {
-        m_LightEffectedMat.SetVector(s_LightPos, m_LightCenter.position);
+        m_LightEffectedMat.SetVector(s_LightPos, transform.position);
         m_LightEffectedMat.SetFloat(s_LightRange,        BrightnessFactor * m_LightVars.LightRange);
         m_LightEffectedMat.SetFloat(s_VisibilityFalloff, m_LightVars.VisibilityFalloff);
 
         if (LightReverseEffectedMat != null)
         {
-            LightReverseEffectedMat.SetVector(s_LightPos, m_LightCenter.position);
+            LightReverseEffectedMat.SetVector(s_LightPos, transform.position);
             LightReverseEffectedMat.SetFloat(s_LightRange, BrightnessFactor * m_LightVars.LightRange*m_LightVars.ReverseLightRangeMult);
         }
     }
@@ -55,7 +59,7 @@ public class LightSetter : Singleton<LightSetter>
     private void OnApplicationQuit()
     {
         m_Brightness       = 1;
-        transform.position = Vector3.zero;
+        PlayerMovement.Instance.transform.position = Vector3.zero;
         setLight();
     }
 }

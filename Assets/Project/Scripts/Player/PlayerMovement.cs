@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Linq;
 using DG.Tweening;
 using Managers;
 using Sirenix.OdinInspector;
@@ -24,7 +21,6 @@ public class PlayerMovement : Singleton<PlayerMovement>
     private                   Tweener         m_TwDash;
     private                   Tweener         m_TwDashRotate;
     private                   RaycastHit2D[]  m_MoveCheckCast = new RaycastHit2D[4];
-    private                   Collider2D[]    m_MoveCheckCols = new Collider2D[4];
 
     public bool  IsOnManaFillSpeed => Velocity > GameConfig.Instance.Mana.ManaFillMinVelocity;
     public float Velocity          => m_Rb.velocity.sqrMagnitude;
@@ -291,14 +287,4 @@ public class PlayerMovement : Singleton<PlayerMovement>
         m_Animator.SetBool(s_OnAir, m_CharacterState == eCharacterState.OnAir);
         m_Animator.SetBool(s_Walk,  m_CharacterState == eCharacterState.Walk);
     }
-
-#region Joystick
-
-    // private Vector2           m_MoveDir  => InputManager.Instance.JoystickDirection;
-    // InputManager.OnInputActionDown   += OnInputActionDown;
-    // InputManager.OnInputActionSwiped += OnInputActionSwiped;
-    // InputManager.OnInputActionDown   -= OnInputActionDown;
-    // InputManager.OnInputActionSwiped -= OnInputActionSwiped;
-
-#endregion
 }

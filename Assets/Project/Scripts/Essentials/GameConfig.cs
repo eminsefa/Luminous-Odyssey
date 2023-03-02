@@ -18,33 +18,6 @@ public class InputVariables
 {
     public float JumpInputInterval = 0.05f;
     public float DashInputInterval = 0.05f;
-
-#region Joystick
-
-    // [OnValueChanged(nameof(OnInputReversed))]
-    // public bool ReverseInput;
-
-    // public JoystickData Joystick;
-    //
-    // [Serializable]
-    // public class JoystickData
-    // {
-    //     public bool IsShowVisuals;
-    //
-    //     public bool IsStatic;
-    //
-    //     public bool IsResetDirection;
-    //
-    //     public float Radius;
-    //     public float HandleRadiusMultiplier;
-    // }
-
-    // public void OnInputReversed()
-    // {
-    //     if(!KeyboardInput) StorageManager.Instance.IsInputReverse = ReverseInput;
-    // }
-
-#endregion
 }
 
 [Serializable]
@@ -59,7 +32,6 @@ public class MovementVariables
 
     [BoxGroup("Hanging")] public float HangingStartDuration;
     [BoxGroup("Hanging")] public float HangingSpeed;
-    [BoxGroup("Hanging")] public float WalkingColMinDist;
     [BoxGroup("Hanging")] public float CayoteJumpThreshold;
 
     [BoxGroup("Dash")] public int      DashManaCost;
