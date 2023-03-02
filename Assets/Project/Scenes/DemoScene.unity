@@ -1447,7 +1447,7 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0.117641136, y: -0.121768}
-  m_Size: {x: 1.4, y: 4.7226467}
+  m_Size: {x: 1.5, y: 4.7226467}
   m_Direction: 0
 --- !u!1 &410087039
 GameObject:
@@ -1923,7 +1923,7 @@ BoxCollider2D:
   m_GameObject: {fileID: 603032341}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 55c8c647950a44248b405623a001ba46, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -3277,7 +3277,7 @@ BoxCollider2D:
   m_GameObject: {fileID: 1468044987}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 55c8c647950a44248b405623a001ba46, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0

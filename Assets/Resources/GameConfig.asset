@@ -12,23 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 893ebc18d674e455bb9c4d389ef1b792, type: 3}
   m_Name: GameConfig
   m_EditorClassIdentifier: 
+  Input:
+    JumpInputInterval: 0.05
+    DashInputInterval: 0.25
   Movement:
     MoveSpeed: 100
-    JumpSpeed: 650
+    JumpSpeed: 750
     MaxSpeed: 10
     GravityScale: 3
     AnimMaxWalkSpeed: 1
     WalkThreshold: 4
-    HangingStartDuration: 0
+    HangingStartDuration: 0.1
     HangingSpeed: 3
     WalkingColMinDist: 1
-    WallJumpMinHangTime: 1
+    CayoteJumpThreshold: 0.2
     DashManaCost: 0
     DashData:
       DashSpeed: 35
       DashAmount: 6
-      RotateDuration: 0.25
-      RotateAmount: 25
+      RotateSpeed: 100
+      RotateAmount: 15
       DashCurve:
         serializedVersion: 2
         m_Curve:

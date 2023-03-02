@@ -1,9 +1,6 @@
 using System;
-using DG.Tweening;
-using Managers;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 [CreateAssetMenu(fileName = "GameConfig")]
 public class GameConfig : SingletonScriptableObject<GameConfig>
@@ -19,6 +16,9 @@ public class GameConfig : SingletonScriptableObject<GameConfig>
 [Serializable]
 public class InputVariables
 {
+    public float JumpInputInterval = 0.05f;
+    public float DashInputInterval = 0.05f;
+
 #region Joystick
 
     // [OnValueChanged(nameof(OnInputReversed))]
@@ -60,7 +60,7 @@ public class MovementVariables
     [BoxGroup("Hanging")] public float HangingStartDuration;
     [BoxGroup("Hanging")] public float HangingSpeed;
     [BoxGroup("Hanging")] public float WalkingColMinDist;
-    [BoxGroup("Hanging")] public float WallJumpMinHangTime;
+    [BoxGroup("Hanging")] public float CayoteJumpThreshold;
 
     [BoxGroup("Dash")] public int      DashManaCost;
     [BoxGroup("Dash")] public DashData DashData;
@@ -94,7 +94,7 @@ public class DashData
 {
     public float          DashSpeed;
     public float          DashAmount;
-    public float          RotateDuration;
+    public float          RotateSpeed;
     public float          RotateAmount;
     public AnimationCurve DashCurve;
 }
