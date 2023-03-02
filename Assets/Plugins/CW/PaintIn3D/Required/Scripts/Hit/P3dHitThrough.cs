@@ -12,7 +12,8 @@ namespace PaintIn3D
 		public enum PhaseType
 		{
 			Update,
-			FixedUpdate
+			FixedUpdate,
+			LateUpdate
 		}
 
 		public enum OrientationType
@@ -105,6 +106,10 @@ namespace PaintIn3D
 		protected virtual void LateUpdate()
 		{
 			UpdatePointAndLine();
+			if (paintIn == PhaseType.LateUpdate)
+			{
+				UpdateHit();
+			}
 		}
 
 		protected virtual void FixedUpdate()

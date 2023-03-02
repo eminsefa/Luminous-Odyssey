@@ -17,6 +17,7 @@ Shader "Custom/LightVisibility"
 
         Blend One OneMinusSrcAlpha
         Zwrite Off
+        Cull Off
 
         Pass
         {

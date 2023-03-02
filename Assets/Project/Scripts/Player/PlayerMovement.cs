@@ -105,7 +105,7 @@ public class PlayerMovement : Singleton<PlayerMovement>
 
 #endregion
 
-#region Events
+#region Event Callbacks
 
     private void OnJumpInput()
     {
@@ -177,7 +177,7 @@ public class PlayerMovement : Singleton<PlayerMovement>
 
     private void dash()
     {
-        m_LastDashDir = m_MoveDir.sqrMagnitude > 0.05f ? m_MoveDir.normalized : Vector2.right * Mathf.Sign(m_Model.localScale.x);
+        m_LastDashDir = m_MoveDir.sqrMagnitude > 0.05f ? m_MoveDir.normalized : m_Col.transform.right;
         var dashData = m_Movement.DashData;
 
 
@@ -242,12 +242,15 @@ public class PlayerMovement : Singleton<PlayerMovement>
                 m_CayoteJumpTimer = m_Movement.CayoteJumpThreshold;
                 if (Mathf.Abs(m_MoveDir.x) > 0 || Mathf.Abs(m_Rb.velocity.x) > m_Movement.WalkThreshold)
                 {
-                    m_CharacterState = eCharacterState.Walk;
+                    m_CharacterState            =  eCharacterState.Walk;
                 }
                 else
                 {
                     m_CharacterState = eCharacterState.Idle;
                 }
+                var vel = m_Rb.velocity;
+                vel           -= vel.normalized * 0.4f ;
+                m_Rb.velocity =  vel;
             }
             else if (Physics2D.CapsuleCastNonAlloc(m_Col.transform.position,
                                                    new Vector2(0.01f, m_Col.size.y), m_Col.direction,
@@ -256,7 +259,8 @@ public class PlayerMovement : Singleton<PlayerMovement>
                                                    Mathf.Abs(m_Col.size.x / Mathf.Cos(m_Col.transform.rotation.eulerAngles.z)),
                                                    m_GroundLayer) > 0) //Touching On Forward Wall
             {
-                if (transform.InverseTransformPoint(m_MoveCheckCast[0].point).y < m_Col.size.y * 1.15f)
+                if (transform.InverseTransformPoint(m_MoveCheckCast[0].point).y < m_Col.size.y * 1.15f
+                 && m_MoveCheckCast[0].collider.bounds.size.y                   > m_Col.size.y / 2f)
                 {
                     m_HangTimer += Time.fixedDeltaTime;
 

@@ -15,8 +15,11 @@ public class LightSetter : Singleton<LightSetter>
 
     public float BrightnessFactor => m_LightVars.BrightnessCurve.Evaluate(m_Brightness);
 
-    [FoldoutGroup("Refs")][SerializeField] private P3dPaintSphere m_PaintSphere;
-    [FoldoutGroup("Refs")][SerializeField] private Material       m_LightEffectedMat;
+    [FoldoutGroup("Refs")] [SerializeField]
+    private P3dPaintSphere m_PaintSphere;
+
+    [FoldoutGroup("Refs")] [SerializeField]
+    private Material m_LightEffectedMat;
 
     protected override void OnAwakeEvent()
     {
@@ -44,21 +47,22 @@ public class LightSetter : Singleton<LightSetter>
         m_LightEffectedMat.SetFloat(s_LightRange,        BrightnessFactor * m_LightVars.LightRange);
         m_LightEffectedMat.SetFloat(s_VisibilityFalloff, m_LightVars.VisibilityFalloff);
 
-        if (LightReverseEffectedMat != null)
+        if (LightReverseEffectedMat != null) //Memory map set it self later
         {
+            var range = BrightnessFactor * m_LightVars.LightRange * m_LightVars.ReverseLightRangeMult;
             LightReverseEffectedMat.SetVector(s_LightPos, transform.position);
-            LightReverseEffectedMat.SetFloat(s_LightRange, BrightnessFactor * m_LightVars.LightRange*m_LightVars.ReverseLightRangeMult);
+            LightReverseEffectedMat.SetFloat(s_LightRange, range);
         }
     }
 
     private void setPaint()
     {
-        m_PaintSphere.Radius = Mathf.Max(BrightnessFactor * m_LightVars.LightRange*m_LightVars.PaintRangeMult, 0.01f); //paints all when it gets to 0
+        m_PaintSphere.Radius = Mathf.Max(BrightnessFactor * m_LightVars.LightRange * m_LightVars.PaintRangeMult, 0.01f); //paints all when it gets to 0
     }
 
     private void OnApplicationQuit()
     {
-        m_Brightness       = 1;
+        m_Brightness                               = 1;
         PlayerMovement.Instance.transform.position = Vector3.zero;
         setLight();
     }

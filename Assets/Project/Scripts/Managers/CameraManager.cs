@@ -1,14 +1,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
 using Managers;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public class CameraManager : MonoBehaviour
+public class CameraManager : Singleton<CameraManager>
 {
-    [SerializeField]            private RenderTexture[] m_RenderTextures;
-    [ShowInInspector, ReadOnly] public  ScreenData      ScreenData;
+    [SerializeField]              public  Camera MainCam;
+    [SerializeField]              public  CinemachineVirtualCamera MemoryCam;
+    
+    [SerializeField]            private RenderTexture[]          m_RenderTextures;
+    [ShowInInspector, ReadOnly] public  ScreenData               ScreenData;
 
     private void Awake()
     {
