@@ -7,7 +7,7 @@ public class CameraManager : Singleton<CameraManager>
     public float   OrthSize  => m_MainCam.orthographicSize;
     public Vector2 BlockSize => m_BlockSize;
 
-    private Vector2 m_BlockSize;
+    private Vector2 m_BlockSize = new (53.333f, 30f); //Maybe later make it dynamic
 
     [SerializeField] private Camera m_MainCam;
 

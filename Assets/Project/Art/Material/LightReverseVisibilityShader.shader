@@ -10,8 +10,6 @@
         _Brightness("Brightness", Float) = 1.0
         _LightPos ("Light Position", Vector) = (0.5, 0.5, 0, 0)
         _LightRange ("Light Range", Range(0,50)) = 0.5
-        _VisibilityFalloff ("Visibility Falloff", Range(0, 25)) = 1
-        _PaintPosition("Paint Position", Vector) = (0, 0, 0, 0)
     }
 
     SubShader
@@ -39,9 +37,7 @@
             float _Brightness;
             float4 _MainTex_ST;
             float4 _LightPos;
-            float4 _PaintPosition;
             float _LightRange;
-            float _VisibilityFalloff;
 
             struct a2v
             {
@@ -76,7 +72,6 @@
 
                 o.vertex = UnityObjectToClipPos(i.vertex);
 
-                // o.uv = TRANSFORM_TEX(i.texcoord0, _MainTex).xy - _PaintPosition.xy;
                 o.uv = TRANSFORM_TEX(i.texcoord0, _MainTex).xy ;
                 o.worldPos = mul(unity_ObjectToWorld, i.vertex);
                 UNITY_TRANSFER_FOG(o, o.vertex);
@@ -90,7 +85,6 @@
                 float3 diff = i.worldPos - float3(_LightPos.xy, 0);
                 float visRange = _LightRange * _LightRange;
                 float visibility = saturate(1 - dot(diff, diff) / visRange);
-                visibility = pow(visibility, _VisibilityFalloff);
 
                 float4 paintColor = tex2D(_MainTex, i.uv);
                 float4 finalColor = paintColor * lerp(_Color1, _Color2, r) * i.color * (1 - visibility);

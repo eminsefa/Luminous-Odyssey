@@ -19,11 +19,12 @@ MonoBehaviour:
     MoveSpeed: 100
     JumpSpeed: 750
     MaxSpeed: 10
+    GroundCheckDistance: 0.05
     GravityScale: 3
     AnimMaxWalkSpeed: 1
-    WalkThreshold: 4
+    WalkThreshold: 6
     HangingStartDuration: 0.1
-    HangingSpeed: 2.5
+    HangingSpeed: 3
     CayoteJumpThreshold: 0.2
     DashManaCost: 0
     DashData:

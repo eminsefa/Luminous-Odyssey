@@ -2,6 +2,7 @@ using DG.Tweening;
 using Managers;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using Util;
 
 public class PlayerMovement : Singleton<PlayerMovement>
 {
@@ -12,6 +13,8 @@ public class PlayerMovement : Singleton<PlayerMovement>
     private static readonly int s_Jump      = Animator.StringToHash("Jump");
     private static readonly int s_Dash      = Animator.StringToHash("Dash");
     private static readonly int s_Idle      = Animator.StringToHash("Idle");
+
+    private static readonly string s_MovingPlatform = $"MovingPlatform";
 
     [ShowInInspector] private eCharacterState m_CharacterState;
     private                   float           m_HangTimer;
@@ -179,8 +182,7 @@ public class PlayerMovement : Singleton<PlayerMovement>
     {
         m_LastDashDir = m_MoveDir.sqrMagnitude > 0.05f ? m_MoveDir.normalized : m_Col.transform.right;
         var dashData = m_Movement.DashData;
-
-
+        
         m_TwDash = m_Rb.DOMove(m_LastDashDir * dashData.DashAmount, dashData.DashSpeed)
                        .SetSpeedBased()
                        .SetUpdate(UpdateType.Fixed)
@@ -235,22 +237,34 @@ public class PlayerMovement : Singleton<PlayerMovement>
         else if (m_CharacterState != eCharacterState.Jump)
         {
             bool onAir = false;
-            var  count = Physics2D.RaycastNonAlloc(m_Rb.position, Vector2.down, m_MoveCheckCast, 0.05f, m_GroundLayer);
+            var  count = Physics2D.RaycastNonAlloc(m_Rb.position, Vector2.down, m_MoveCheckCast, m_Movement.GroundCheckDistance, m_GroundLayer);
             if (count > 0) //Touching Ground
             {
+                var onMovingPlatform = m_MoveCheckCast[0].transform.CompareTag(s_MovingPlatform);
+                
+                var vel = m_Rb.velocity;
+                if (onMovingPlatform)
+                {
+                    vel = m_MoveCheckCast[0].rigidbody.velocity;
+                }
+                else if (vel.sqrMagnitude > 0.1f) //Add friction
+                {
+                    vel -= vel.normalized * 0.4f;
+                }
+                else vel = Vector2.zero;
+
+                m_Rb.velocity = vel;
+
                 m_HangTimer       = 0;
                 m_CayoteJumpTimer = m_Movement.CayoteJumpThreshold;
                 if (Mathf.Abs(m_MoveDir.x) > 0 || Mathf.Abs(m_Rb.velocity.x) > m_Movement.WalkThreshold)
                 {
-                    m_CharacterState            =  eCharacterState.Walk;
+                    m_CharacterState = eCharacterState.Walk;
                 }
                 else
                 {
                     m_CharacterState = eCharacterState.Idle;
                 }
-                var vel = m_Rb.velocity;
-                vel           -= vel.normalized * 0.4f ;
-                m_Rb.velocity =  vel;
             }
             else if (Physics2D.CapsuleCastNonAlloc(m_Col.transform.position,
                                                    new Vector2(0.01f, m_Col.size.y), m_Col.direction,
@@ -259,8 +273,9 @@ public class PlayerMovement : Singleton<PlayerMovement>
                                                    Mathf.Abs(m_Col.size.x / Mathf.Cos(m_Col.transform.rotation.eulerAngles.z)),
                                                    m_GroundLayer) > 0) //Touching On Forward Wall
             {
-                if (transform.InverseTransformPoint(m_MoveCheckCast[0].point).y < m_Col.size.y * 0.85f
-                 && m_MoveCheckCast[0].collider.bounds.size.y                   > m_Col.size.y / 2f)
+                var relPos = transform.InverseTransformPoint(m_MoveCheckCast[0].point);
+                if (relPos.y < m_Col.size.y * 0.85f && relPos.y > m_Col.size.y * 0.25f 
+                                                    && m_MoveCheckCast[0].collider.bounds.size.y > m_Col.size.y / 2f)
                 {
                     m_HangTimer += Time.fixedDeltaTime;
 

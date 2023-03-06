@@ -166,7 +166,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _LightRange: 10
+    - _LightRange: 7
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005
@@ -182,7 +182,7 @@ Material:
     - _Surface: 0
     - _UseUV2: 0
     - _UseUV2Alt: 1
-    - _VisibilityFalloff: 5
+    - _VisibilityFalloff: 0.4
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
@@ -193,7 +193,7 @@ Material:
     - _Emission: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
-    - _LightPos: {r: 0, g: 5.175, b: 0, a: 0}
+    - _LightPos: {r: -7.713276, g: 20.673124, b: 0, a: 0}
     - _PaintPosition: {r: 0, g: 0, b: 0, a: 0}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}

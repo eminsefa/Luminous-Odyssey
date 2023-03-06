@@ -26,6 +26,7 @@ public class MovementVariables
     [BoxGroup("Movement")] public float MoveSpeed;
     [BoxGroup("Movement")] public float JumpSpeed;
     [BoxGroup("Movement")] public float MaxSpeed;
+    [BoxGroup("Movement")] public float GroundCheckDistance = 0.1f;
     [BoxGroup("Movement")] public float GravityScale;
     [BoxGroup("Movement")] public float AnimMaxWalkSpeed;
     [BoxGroup("Movement")] public float WalkThreshold = 0.1f;

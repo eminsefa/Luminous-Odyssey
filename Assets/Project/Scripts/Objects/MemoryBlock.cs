@@ -12,7 +12,6 @@ public class MemoryBlock : MonoBehaviour
     [SerializeField] private Camera              m_MemoryCam;
     [SerializeField] private P3dPaintFill        m_PaintFill;
 
-
     private void OnEnable()
     {
         setCam();

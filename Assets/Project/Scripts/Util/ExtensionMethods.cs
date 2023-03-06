@@ -42,5 +42,25 @@ namespace Util
 
             return result;
         }
+
+        public enum Axis
+        {
+            x,
+            y,
+        }
+        public static void SetPos(this Transform i_Tr, Axis i_Axis, float i_Value)
+        {
+            var pos = i_Tr.position;
+            switch (i_Axis)
+            {
+                case Axis.x:
+                    pos.x = i_Value;
+                    break;
+                case Axis.y:
+                    pos.y = i_Value;
+                    break;
+            }
+            i_Tr.position = pos;
+        }
     }
 }

@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 
 public class MemoryBlockManager : MonoBehaviour
 {
@@ -48,8 +46,7 @@ public class MemoryBlockManager : MonoBehaviour
             setMemoryBlocks();
         }
     }
-
-
+    
     private void setMemoryBlocks()
     {
         foreach (var m in m_MemoryBlocks)

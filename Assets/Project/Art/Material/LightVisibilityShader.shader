@@ -4,7 +4,7 @@ Shader "Custom/LightVisibility"
     {
         _MainTex ("Texture", 2D) = "white" {}
         _LightPos ("Light Position", Vector) = (0.5, 0.5, 0, 0)
-        _LightRange ("Light Range", Range(0,50)) = 0.5
+        _LightRange ("Light Range", Range(0,5000)) = 7.5
         _VisibilityFalloff ("Visibility Falloff", Range(0, 25)) = 1
     }
 

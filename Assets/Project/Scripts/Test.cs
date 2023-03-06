@@ -7,9 +7,23 @@ using UnityEngine;
 
 public class Test : MonoBehaviour
 {
-    public bool late;
+    public bool      moveX;
+    public float      speed;
     private void OnEnable()
     {
-        transform.DOLocalMoveX(20, 2).SetLoops(-1, LoopType.Yoyo).SetUpdate(late? UpdateType.Late :UpdateType.Fixed);
+        if(moveX)
+        {
+            transform.DOLocalMoveX(20, speed)
+              .SetSpeedBased(true)
+                       .SetLoops(-1, LoopType.Yoyo)
+                       .SetRelative(true)
+                       .SetUpdate(UpdateType.Fixed);
+            
+        }
+        else transform.DOLocalMoveY(20, speed)
+               .SetSpeedBased(true)
+                        .SetLoops(-1, LoopType.Yoyo)
+                        .SetRelative(true)
+                        .SetUpdate(UpdateType.Fixed);
     }
 }
