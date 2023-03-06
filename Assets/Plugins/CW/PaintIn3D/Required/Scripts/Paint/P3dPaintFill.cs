@@ -72,6 +72,40 @@ namespace PaintIn3D
 				}
 			}
 		}
+		
+		public void HandleHitPoint(bool preview, int priority, float pressure, int seed, P3dModel model)
+		{
+			if (model != null)
+			{
+				var paintableTextures = P3dPaintableTexture.FilterAll(model, group);
+
+				if (paintableTextures.Count > 0)
+				{
+					var finalColor   = color;
+					var finalOpacity = opacity;
+					var finalTexture = texture;
+
+					if (modifiers != null && modifiers.Count > 0)
+					{
+						CwHelper.BeginSeed(seed);
+						modifiers.ModifyColor(ref finalColor, preview, pressure);
+						modifiers.ModifyOpacity(ref finalOpacity, preview, pressure);
+						modifiers.ModifyTexture(ref finalTexture, preview, pressure);
+						CwHelper.EndSeed();
+					}
+
+					P3dCommandFill.Instance.SetState(preview, priority);
+					P3dCommandFill.Instance.SetMaterial(blendMode, finalTexture, finalColor, opacity, minimum);
+
+					for (var i = paintableTextures.Count - 1; i >= 0; i--)
+					{
+						var paintableTexture = paintableTextures[i];
+
+						P3dPaintableManager.Submit(P3dCommandFill.Instance, model, paintableTexture);
+					}
+				}
+			}
+		}
 	}
 }
 

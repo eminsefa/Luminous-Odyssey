@@ -10,10 +10,13 @@ public class LightSetter : Singleton<LightSetter>
 
     private LightVariables m_LightVars => GameConfig.Instance.LightVars;
 
-    private float    m_Brightness = 1;
-    public  Material LightReverseEffectedMat { get; set; }
+    private float m_Brightness = 1;
 
     public float BrightnessFactor => m_LightVars.BrightnessCurve.Evaluate(m_Brightness);
+
+    // [FoldoutGroup("Refs")]
+    // [field: SerializeField]
+    // public Material LightReverseEffectedMat { get; set; }
 
     [FoldoutGroup("Refs")] [SerializeField]
     private P3dPaintSphere m_PaintSphere;
@@ -47,12 +50,9 @@ public class LightSetter : Singleton<LightSetter>
         m_LightEffectedMat.SetFloat(s_LightRange,        BrightnessFactor * m_LightVars.LightRange);
         m_LightEffectedMat.SetFloat(s_VisibilityFalloff, m_LightVars.VisibilityFalloff);
 
-        if (LightReverseEffectedMat != null) //Memory map set it self later
-        {
-            var range = BrightnessFactor * m_LightVars.LightRange * m_LightVars.ReverseLightRangeMult;
-            LightReverseEffectedMat.SetVector(s_LightPos, transform.position);
-            LightReverseEffectedMat.SetFloat(s_LightRange, range);
-        }
+        // var range = BrightnessFactor * m_LightVars.LightRange * m_LightVars.ReverseLightRangeMult;
+        // LightReverseEffectedMat.SetVector(s_LightPos, transform.position);
+        // LightReverseEffectedMat.SetFloat(s_LightRange, range);
     }
 
     private void setPaint()

@@ -6,12 +6,12 @@
         _Color("Color", Color) = (1.0, 1.0, 1.0, 1.0)
         _Color1("Color 1", Color) = (1.0, 0.5, 0.5, 1.0)
         _Color2("Color 2", Color) = (0.5, 0.5, 1.0, 1.0)
-        _Rim("Rim", Float) = 1.0
         _Shift("Shift", Float) = 1.0
         _Brightness("Brightness", Float) = 1.0
         _LightPos ("Light Position", Vector) = (0.5, 0.5, 0, 0)
         _LightRange ("Light Range", Range(0,50)) = 0.5
         _VisibilityFalloff ("Visibility Falloff", Range(0, 25)) = 1
+        _PaintPosition("Paint Position", Vector) = (0, 0, 0, 0)
     }
 
     SubShader
@@ -35,11 +35,11 @@
             float4 _Color;
             float4 _Color1;
             float4 _Color2;
-            float _Rim;
             float _Shift;
             float _Brightness;
             float4 _MainTex_ST;
             float4 _LightPos;
+            float4 _PaintPosition;
             float _LightRange;
             float _VisibilityFalloff;
 
@@ -75,7 +75,9 @@
                 o.color = i.color * _Color;
 
                 o.vertex = UnityObjectToClipPos(i.vertex);
-                o.uv = TRANSFORM_TEX(i.texcoord0, _MainTex);
+
+                // o.uv = TRANSFORM_TEX(i.texcoord0, _MainTex).xy - _PaintPosition.xy;
+                o.uv = TRANSFORM_TEX(i.texcoord0, _MainTex).xy ;
                 o.worldPos = mul(unity_ObjectToWorld, i.vertex);
                 UNITY_TRANSFER_FOG(o, o.vertex);
             }
@@ -83,17 +85,32 @@
             void Frag(v2f i, out f2g o)
             {
                 float d = abs(dot(normalize(i.normal), normalize(i.direct)));
-                float r = _Shift - pow(1.0f - d, _Rim);
+                float r = _Shift - pow(1.0f - d, 0);
 
                 float3 diff = i.worldPos - float3(_LightPos.xy, 0);
                 float visRange = _LightRange * _LightRange;
                 float visibility = saturate(1 - dot(diff, diff) / visRange);
                 visibility = pow(visibility, _VisibilityFalloff);
-                UNITY_APPLY_FOG(i.fogCoord, col);
 
-                o.color = tex2D(_MainTex, i.uv) * lerp(_Color1, _Color2, r) * i.color * (1 - visibility);
+                float4 paintColor = tex2D(_MainTex, i.uv);
+                float4 finalColor = paintColor * lerp(_Color1, _Color2, r) * i.color * (1 - visibility);
+
+                if (dot(diff, diff) <= visRange)
+                {
+                    float3 cameraDir = normalize(i.worldPos - _WorldSpaceCameraPos);
+                    float3 lightDir = normalize(i.worldPos - float3(_LightPos.xy, 0));
+                    float cameraFactor = dot(i.normal, -cameraDir);
+                    float lightFactor = dot(i.normal, -lightDir);
+
+                    if (cameraFactor > 0 && lightFactor > 0)
+                    {
+                        finalColor.rgb += cameraFactor * lightFactor * _Brightness * _Color.rgb;
+                    }
+                }
+
+                o.color = finalColor;
             }
             ENDCG
-        } 
-    } 
-} 
+        }
+    }
+}

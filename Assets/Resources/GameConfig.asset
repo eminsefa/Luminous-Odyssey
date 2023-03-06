@@ -23,8 +23,7 @@ MonoBehaviour:
     AnimMaxWalkSpeed: 1
     WalkThreshold: 4
     HangingStartDuration: 0.1
-    HangingSpeed: 3
-    WalkingColMinDist: 1
+    HangingSpeed: 2.5
     CayoteJumpThreshold: 0.2
     DashManaCost: 0
     DashData:
@@ -64,9 +63,9 @@ MonoBehaviour:
     ManaStackedClearDelay: 0.1
     ManaFillMinVelocity: 100
   LightVars:
-    DarkenSpeed: 0.15
+    DarkenSpeed: 0
     BrightenSpeed: 0.0025
-    LightRange: 10
+    LightRange: 7
     PaintRangeMult: 1
     ReverseLightRangeMult: 1
     BrightnessCurve:

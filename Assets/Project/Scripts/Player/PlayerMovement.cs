@@ -259,7 +259,7 @@ public class PlayerMovement : Singleton<PlayerMovement>
                                                    Mathf.Abs(m_Col.size.x / Mathf.Cos(m_Col.transform.rotation.eulerAngles.z)),
                                                    m_GroundLayer) > 0) //Touching On Forward Wall
             {
-                if (transform.InverseTransformPoint(m_MoveCheckCast[0].point).y < m_Col.size.y * 1.15f
+                if (transform.InverseTransformPoint(m_MoveCheckCast[0].point).y < m_Col.size.y * 0.85f
                  && m_MoveCheckCast[0].collider.bounds.size.y                   > m_Col.size.y / 2f)
                 {
                     m_HangTimer += Time.fixedDeltaTime;

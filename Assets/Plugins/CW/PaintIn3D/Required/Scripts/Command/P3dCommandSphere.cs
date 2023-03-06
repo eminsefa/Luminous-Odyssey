@@ -76,7 +76,7 @@ namespace PaintIn3D
 		public override void Apply(Material material)
 		{
 			base.Apply(material);
-
+			
 			Blend.Apply(material);
 
 			var inv = Matrix.inverse;

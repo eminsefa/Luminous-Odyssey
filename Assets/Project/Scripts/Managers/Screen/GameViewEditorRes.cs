@@ -34,8 +34,7 @@ namespace Managers
             return (Vector2)scaleField.GetValue(areaObj);
             ////scaleField.SetValue(areaObj, new Vector2(defaultScale, defaultScale));
         }
-    
-
+        
         private static Type GetGameViewType()
         {
             Assembly unityEditorAssembly = typeof(EditorWindow).Assembly;

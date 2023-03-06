@@ -7,9 +7,9 @@ using UnityEngine;
 
 public class Test : MonoBehaviour
 {
-   private void OnEnable()
-   {
-       transform.DOLocalMoveY(3, 3)
-                .SetLoops(-1, LoopType.Yoyo);
-   }
+    public bool late;
+    private void OnEnable()
+    {
+        transform.DOLocalMoveX(20, 2).SetLoops(-1, LoopType.Yoyo).SetUpdate(late? UpdateType.Late :UpdateType.Fixed);
+    }
 }
