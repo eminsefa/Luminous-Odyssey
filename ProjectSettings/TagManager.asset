@@ -9,16 +9,16 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Mask
   - Water
   - UI
   - Player
   - Ground
   - Environment
   - MemoryMap
-  - 
-  - 
-  - 
+  - MovingObject
+  - MovingObjectMemory
+  - Background
   - 
   - 
   - 

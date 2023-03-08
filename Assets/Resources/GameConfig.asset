@@ -64,8 +64,8 @@ MonoBehaviour:
     ManaStackedClearDelay: 0.1
     ManaFillMinVelocity: 100
   LightVars:
-    DarkenSpeed: 0
-    BrightenSpeed: 0.0025
+    DarkenSpeed: 0.15
+    BrightenSpeed: 0.01
     LightRange: 7
     PaintRangeMult: 1
     ReverseLightRangeMult: 1
@@ -82,7 +82,7 @@ MonoBehaviour:
         inWeight: 0
         outWeight: 0
       - serializedVersion: 3
-        time: 0.06909249
+        time: 0.2
         value: 0.5
         inSlope: 0.76606023
         outSlope: 0.76606023
@@ -102,4 +102,4 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    VisibilityFalloff: 0.4
+    VisibilityFalloff: 0

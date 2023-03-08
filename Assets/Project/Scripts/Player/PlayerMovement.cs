@@ -245,26 +245,29 @@ public class PlayerMovement : Singleton<PlayerMovement>
                 var vel = m_Rb.velocity;
                 if (onMovingPlatform)
                 {
-                    vel = m_MoveCheckCast[0].rigidbody.velocity;
+                    vel.y = m_MoveCheckCast[0].rigidbody.velocity.y;
+                    if(Mathf.Abs(m_MoveDir.x) <= 0f) vel.x = m_MoveCheckCast[0].rigidbody.velocity.x;
                 }
                 else if (vel.sqrMagnitude > 0.1f) //Add friction
                 {
                     vel -= vel.normalized * 0.4f;
                 }
                 else vel = Vector2.zero;
-
+                
                 m_Rb.velocity = vel;
 
+                
                 m_HangTimer       = 0;
                 m_CayoteJumpTimer = m_Movement.CayoteJumpThreshold;
-                if (Mathf.Abs(m_MoveDir.x) > 0 || Mathf.Abs(m_Rb.velocity.x) > m_Movement.WalkThreshold)
+                if (Mathf.Abs(m_MoveDir.x) > 0 || (!onMovingPlatform && Mathf.Abs(m_Rb.velocity.x) > m_Movement.WalkThreshold))
                 {
                     m_CharacterState = eCharacterState.Walk;
                 }
                 else
                 {
                     m_CharacterState = eCharacterState.Idle;
-                }
+                }               
+                
             }
             else if (Physics2D.CapsuleCastNonAlloc(m_Col.transform.position,
                                                    new Vector2(0.01f, m_Col.size.y), m_Col.direction,

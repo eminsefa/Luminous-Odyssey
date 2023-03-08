@@ -19,6 +19,9 @@ public class LightSetter : Singleton<LightSetter>
     // public Material LightReverseEffectedMat { get; set; }
 
     [FoldoutGroup("Refs")] [SerializeField]
+    private Transform m_LightVisualCircle;
+    
+    [FoldoutGroup("Refs")] [SerializeField]
     private P3dPaintSphere m_PaintSphere;
 
     [FoldoutGroup("Refs")] [SerializeField]
@@ -46,10 +49,11 @@ public class LightSetter : Singleton<LightSetter>
 
     private void setLight()
     {
-        m_LightEffectedMat.SetVector(s_LightPos, transform.position);
-        m_LightEffectedMat.SetFloat(s_LightRange,        BrightnessFactor * m_LightVars.LightRange);
-        m_LightEffectedMat.SetFloat(s_VisibilityFalloff, m_LightVars.VisibilityFalloff);
+        // m_LightEffectedMat.SetVector(s_LightPos, transform.position);
+        // m_LightEffectedMat.SetFloat(s_LightRange,        BrightnessFactor * m_LightVars.LightRange);
+        // m_LightEffectedMat.SetFloat(s_VisibilityFalloff, m_LightVars.VisibilityFalloff);
 
+        m_LightVisualCircle.localScale = Vector3.one * Mathf.Lerp(0, 1.6f, BrightnessFactor);
         // var range = BrightnessFactor * m_LightVars.LightRange * m_LightVars.ReverseLightRangeMult;
         // LightReverseEffectedMat.SetVector(s_LightPos, transform.position);
         // LightReverseEffectedMat.SetFloat(s_LightRange, range);
@@ -63,7 +67,7 @@ public class LightSetter : Singleton<LightSetter>
     private void OnApplicationQuit()
     {
         m_Brightness                               = 1;
-        PlayerMovement.Instance.transform.position = Vector3.zero;
-        setLight();
+        // PlayerMovement.Instance.transform.position = Vector3.up * 0.3751192f;
+        // setLight();
     }
 }

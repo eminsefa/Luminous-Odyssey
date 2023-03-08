@@ -168,8 +168,8 @@ MonoBehaviour:
   saveName: 
   width: 1920
   height: 1080
-  texture: {fileID: 8400000, guid: 429001a8e685b4914bf1730c73294518, type: 2}
-  color: {r: 1, g: 1, b: 1, a: 1}
+  texture: {fileID: 0}
+  color: {r: 1, g: 1, b: 1, a: 0}
   format: 0
   mipMaps: 0
   filter: -1
@@ -228,7 +228,7 @@ GameObject:
   - component: {fileID: 8068536971098039954}
   - component: {fileID: 1075481822738778805}
   m_Layer: 0
-  m_Name: Memory Block
+  m_Name: Memory Block Old
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
