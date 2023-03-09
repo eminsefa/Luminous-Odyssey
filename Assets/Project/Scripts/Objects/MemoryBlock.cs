@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MemoryBlock : MonoBehaviour
 {
-    public RenderTexture MemoryTexture => m_PaintableTexture.Current;
+    public RenderTexture TempMemoryTexture => m_PaintableTexture.Current;
 
     [SerializeField] private P3dPaintableTexture m_PaintableTexture;
     [SerializeField] private P3dPaintFill        m_PaintFill;
@@ -20,7 +20,7 @@ public class MemoryBlock : MonoBehaviour
         m_PaintableTexture.transform.localScale = new Vector3(blockSize.x, blockSize.y, 1.0f);
     }
 
-    public void MoveMap([CanBeNull] Texture i_Texture, Vector2 i_MovePos)
+    public void MoveMap([CanBeNull] Texture2D i_Texture, Vector2 i_MovePos)
     {
         if (i_Texture)
         {

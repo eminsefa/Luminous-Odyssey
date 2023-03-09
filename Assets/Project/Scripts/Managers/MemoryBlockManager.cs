@@ -10,15 +10,19 @@ public class MemoryBlockManager : MonoBehaviour
     private Camera  m_MainCam;
     private float   m_CamY;
 
-    private Vector2 m_BlockSize => CameraManager.Instance.BlockSize;
+    public  Transform test;
+    private Vector2   m_BlockSize => CameraManager.Instance.BlockSize;
 
-    [ShowInInspector] private Dictionary<Vector2, Texture> m_PermanentMemory = new();
+    [ShowInInspector] private Dictionary<Vector2, Texture2D> m_PermanentMemory = new();
+    [ShowInInspector] private Dictionary<MemoryBlock, RenderTexture> m_TemporaryMemory = new();
 
     [SerializeField] private MemoryBlock[] m_MemoryBlocks;
 
+#region Unity Events
+
     private void Start()
     {
-        m_MainCam = Camera.main;
+        m_MainCam = CameraManager.Instance.MainCam;
         m_CamY    = m_MainCam.transform.position.y;
         for (var i = 0; i < m_MemoryBlocks.Length; i++)
         {
@@ -28,7 +32,8 @@ public class MemoryBlockManager : MonoBehaviour
             m_MemoryBlocks[i].transform.position = pos;
 
             m_MemoryBlocks[i].gameObject.SetActive(true);
-            m_PermanentMemory.Add(pos, m_MemoryBlocks[i].MemoryTexture);
+            m_PermanentMemory.Add(pos, convertRenderTextureToTexture2D(m_MemoryBlocks[i].TempMemoryTexture));
+            m_TemporaryMemory.Add(m_MemoryBlocks[i],m_MemoryBlocks[i].TempMemoryTexture);
         }
     }
 
@@ -47,6 +52,8 @@ public class MemoryBlockManager : MonoBehaviour
             setMemoryBlocks();
         }
     }
+
+#endregion
 
     private void setMemoryBlocks()
     {
@@ -74,11 +81,10 @@ public class MemoryBlockManager : MonoBehaviour
         copyTexture(i_MemoryBlock);
 
         i_MemoryBlock.Clear();
-        Texture tex = null;
+        Texture2D tex = null;
         if (!m_PermanentMemory.ContainsKey(i_MovePos))
         {
-            // m_PermanentMemory.Add(i_MovePos, i_MemoryBlock.MemoryCamTexture);
-            m_PermanentMemory.Add(i_MovePos, i_MemoryBlock.MemoryTexture);
+            m_PermanentMemory.Add(i_MovePos, convertRenderTextureToTexture2D(i_MemoryBlock.TempMemoryTexture));
         }
         else tex = m_PermanentMemory[i_MovePos];
 
@@ -87,7 +93,7 @@ public class MemoryBlockManager : MonoBehaviour
 
     private void copyTexture(MemoryBlock i_MemoryBlock)
     {
-        var rt         = i_MemoryBlock.MemoryTexture;
+        var rt         = i_MemoryBlock.TempMemoryTexture;
         var newTexture = new Texture2D(rt.width, rt.height, TextureFormat.RGBA32, false);
         RenderTexture.active = rt;
 
@@ -96,5 +102,39 @@ public class MemoryBlockManager : MonoBehaviour
 
         RenderTexture.active                                = null;
         m_PermanentMemory[i_MemoryBlock.transform.position] = newTexture;
+    }
+
+    private Texture2D convertRenderTextureToTexture2D(RenderTexture i_RenderTexture)
+    {
+        var texture = new Texture2D(i_RenderTexture.width, i_RenderTexture.height, TextureFormat.RGBA32, false);
+        RenderTexture.active = i_RenderTexture;
+
+        texture.ReadPixels(new Rect(0, 0, i_RenderTexture.width, i_RenderTexture.height), 0, 0);
+        texture.Apply();
+
+        RenderTexture.active = null;
+
+        return texture;
+    }
+
+    public bool IsPointPainted(Vector3 i_Point)
+    {
+        var x   = ((int) (i_Point.x / m_BlockSize.x)) * m_BlockSize.x;
+        var y   = ((int) (i_Point.y / m_BlockSize.y)) * m_BlockSize.y + m_CamY;
+
+        var tex = m_PermanentMemory[new Vector2(x, y )];
+ 
+        for (var i = 0; i < m_MemoryBlocks.Length; i++)
+        {
+            if ((m_MemoryBlocks[i].transform.position - i_Point).sqrMagnitude < m_BlockSize.sqrMagnitude/4f)
+            {
+                tex = convertRenderTextureToTexture2D(m_TemporaryMemory[m_MemoryBlocks[i]]);
+                break;
+            }
+        }
+
+        var screenX = ((i_Point.x - x)  / m_BlockSize.x) * tex.width +tex.width /2f;
+        var screenY = ((i_Point.y - y ) / m_BlockSize.y * tex.height +tex.height /2f);
+        return tex.GetPixel((int)screenX, (int)screenY).a > 0.5f;
     }
 }

@@ -64,7 +64,7 @@ MonoBehaviour:
     ManaStackedClearDelay: 0.1
     ManaFillMinVelocity: 100
   LightVars:
-    DarkenSpeed: 0.15
+    DarkenSpeed: 0
     BrightenSpeed: 0.01
     LightRange: 7
     PaintRangeMult: 1
