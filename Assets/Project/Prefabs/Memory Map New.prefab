@@ -181,10 +181,10 @@ MonoBehaviour:
   stateLimit: 10
   saveLoad: 0
   saveName: 
-  width: 960
-  height: 540
+  width: 1920
+  height: 1080
   texture: {fileID: 0}
-  color: {r: 1, g: 1, b: 1, a: 0}
+  color: {r: 0.09803922, g: 0.22745098, b: 0.16470589, a: 0}
   format: 0
   mipMaps: 0
   filter: -1

@@ -4,16 +4,15 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class MemoryBlockManager : MonoBehaviour
+public class MemoryBlockManager : Singleton<MemoryBlockManager>
 {
     private Vector2 m_PlayerActiveBlockPos;
     private Camera  m_MainCam;
     private float   m_CamY;
 
-    public  Transform test;
     private Vector2   m_BlockSize => CameraManager.Instance.BlockSize;
 
-    [ShowInInspector] private Dictionary<Vector2, Texture2D> m_PermanentMemory = new();
+    [ShowInInspector] private Dictionary<Vector2, Texture2D>         m_PermanentMemory = new();
     [ShowInInspector] private Dictionary<MemoryBlock, RenderTexture> m_TemporaryMemory = new();
 
     [SerializeField] private MemoryBlock[] m_MemoryBlocks;
@@ -33,7 +32,7 @@ public class MemoryBlockManager : MonoBehaviour
 
             m_MemoryBlocks[i].gameObject.SetActive(true);
             m_PermanentMemory.Add(pos, convertRenderTextureToTexture2D(m_MemoryBlocks[i].TempMemoryTexture));
-            m_TemporaryMemory.Add(m_MemoryBlocks[i],m_MemoryBlocks[i].TempMemoryTexture);
+            m_TemporaryMemory.Add(m_MemoryBlocks[i], m_MemoryBlocks[i].TempMemoryTexture);
         }
     }
 
@@ -78,7 +77,8 @@ public class MemoryBlockManager : MonoBehaviour
 
     private void MoveBlockPosition(MemoryBlock i_MemoryBlock, Vector2 i_MovePos)
     {
-        copyTexture(i_MemoryBlock);
+        var copyTexture = convertRenderTextureToTexture2D(i_MemoryBlock.TempMemoryTexture);
+        m_PermanentMemory[i_MemoryBlock.transform.position] = copyTexture;
 
         i_MemoryBlock.Clear();
         Texture2D tex = null;
@@ -91,19 +91,6 @@ public class MemoryBlockManager : MonoBehaviour
         i_MemoryBlock.MoveMap(tex, i_MovePos);
     }
 
-    private void copyTexture(MemoryBlock i_MemoryBlock)
-    {
-        var rt         = i_MemoryBlock.TempMemoryTexture;
-        var newTexture = new Texture2D(rt.width, rt.height, TextureFormat.RGBA32, false);
-        RenderTexture.active = rt;
-
-        newTexture.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
-        newTexture.Apply();
-
-        RenderTexture.active                                = null;
-        m_PermanentMemory[i_MemoryBlock.transform.position] = newTexture;
-    }
-
     private Texture2D convertRenderTextureToTexture2D(RenderTexture i_RenderTexture)
     {
         var texture = new Texture2D(i_RenderTexture.width, i_RenderTexture.height, TextureFormat.RGBA32, false);
@@ -114,27 +101,30 @@ public class MemoryBlockManager : MonoBehaviour
 
         RenderTexture.active = null;
 
+        texture.name = i_RenderTexture.name;
         return texture;
     }
-
+    
     public bool IsPointPainted(Vector3 i_Point)
     {
-        var x   = ((int) (i_Point.x / m_BlockSize.x)) * m_BlockSize.x;
-        var y   = ((int) (i_Point.y / m_BlockSize.y)) * m_BlockSize.y + m_CamY;
+        var x = Mathf.RoundToInt((i_Point.x           / m_BlockSize.x)) * m_BlockSize.x;
+        var y = Mathf.RoundToInt((i_Point.y - m_CamY) / m_BlockSize.y) * m_BlockSize.y + m_CamY;
 
-        var tex = m_PermanentMemory[new Vector2(x, y )];
- 
-        for (var i = 0; i < m_MemoryBlocks.Length; i++)
+        var point = new Vector2(x, y);
+        var tex   = m_PermanentMemory[point];
+
+        foreach (var m in m_MemoryBlocks)
         {
-            if ((m_MemoryBlocks[i].transform.position - i_Point).sqrMagnitude < m_BlockSize.sqrMagnitude/4f)
+            if (((Vector2)m.transform.position - point).sqrMagnitude < 1)
             {
-                tex = convertRenderTextureToTexture2D(m_TemporaryMemory[m_MemoryBlocks[i]]);
+                tex = convertRenderTextureToTexture2D(m.TempMemoryTexture);
                 break;
             }
         }
 
-        var screenX = ((i_Point.x - x)  / m_BlockSize.x) * tex.width +tex.width /2f;
-        var screenY = ((i_Point.y - y ) / m_BlockSize.y * tex.height +tex.height /2f);
-        return tex.GetPixel((int)screenX, (int)screenY).a > 0.5f;
+        var screenX = ((i_Point.x - x) / m_BlockSize.x) * tex.width  + tex.width  / 2f;
+        var screenY = ((i_Point.y - y) / m_BlockSize.y) * tex.height + tex.height / 2f;
+
+        return tex.GetPixel((int) screenX, (int) screenY).a > 0.1f;
     }
 }
