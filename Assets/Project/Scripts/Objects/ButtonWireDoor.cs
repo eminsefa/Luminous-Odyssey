@@ -7,10 +7,26 @@ using UnityEngine;
 public class ButtonWireDoor : MonoBehaviour
 {
     [SerializeField] private float            m_PointLightInterval;
+    [SerializeField] private DoorButton       m_Button;
     [SerializeField] private SpriteRenderer   m_Door;
     [SerializeField] private SpriteRenderer[] m_WirePoints;
 
     private void OnCollisionEnter2D(Collision2D col)
+    {
+        StartCoroutine(tryToOpenDoor());
+    }
+
+    private void OnEnable()
+    {
+        m_Button.OnButtonPressed += OnButtonPressed;
+    }
+
+    private void OnDisable()
+    {
+        m_Button.OnButtonPressed -= OnButtonPressed;
+    }
+
+    private void OnButtonPressed()
     {
         StartCoroutine(tryToOpenDoor());
     }
@@ -38,14 +54,16 @@ public class ButtonWireDoor : MonoBehaviour
     {
         for (var i = i_LastTry; i >= 0; i--)
         {
-            yield return new WaitForSeconds(m_PointLightInterval/2f);
-            m_WirePoints[i].color = Color.white;
+            yield return new WaitForSeconds(m_PointLightInterval / 2f);
+            m_WirePoints[i].color = Color.black;
         }
+
+        m_Button.OpenDoorFailed();
     }
 
     private void openCompleted()
     {
-        m_Door.color=Color.green;
+        m_Door.color = Color.green;
         m_Door.transform.DOLocalMoveY(2, 2);
     }
 }

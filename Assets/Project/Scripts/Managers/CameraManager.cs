@@ -11,6 +11,7 @@ public class CameraManager : Singleton<CameraManager>
 
     [SerializeField] private Camera          m_MainCam;
     [SerializeField] private RenderTexture[] m_RenderTextures;
+    [SerializeField] private RenderTexture[] m_MaskRenderTextures;
 
     [ShowInInspector, ReadOnly] public ScreenData ScreenData;
 
@@ -28,6 +29,12 @@ public class CameraManager : Singleton<CameraManager>
         {
             m_RenderTextures[i].width  = width;
             m_RenderTextures[i].height = height;
+        }
+
+        for (var i = 0; i < m_RenderTextures.Length; i++)
+        {
+            m_MaskRenderTextures[i].width  = width  /2;
+            m_MaskRenderTextures[i].height = height /2;
         }
     }
 }

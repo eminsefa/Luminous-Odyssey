@@ -1,8 +1,8 @@
+using System;
 using DG.Tweening;
 using Managers;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using Util;
 
 public class PlayerMovement : Singleton<PlayerMovement>
 {
@@ -16,14 +16,15 @@ public class PlayerMovement : Singleton<PlayerMovement>
 
     private static readonly string s_MovingPlatform = $"MovingPlatform";
 
-    [ShowInInspector] private eCharacterState m_CharacterState;
-    private                   float           m_HangTimer;
-    private                   float           m_CayoteJumpTimer;
-    private                   bool            m_IsMirrored;
-    private                   Vector2         m_LastDashDir;
-    private                   Tweener         m_TwDash;
-    private                   Tweener         m_TwDashRotate;
-    private                   RaycastHit2D[]  m_MoveCheckCast = new RaycastHit2D[4];
+    private eCharacterState m_CharacterState;
+    private float           m_HangTimer;
+    private float           m_CayoteJumpTimer;
+    private bool            m_IsMirrored;
+    private Vector2         m_LastDashDir;
+    private Tweener         m_TwDash;
+    private Tweener         m_TwDashRotate;
+    private RaycastHit2D[]  m_MoveCheckCast = new RaycastHit2D[2];
+    private RaycastHit2D[]  m_HangCheckCast = new RaycastHit2D[4];
 
     public bool  IsOnManaFillSpeed => Velocity > GameConfig.Instance.Mana.ManaFillMinVelocity;
     public float Velocity          => m_Rb.velocity.sqrMagnitude;
@@ -90,6 +91,7 @@ public class PlayerMovement : Singleton<PlayerMovement>
         checkState();
         setAnimation();
         move();
+        rotate();
     }
 
     private void OnCollisionEnter2D(Collision2D col)
@@ -165,6 +167,17 @@ public class PlayerMovement : Singleton<PlayerMovement>
         m_Model.localRotation = rot;
     }
 
+    private void rotate()
+    {
+        var targetRotation = Quaternion.identity;
+
+        if (m_CharacterState is not (eCharacterState.Idle or eCharacterState.Walk))
+        {
+            var newRotation = Quaternion.Lerp(m_Rb.transform.rotation, targetRotation, m_Movement.RotationSpeed * Time.fixedDeltaTime);
+            m_Rb.transform.rotation = newRotation;
+        }
+    }
+
     private void jump()
     {
         m_Animator.SetBool(s_Jump, true);
@@ -182,7 +195,7 @@ public class PlayerMovement : Singleton<PlayerMovement>
     {
         m_LastDashDir = m_MoveDir.sqrMagnitude > 0.05f ? m_MoveDir.normalized : m_Col.transform.right;
         var dashData = m_Movement.DashData;
-        
+
         m_TwDash = m_Rb.DOMove(m_LastDashDir * dashData.DashAmount, dashData.DashSpeed)
                        .SetSpeedBased()
                        .SetUpdate(UpdateType.Fixed)
@@ -237,28 +250,31 @@ public class PlayerMovement : Singleton<PlayerMovement>
         else if (m_CharacterState != eCharacterState.Jump)
         {
             bool onAir = false;
-            var  count = Physics2D.RaycastNonAlloc(m_Rb.position, Vector2.down, m_MoveCheckCast, m_Movement.GroundCheckDistance, m_GroundLayer);
+
+            Array.Clear(m_MoveCheckCast, 0, m_MoveCheckCast.Length);
+
+            var count = Physics2D.RaycastNonAlloc(m_Col.bounds.center, -m_Col.transform.up, m_MoveCheckCast, m_Movement.GroundCheckDistance + m_Col.size.y / 2f, m_GroundLayer);
             if (count > 0) //Touching Ground
             {
                 var onMovingPlatform = m_MoveCheckCast[0].transform.CompareTag(s_MovingPlatform);
-                
+
                 var vel = m_Rb.velocity;
                 if (onMovingPlatform)
                 {
                     vel.y = m_MoveCheckCast[0].rigidbody.velocity.y;
-                    if(Mathf.Abs(m_MoveDir.x) <= 0f) vel.x = m_MoveCheckCast[0].rigidbody.velocity.x;
+                    if (Mathf.Abs(m_MoveDir.x) <= 0f) vel.x = m_MoveCheckCast[0].rigidbody.velocity.x;
                 }
                 else if (vel.sqrMagnitude > 0.1f) //Add friction
                 {
-                    vel -= vel.normalized * 0.4f;
+                    vel -= vel.normalized * m_Movement.Friction;
                 }
                 else vel = Vector2.zero;
-                
+
                 m_Rb.velocity = vel;
 
-                
                 m_HangTimer       = 0;
                 m_CayoteJumpTimer = m_Movement.CayoteJumpThreshold;
+
                 if (Mathf.Abs(m_MoveDir.x) > 0 || (!onMovingPlatform && Mathf.Abs(m_Rb.velocity.x) > m_Movement.WalkThreshold))
                 {
                     m_CharacterState = eCharacterState.Walk;
@@ -266,19 +282,29 @@ public class PlayerMovement : Singleton<PlayerMovement>
                 else
                 {
                     m_CharacterState = eCharacterState.Idle;
-                }               
-                
+                }
+
+                var newRot = Quaternion.FromToRotation(Vector3.Lerp(Vector3.up, m_MoveCheckCast[0].normal, 0.5f), m_MoveCheckCast[0].normal);
+                m_Rb.transform.rotation = Quaternion.Lerp(m_Rb.transform.rotation, newRot, m_Movement.RotationSpeed * Time.fixedDeltaTime);
             }
-            else if (Physics2D.CapsuleCastNonAlloc(m_Col.transform.position,
-                                                   new Vector2(0.01f, m_Col.size.y), m_Col.direction,
-                                                   m_Col.transform.rotation.eulerAngles.z,
-                                                   m_Col.transform.right, m_MoveCheckCast,
-                                                   Mathf.Abs(m_Col.size.x / Mathf.Cos(m_Col.transform.rotation.eulerAngles.z)),
-                                                   m_GroundLayer) > 0) //Touching On Forward Wall
+            else //Check if hang
             {
-                var relPos = transform.InverseTransformPoint(m_MoveCheckCast[0].point);
-                if (relPos.y < m_Col.size.y * 0.85f && relPos.y > m_Col.size.y * 0.25f 
-                                                    && m_MoveCheckCast[0].collider.bounds.size.y > m_Col.size.y / 2f)
+                Array.Clear(m_HangCheckCast, 0, m_HangCheckCast.Length);
+
+                var angle           = Quaternion.AngleAxis(m_Col.transform.eulerAngles.z, Vector3.forward).eulerAngles.z;
+                var raycastDistance = Mathf.Abs(m_Col.size.x / Mathf.Cos(Mathf.Deg2Rad * angle));
+
+                var hitUp = Physics2D.RaycastNonAlloc(m_Col.bounds.center,
+                                                      m_Col.transform.right, m_HangCheckCast,
+                                                      raycastDistance,
+                                                      m_GroundLayer) > 0;
+
+                var hitDown = Physics2D.RaycastNonAlloc((Vector2) m_Col.bounds.center - (Vector2) m_Col.transform.up * (m_Col.size.y * 0.25f),
+                                                        m_Col.transform.right, m_HangCheckCast,
+                                                        raycastDistance,
+                                                        m_GroundLayer) > 0;
+
+                if (hitUp && hitDown) //Hanging
                 {
                     m_HangTimer += Time.fixedDeltaTime;
 
@@ -291,7 +317,6 @@ public class PlayerMovement : Singleton<PlayerMovement>
                 }
                 else onAir = true;
             }
-            else onAir = true;
 
             if (onAir)
             {

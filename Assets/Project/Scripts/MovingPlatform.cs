@@ -6,6 +6,7 @@ public class MovingPlatform : MonoBehaviour
     private static readonly int s_LightPos   = Shader.PropertyToID("_LightPos");
     private static readonly int s_LightRange = Shader.PropertyToID("_LightRange");
 
+    private float   m_RealDur;
     private Vector3 m_ClosestLightPos = Vector3.one * 999;
 
     [SerializeField] private bool             m_MoveX;
@@ -29,23 +30,31 @@ public class MovingPlatform : MonoBehaviour
 
     private void OnEnable()
     {
+        m_RealDur = m_Dur / 2f;
+        movePlatform();
+    }
+
+    private void movePlatform()
+    {
         if (m_MoveX)
         {
-            DOTween.To(() => m_Rb.velocity, x => m_Rb.velocity = x, Vector2.right * m_Speed, m_Dur)
-                   .OnStepComplete(() =>
+            DOTween.To(() => m_Rb.velocity, x => m_Rb.velocity = x, Vector2.right * m_Speed, m_RealDur)
+                   .OnComplete(() =>
                                    {
-                                       m_Speed *= -1;
-                                       OnEnable();
+                                       m_Speed   *= -1;
+                                       m_RealDur =  m_Dur;
+                                       movePlatform();
                                    })
                    .SetUpdate(UpdateType.Fixed);
         }
         else
         {
-            DOTween.To(() => m_Rb.velocity, x => m_Rb.velocity = x, Vector2.up * m_Speed, m_Dur)
-                   .OnStepComplete(() =>
+            DOTween.To(() => m_Rb.velocity, x => m_Rb.velocity = x, Vector2.up * m_Speed, m_RealDur)
+                   .OnComplete(() =>
                                    {
-                                       m_Speed *= -1;
-                                       OnEnable();
+                                       m_Speed   *= -1;
+                                       m_RealDur =  m_Dur;
+                                       movePlatform();
                                    })
                    .SetUpdate(UpdateType.Fixed);
         }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -18,7 +19,7 @@ public class MemoryBlockManager : Singleton<MemoryBlockManager>
     [SerializeField] private MemoryBlock[] m_MemoryBlocks;
 
 #region Unity Events
-
+    
     private void Start()
     {
         m_MainCam = CameraManager.Instance.MainCam;
@@ -77,8 +78,8 @@ public class MemoryBlockManager : Singleton<MemoryBlockManager>
 
     private void MoveBlockPosition(MemoryBlock i_MemoryBlock, Vector2 i_MovePos)
     {
-        var copyTexture = convertRenderTextureToTexture2D(i_MemoryBlock.TempMemoryTexture);
-        m_PermanentMemory[i_MemoryBlock.transform.position] = copyTexture;
+        var copyTex = convertRenderTextureToTexture2D(i_MemoryBlock.TempMemoryTexture);
+        m_PermanentMemory[i_MemoryBlock.transform.position] = copyTex;
 
         i_MemoryBlock.Clear();
         Texture2D tex = null;
@@ -101,10 +102,9 @@ public class MemoryBlockManager : Singleton<MemoryBlockManager>
 
         RenderTexture.active = null;
 
-        texture.name = i_RenderTexture.name;
         return texture;
     }
-    
+
     public bool IsPointPainted(Vector3 i_Point)
     {
         var x = Mathf.RoundToInt((i_Point.x           / m_BlockSize.x)) * m_BlockSize.x;
@@ -122,9 +122,9 @@ public class MemoryBlockManager : Singleton<MemoryBlockManager>
             }
         }
 
-        var screenX = ((i_Point.x - x) / m_BlockSize.x) * tex.width  + tex.width  / 2f;
-        var screenY = ((i_Point.y - y) / m_BlockSize.y) * tex.height + tex.height / 2f;
+        var screenX = ((i_Point.x - x) / m_BlockSize.x + 0.5f) * tex.width;
+        var screenY = ((i_Point.y - y) / m_BlockSize.y + 0.5f) * tex.height;
 
-        return tex.GetPixel((int) screenX, (int) screenY).a > 0.1f;
+        return tex.GetPixel((int) screenX, (int) screenY).a > 0.25f;
     }
 }

@@ -181,8 +181,8 @@ MonoBehaviour:
   stateLimit: 10
   saveLoad: 0
   saveName: 
-  width: 1920
-  height: 1080
+  width: 960
+  height: 540
   texture: {fileID: 0}
   color: {r: 0.09803922, g: 0.22745098, b: 0.16470589, a: 0}
   format: 0

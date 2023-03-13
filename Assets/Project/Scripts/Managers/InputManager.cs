@@ -28,7 +28,6 @@ namespace Managers
 
         private void OnEnable()
         {
-            GameManager.OnLevelStarted += OnLevelStarted;
             OnLevelStarted();
 
             PlayerMovement.Enable();
@@ -39,8 +38,6 @@ namespace Managers
 
         private void OnDisable()
         {
-            GameManager.OnLevelStarted -= OnLevelStarted;
-
             PlayerMovement.Disable();
             PlayerAction.Disable();
 
