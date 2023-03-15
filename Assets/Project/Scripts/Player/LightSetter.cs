@@ -10,6 +10,7 @@ public class LightSetter : Singleton<LightSetter>
 
     private LightVariables m_LightVars => GameConfig.Instance.LightVars;
 
+    private float m_CamY;
     private float m_Brightness = 1;
 
     public float BrightnessFactor => m_LightVars.BrightnessCurve.Evaluate(m_Brightness);
@@ -30,6 +31,7 @@ public class LightSetter : Singleton<LightSetter>
     protected override void OnAwakeEvent()
     {
         base.OnAwakeEvent();
+        m_CamY = CameraManager.Instance.MainCam.transform.position.y;
         setLight();
     }
 
@@ -49,9 +51,9 @@ public class LightSetter : Singleton<LightSetter>
 
     private void setLight()
     {
-        // m_LightEffectedMat.SetVector(s_LightPos, transform.position);
-        // m_LightEffectedMat.SetFloat(s_LightRange,        BrightnessFactor * m_LightVars.LightRange);
-        // m_LightEffectedMat.SetFloat(s_VisibilityFalloff, m_LightVars.VisibilityFalloff);
+        m_LightEffectedMat.SetVector(s_LightPos, Vector3.up               *(m_CamY-Screen.height /4f));
+        m_LightEffectedMat.SetFloat(s_LightRange,        BrightnessFactor * m_LightVars.LightRange * m_LightVars.MaskRangeMult);
+        m_LightEffectedMat.SetFloat(s_VisibilityFalloff, m_LightVars.VisibilityFalloff);
 
         m_LightVisualCircle.localScale = Vector3.one * Mathf.Lerp(0, 1.6f, BrightnessFactor);
         // var range = BrightnessFactor * m_LightVars.LightRange * m_LightVars.ReverseLightRangeMult;

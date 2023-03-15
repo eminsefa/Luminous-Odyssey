@@ -70,7 +70,7 @@ MonoBehaviour:
     BrightenSpeed: 0.01
     LightRange: 7
     PaintRangeMult: 1
-    ReverseLightRangeMult: 1
+    MaskRangeMult: 60
     BrightnessCurve:
       serializedVersion: 2
       m_Curve:
@@ -104,4 +104,4 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    VisibilityFalloff: 0
+    VisibilityFalloff: 0.8

@@ -1,4 +1,5 @@
 using DG.Tweening;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class MovingPlatform : MonoBehaviour
@@ -8,13 +9,16 @@ public class MovingPlatform : MonoBehaviour
 
     private float   m_RealDur;
     private Vector3 m_ClosestLightPos = Vector3.one * 999;
-
-    [SerializeField] private bool             m_MoveX;
-    [SerializeField] private float            m_Speed = 10;
-    [SerializeField] private float            m_Dur   = 2;
-    [SerializeField] private Rigidbody2D      m_Rb;
-    [SerializeField] private Material         m_Mat;
-    [SerializeField] private SpriteRenderer[] m_Renderers;
+    
+    [BoxGroup("Animation")][SerializeField]  private bool  m_MoveX;
+    [BoxGroup("Animation")] [SerializeField] private bool  m_IsRelative;
+    [BoxGroup("Animation")][SerializeField]  private float m_Delay;
+    [BoxGroup("Animation")][SerializeField]  private float m_Speed = 10;
+    [BoxGroup("Animation")][SerializeField]  private float m_Dur   = 2;
+    
+    [BoxGroup("Refs")][SerializeField] private Rigidbody2D      m_Rb;
+    [BoxGroup("Refs")][SerializeField] private Material         m_Mat;
+    [BoxGroup("Refs")][SerializeField] private SpriteRenderer[] m_Renderers;
 
     private void Awake()
     {
@@ -34,11 +38,14 @@ public class MovingPlatform : MonoBehaviour
         movePlatform();
     }
 
+    [Button]
     private void movePlatform()
     {
         if (m_MoveX)
         {
             DOTween.To(() => m_Rb.velocity, x => m_Rb.velocity = x, Vector2.right * m_Speed, m_RealDur)
+                   .SetRelative(m_IsRelative)
+                   .SetDelay(m_Delay)
                    .OnComplete(() =>
                                    {
                                        m_Speed   *= -1;
@@ -50,6 +57,8 @@ public class MovingPlatform : MonoBehaviour
         else
         {
             DOTween.To(() => m_Rb.velocity, x => m_Rb.velocity = x, Vector2.up * m_Speed, m_RealDur)
+                   .SetRelative(m_IsRelative)
+                   .SetDelay(m_Delay)
                    .OnComplete(() =>
                                    {
                                        m_Speed   *= -1;

@@ -1,17 +1,15 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
 public class ButtonWireDoor : MonoBehaviour
 {
+    [SerializeField] private BasicAnimation   m_DoorAnimation;
     [SerializeField] private float            m_PointLightInterval;
     [SerializeField] private DoorButton       m_Button;
-    [SerializeField] private SpriteRenderer   m_Door;
     [SerializeField] private SpriteRenderer[] m_WirePoints;
 
-    private void OnCollisionEnter2D(Collision2D col)
+    private void OnCollisionEnter2D(Collision2D i_Col)
     {
         StartCoroutine(tryToOpenDoor());
     }
@@ -63,7 +61,7 @@ public class ButtonWireDoor : MonoBehaviour
 
     private void openCompleted()
     {
-        m_Door.color = Color.green;
-        m_Door.transform.DOLocalMoveY(2, 2);
+        m_DoorAnimation.transform.DOShakePosition(0.5f,0.25f)
+                       .OnComplete(() => m_DoorAnimation.Animate());
     }
 }
