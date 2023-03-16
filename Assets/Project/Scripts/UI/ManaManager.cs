@@ -28,7 +28,7 @@ public class ManaManager : Singleton<ManaManager>
 
     private void updateManaAmount()
     {
-        var onManaFillSpeed = PlayerMovement.Instance.IsOnManaFillSpeed;
+        var onManaFillSpeed = PlayerController.Instance.VelocityMag>m_ManaVars.ManaFillMinVelocity;
         if (!onManaFillSpeed) m_IdleSpeedTimer += Time.deltaTime;
         else m_IdleSpeedTimer                  =  0;
 
@@ -66,29 +66,17 @@ public class ManaManager : Singleton<ManaManager>
 
     public bool TryToUseMana()
     {
+        if (GameConfig.Instance.Debug.InfiniteMana) return true;
         if (m_ManaStackCount < 1) return false;
         m_ManaStackCount--;
         updateStacks();
         return true;
     }
-    // public bool IsDashManaEnough()
-    // {
-    //     var cost    = GameConfig.Instance.Movement.DashManaCost;
-    //     var newMana = m_ManaStackCount - cost;
-    //     if (newMana < 0) return false;
-    //
-    //     m_ManaStackCount = newMana;
-    //     updateStacks();
-    //     return true;
-    // }
 
     private void updateStacks()
     {
-        // var color = m_ManaStacks[0].color;
         for (int i = 0; i < m_ManaStacks.Length; i++)
         {
-            // color.a               = i < m_ManaStackCount ? 1 : 0;
-            // m_ManaStacks[i].color = color;
             m_ManaStacks[i].gameObject.SetActive(i < m_ManaStackCount);
         }
     }

@@ -113,7 +113,7 @@ Material:
     - _HaloSizeMultiplier: 0.5
     - _HaloThickness: 0.053
     - _HaloThicknessMultiplier: 0.35
-    - _LightRange: 266.3184
+    - _LightRange: 420
     - _Metallic: 0
     - _NumberOfHalos: 3
     - _OcclusionStrength: 1
@@ -144,7 +144,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _HaloMinMaxSize: {r: 0.35, g: 0.75, b: 0, a: 0}
     - _HaloSizeMultiplier: {r: 0.25, g: 0.5, b: 0, a: 0}
-    - _LightPos: {r: -0, g: -264.05, b: -0, a: 0}
+    - _LightPos: {r: -0, g: -264, b: -0, a: 0}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &5900148824814301897

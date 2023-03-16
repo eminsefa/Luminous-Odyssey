@@ -463,6 +463,8 @@ GameObject:
   m_Component:
   - component: {fileID: 113983051}
   - component: {fileID: 113983050}
+  - component: {fileID: 113983054}
+  - component: {fileID: 113983053}
   - component: {fileID: 113983052}
   m_Layer: 6
   m_Name: Player
@@ -484,14 +486,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DontDestroyLoad: 0
-  m_Model: {fileID: 326100929}
-  m_Animator: {fileID: 405258977}
-  m_Rb: {fileID: 113983052}
-  m_Col: {fileID: 405258979}
-  m_GroundLayer:
-    serializedVersion: 2
-    m_Bits: 1152
-  m_AnimEventSender: {fileID: 405258978}
+  m_Animation: {fileID: 113983053}
+  m_Physics: {fileID: 113983054}
 --- !u!4 &113983051
 Transform:
   m_ObjectHideFlags: 0
@@ -529,6 +525,38 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &113983053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 113983048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 496895be2b6b40118c64b0583efa6818, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Model: {fileID: 326100929}
+  m_Animator: {fileID: 405258977}
+  m_AnimEventSender: {fileID: 405258978}
+--- !u!114 &113983054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 113983048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 075df2ffa536474d93e1b640a6a67c66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Rb: {fileID: 113983052}
+  m_GroundLayer:
+    serializedVersion: 2
+    m_Bits: 1152
+  m_Col: {fileID: 405258979}
 --- !u!1001 &116079266
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12920,8 +12948,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DontDestroyLoad: 0
   m_LightCircleMask: {fileID: 391001208}
-  m_PaintSphere: {fileID: 1969474920}
   m_LightCircleMat: {fileID: 2100000, guid: 14d15484ec29442a490ec196cbce740b, type: 2}
+  m_PaintSphere: {fileID: 1969474920}
 --- !u!1 &1562688154
 GameObject:
   m_ObjectHideFlags: 0

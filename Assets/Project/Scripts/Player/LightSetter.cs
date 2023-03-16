@@ -41,7 +41,7 @@ public class LightSetter : Singleton<LightSetter>
 
     private void calculateBrightness()
     {
-        var delta = PlayerMovement.Instance.Velocity * m_LightVars.BrightenSpeed - m_LightVars.DarkenSpeed;
+        var delta = PlayerController.Instance.VelocityMag * m_LightVars.BrightenSpeed - m_LightVars.DarkenSpeed;
         m_Brightness += delta * Time.deltaTime;
         m_Brightness =  Mathf.Clamp01(m_Brightness);
     }
@@ -63,7 +63,7 @@ public class LightSetter : Singleton<LightSetter>
     private void OnApplicationQuit()
     {
         m_Brightness                               = 1;
-        m_LightCircleMat.SetVector(s_LightPos, -Vector3.up       *-264);
+        m_LightCircleMat.SetVector(s_LightPos, Vector3.up       *-264);
         m_LightCircleMat.SetFloat(s_LightRange, BrightnessFactor * m_LightVars.LightRange * m_LightVars.MaskRangeMult);
     }
 }

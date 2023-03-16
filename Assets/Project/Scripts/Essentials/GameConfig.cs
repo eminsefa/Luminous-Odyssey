@@ -5,13 +5,19 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "GameConfig")]
 public class GameConfig : SingletonScriptableObject<GameConfig>
 {
+    public DebugVariables    Debug     = new();
     public InputVariables    Input     = new();
     public MovementVariables Movement  = new();
     public ManaVariables     Mana      = new();
     public LightVariables    LightVars = new();
 }
 
-[Serializable] public class UIVariables { }
+[Serializable]
+public class DebugVariables
+{
+    public bool InfiniteMana;
+    public bool GodMode;
+}
 
 [Serializable]
 public class InputVariables
@@ -23,7 +29,8 @@ public class InputVariables
 [Serializable]
 public class MovementVariables
 {
-    [BoxGroup("Movement")] public float MoveSpeed;
+    [BoxGroup("Movement")] public float WalkSpeed;
+    [BoxGroup("Movement")] public float AirMoveSpeed;
     [BoxGroup("Movement")] public float JumpSpeed;
     [BoxGroup("Movement")] public float MaxSpeed;
     [BoxGroup("Movement")] public float RotationSpeed;
@@ -35,9 +42,8 @@ public class MovementVariables
 
     [BoxGroup("Hanging")] public float HangingStartDuration;
     [BoxGroup("Hanging")] public float HangingSpeed;
-    [BoxGroup("Hanging")] public float CayoteJumpThreshold;
+    [BoxGroup("Hanging")] public float CayoteTime;
 
-    [BoxGroup("Dash")] public int      DashManaCost;
     [BoxGroup("Dash")] public DashData DashData;
 }
 
@@ -74,5 +80,3 @@ public class DashData
     public float          RotateAmount;
     public AnimationCurve DashCurve;
 }
-
-// [Serializable] public class DashDataDictionary : UnitySerializedDictionary<InputManager.eSwipeDirections, DashData> { }

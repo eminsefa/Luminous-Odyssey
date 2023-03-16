@@ -39,7 +39,7 @@ public class MemoryBlockManager : Singleton<MemoryBlockManager>
 
     private void Update()
     {
-        var playerPos = PlayerMovement.Instance.transform.position;
+        var playerPos = PlayerController.Instance.transform.position;
 
         Vector2 activeBlockCenter = new Vector2(
                                                 Mathf.RoundToInt(playerPos.x / m_BlockSize.x) * m_BlockSize.x,

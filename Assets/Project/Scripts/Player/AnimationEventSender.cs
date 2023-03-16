@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class AnimationEventSender : MonoBehaviour
 {
-    public event Action JumpAnimCompleted;
+    public event Action OnJumpAnimCompleted;
     
     public void Jumped()
     {
-        JumpAnimCompleted?.Invoke();
+        OnJumpAnimCompleted?.Invoke();
     }
 }

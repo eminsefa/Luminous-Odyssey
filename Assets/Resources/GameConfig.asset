@@ -16,8 +16,9 @@ MonoBehaviour:
     JumpInputInterval: 0.05
     DashInputInterval: 0.25
   Movement:
-    MoveSpeed: 50
-    JumpSpeed: 750
+    WalkSpeed: 65
+    AirMoveSpeed: 35
+    JumpSpeed: 14
     MaxSpeed: 10
     RotationSpeed: 7.5
     Friction: 0.4
@@ -27,8 +28,7 @@ MonoBehaviour:
     WalkThreshold: 6
     HangingStartDuration: 0.1
     HangingSpeed: 3
-    CayoteJumpThreshold: 0.2
-    DashManaCost: 1
+    CayoteTime: 0.2
     DashData:
       DashSpeed: 35
       DashAmount: 6
