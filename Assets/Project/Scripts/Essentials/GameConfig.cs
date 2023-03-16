@@ -47,9 +47,10 @@ public class ManaVariables
     public float ManaFillAmount;
     public float ManaDrainAmount;
     public float ManaDrainMinIdleDuration;
-    public float ManaStackedClearSpeed = 0.25f;
-    public float ManaStackedClearDelay = 0.1f;
     public float ManaFillMinVelocity;
+
+    [BoxGroup("Visual")] public float ManaStackedClearSpeed = 0.25f;
+    [BoxGroup("Visual")] public float ManaStackedClearDelay = 0.1f;
 }
 
 [Serializable]
@@ -57,11 +58,11 @@ public class LightVariables
 {
     public               float          DarkenSpeed;
     public               float          BrightenSpeed;
-    public               float          LightRange            = 10;
-    public               float          PaintRangeMult        = 0.8f;
-    public               float          MaskRangeMult = 60;
+    public               float          LightRange     = 7;
+    public               float          PaintRangeMult = 1;
+    public               float          MaskRangeMult  = 60;
     public               AnimationCurve BrightnessCurve;
-    [Range(0, 2)] public float          VisibilityFalloff = 0.8f;
+    [Range(0, 2)] public float          VisibilityFalloff = 1;
 }
 
 [Serializable]

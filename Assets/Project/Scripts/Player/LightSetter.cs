@@ -15,18 +15,15 @@ public class LightSetter : Singleton<LightSetter>
 
     public float BrightnessFactor => m_LightVars.BrightnessCurve.Evaluate(m_Brightness);
 
-    // [FoldoutGroup("Refs")]
-    // [field: SerializeField]
-    // public Material LightReverseEffectedMat { get; set; }
-
     [FoldoutGroup("Refs")] [SerializeField]
-    private Transform m_LightVisualCircle;
+    private Transform m_LightCircleMask;
+    
+    [FoldoutGroup("Refs")] [SerializeField]
+    private Material m_LightCircleMat;
     
     [FoldoutGroup("Refs")] [SerializeField]
     private P3dPaintSphere m_PaintSphere;
 
-    [FoldoutGroup("Refs")] [SerializeField]
-    private Material m_LightEffectedMat;
 
     protected override void OnAwakeEvent()
     {
@@ -51,14 +48,11 @@ public class LightSetter : Singleton<LightSetter>
 
     private void setLight()
     {
-        m_LightEffectedMat.SetVector(s_LightPos, Vector3.up               *(m_CamY-Screen.height /4f));
-        m_LightEffectedMat.SetFloat(s_LightRange,        BrightnessFactor * m_LightVars.LightRange * m_LightVars.MaskRangeMult);
-        m_LightEffectedMat.SetFloat(s_VisibilityFalloff, m_LightVars.VisibilityFalloff);
+        m_LightCircleMat.SetVector(s_LightPos, Vector3.up               *(m_CamY-Screen.height /4f));
+        m_LightCircleMat.SetFloat(s_LightRange,        BrightnessFactor * m_LightVars.LightRange * m_LightVars.MaskRangeMult);
+        m_LightCircleMat.SetFloat(s_VisibilityFalloff, m_LightVars.VisibilityFalloff); //Later call this once
 
-        m_LightVisualCircle.localScale = Vector3.one * Mathf.Lerp(0, 1.6f, BrightnessFactor);
-        // var range = BrightnessFactor * m_LightVars.LightRange * m_LightVars.ReverseLightRangeMult;
-        // LightReverseEffectedMat.SetVector(s_LightPos, transform.position);
-        // LightReverseEffectedMat.SetFloat(s_LightRange, range);
+        m_LightCircleMask.localScale = Vector3.one * Mathf.Lerp(0, 14f, BrightnessFactor);
     }
 
     private void setPaint()
@@ -69,7 +63,7 @@ public class LightSetter : Singleton<LightSetter>
     private void OnApplicationQuit()
     {
         m_Brightness                               = 1;
-        // PlayerMovement.Instance.transform.position = Vector3.up * 0.3751192f;
-        // setLight();
+        m_LightCircleMat.SetVector(s_LightPos, -Vector3.up       *-264);
+        m_LightCircleMat.SetFloat(s_LightRange, BrightnessFactor * m_LightVars.LightRange * m_LightVars.MaskRangeMult);
     }
 }

@@ -64,16 +64,23 @@ public class ManaManager : Singleton<ManaManager>
                .OnComplete(() => m_Wait                 = false);
     }
 
-    public bool IsManaEnough()
+    public bool TryToUseMana()
     {
-        var cost    = GameConfig.Instance.Movement.DashManaCost;
-        var newMana = m_ManaStackCount - cost;
-        if (newMana < 0) return false;
-
-        m_ManaStackCount = newMana;
+        if (m_ManaStackCount < 1) return false;
+        m_ManaStackCount--;
         updateStacks();
         return true;
     }
+    // public bool IsDashManaEnough()
+    // {
+    //     var cost    = GameConfig.Instance.Movement.DashManaCost;
+    //     var newMana = m_ManaStackCount - cost;
+    //     if (newMana < 0) return false;
+    //
+    //     m_ManaStackCount = newMana;
+    //     updateStacks();
+    //     return true;
+    // }
 
     private void updateStacks()
     {

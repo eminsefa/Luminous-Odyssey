@@ -6,16 +6,6 @@ using UnityEngine;
 
 public class PlayerMovement : Singleton<PlayerMovement>
 {
-    private static readonly int s_WalkSpeed = Animator.StringToHash("WalkSpeed");
-    private static readonly int s_Walk      = Animator.StringToHash("Walk");
-    private static readonly int s_OnAir     = Animator.StringToHash("OnAir");
-    private static readonly int s_Hang      = Animator.StringToHash("Hang");
-    private static readonly int s_Jump      = Animator.StringToHash("Jump");
-    private static readonly int s_Dash      = Animator.StringToHash("Dash");
-    private static readonly int s_Idle      = Animator.StringToHash("Idle");
-
-    private static readonly string s_MovingPlatform = $"MovingPlatform";
-
     private eCharacterState m_CharacterState;
     private float           m_HangTimer;
     private float           m_CayoteJumpTimer;
@@ -32,16 +22,6 @@ public class PlayerMovement : Singleton<PlayerMovement>
     private MovementVariables m_Movement => GameConfig.Instance.Movement;
 
     private Vector2 m_MoveDir => InputManager.Instance.PlayerMovement.ReadValue<Vector2>().normalized;
-
-    private enum eCharacterState
-    {
-        Idle,
-        Walk,
-        Jump,
-        OnAir,
-        Dash,
-        Hang
-    }
 
 #region Refs
 
@@ -71,6 +51,7 @@ public class PlayerMovement : Singleton<PlayerMovement>
     {
         InputManager.OnJumpInput            += OnJumpInput;
         InputManager.OnDashInput            += OnDashInput;
+        InputManager.OnInteractionInput     += OnInteractionInput;
         m_AnimEventSender.JumpAnimCompleted += OnJumpCompleted;
 
         m_Rb.gravityScale = m_Movement.GravityScale;
@@ -81,6 +62,7 @@ public class PlayerMovement : Singleton<PlayerMovement>
     {
         InputManager.OnJumpInput            -= OnJumpInput;
         InputManager.OnDashInput            -= OnDashInput;
+        InputManager.OnInteractionInput     -= OnInteractionInput;
         m_AnimEventSender.JumpAnimCompleted -= OnJumpCompleted;
     }
 
@@ -94,12 +76,12 @@ public class PlayerMovement : Singleton<PlayerMovement>
         rotate();
     }
 
-    private void OnCollisionEnter2D(Collision2D col)
+    private void OnCollisionEnter2D(Collision2D i_Col)
     {
         switch (m_CharacterState)
         {
             case eCharacterState.Dash:
-                var angle = Vector2.Angle(m_LastDashDir, col.GetContact(0).normal);
+                var angle = Vector2.Angle(m_LastDashDir, i_Col.GetContact(0).normal);
                 if (angle > 90) m_TwDash?.Kill();
                 break;
             case eCharacterState.Jump:
@@ -125,11 +107,16 @@ public class PlayerMovement : Singleton<PlayerMovement>
     private void OnDashInput()
     {
         if (m_CharacterState == eCharacterState.Dash) return;
-        if (!ManaManager.Instance.IsManaEnough()) return;
-
-        m_CayoteJumpTimer = 0;
-
+        if (!ManaManager.Instance.TryToUseMana()) return;
+        
         dash();
+    }
+
+    private void OnInteractionInput()
+    {
+        if(m_CharacterState is not (eCharacterState.Idle or eCharacterState.Walk)) return;
+        if (!ManaManager.Instance.TryToUseMana()) return;
+        
     }
 
     private void OnJumpCompleted()
@@ -149,7 +136,7 @@ public class PlayerMovement : Singleton<PlayerMovement>
                 var newVelX = vel.x + m_MoveDir.x * m_Movement.MoveSpeed * Time.fixedDeltaTime;
                 vel.x         = Mathf.Clamp(newVelX, -m_Movement.MaxSpeed, m_Movement.MaxSpeed);
                 m_Rb.velocity = vel;
-                m_Animator.SetFloat(s_WalkSpeed, Mathf.Lerp(0, m_Movement.AnimMaxWalkSpeed, (Mathf.Abs(vel.x) - m_Movement.WalkThreshold) / m_Movement.MaxSpeed));
+                m_Animator.SetFloat(AnimationHashes.S_WalkSpeed, Mathf.Lerp(0, m_Movement.AnimMaxWalkSpeed, (Mathf.Abs(vel.x) - m_Movement.WalkThreshold) / m_Movement.MaxSpeed));
             }
             else
             {
@@ -180,7 +167,7 @@ public class PlayerMovement : Singleton<PlayerMovement>
 
     private void jump()
     {
-        m_Animator.SetBool(s_Jump, true);
+        m_Animator.SetBool(AnimationHashes.S_Jump, true);
         m_CharacterState = eCharacterState.Jump;
 
         var vel = m_Rb.velocity;
@@ -195,7 +182,7 @@ public class PlayerMovement : Singleton<PlayerMovement>
     {
         m_LastDashDir = m_MoveDir.sqrMagnitude > 0.05f ? m_MoveDir.normalized : m_Col.transform.right;
         var dashData = m_Movement.DashData;
-
+        
         m_TwDash = m_Rb.DOMove(m_LastDashDir * dashData.DashAmount, dashData.DashSpeed)
                        .SetSpeedBased()
                        .SetUpdate(UpdateType.Fixed)
@@ -220,6 +207,8 @@ public class PlayerMovement : Singleton<PlayerMovement>
                                     }
                                 })
                        .OnKill(dashCompleted);
+        
+        m_CayoteJumpTimer = 0;
     }
 
     private void dashCompleted()
@@ -256,7 +245,7 @@ public class PlayerMovement : Singleton<PlayerMovement>
             var count = Physics2D.RaycastNonAlloc(m_Col.bounds.center, -m_Col.transform.up, m_MoveCheckCast, m_Movement.GroundCheckDistance + m_Col.size.y / 2f, m_GroundLayer);
             if (count > 0) //Touching Ground
             {
-                var onMovingPlatform = m_MoveCheckCast[0].transform.CompareTag(s_MovingPlatform);
+                var onMovingPlatform = m_MoveCheckCast[0].transform.CompareTag(ObjectTags.S_MovingPlatform);
 
                 var vel = m_Rb.velocity;
                 if (onMovingPlatform)
@@ -308,12 +297,20 @@ public class PlayerMovement : Singleton<PlayerMovement>
                 {
                     m_HangTimer += Time.fixedDeltaTime;
 
-                    m_CharacterState = eCharacterState.Hang;
-                    var dur = Mathf.Lerp(0.05f, m_Movement.HangingStartDuration,
-                                         Mathf.InverseLerp(m_Movement.HangingSpeed, m_Movement.HangingSpeed * 2, Mathf.Abs(m_Rb.velocity.y)));
-                    m_Animator.CrossFade(s_Hang, dur);
+                    if(m_CharacterState!=eCharacterState.Hang)
+                    {
+                        var dur = Mathf.Lerp(0.05f, m_Movement.HangingStartDuration,
+                                             Mathf.InverseLerp(m_Movement.HangingSpeed, m_Movement.HangingSpeed * 2, Mathf.Abs(m_Rb.velocity.y)));
+                        m_Animator.CrossFade(AnimationHashes.S_Hang, dur);
+                        
+                        m_CharacterState  = eCharacterState.Hang;
+                        m_CayoteJumpTimer = m_Movement.CayoteJumpThreshold + dur;
+                    }
+                    else
+                    {
+                        m_CayoteJumpTimer = m_Movement.CayoteJumpThreshold;
+                    }
 
-                    m_CayoteJumpTimer = m_Movement.CayoteJumpThreshold + dur;
                 }
                 else onAir = true;
             }
@@ -328,10 +325,10 @@ public class PlayerMovement : Singleton<PlayerMovement>
 
     private void setAnimation()
     {
-        m_Animator.SetBool(s_Jump,  m_CharacterState == eCharacterState.Jump);
-        m_Animator.SetBool(s_Dash,  m_CharacterState == eCharacterState.Dash);
-        m_Animator.SetBool(s_Hang,  m_CharacterState == eCharacterState.Hang);
-        m_Animator.SetBool(s_OnAir, m_CharacterState == eCharacterState.OnAir);
-        m_Animator.SetBool(s_Walk,  m_CharacterState == eCharacterState.Walk);
+        m_Animator.SetBool(AnimationHashes.S_Jump,  m_CharacterState == eCharacterState.Jump);
+        m_Animator.SetBool(AnimationHashes.S_Dash,  m_CharacterState == eCharacterState.Dash);
+        m_Animator.SetBool(AnimationHashes.S_Hang,  m_CharacterState == eCharacterState.Hang);
+        m_Animator.SetBool(AnimationHashes.S_OnAir, m_CharacterState == eCharacterState.OnAir);
+        m_Animator.SetBool(AnimationHashes.S_Walk,   m_CharacterState == eCharacterState.Walk);
     }
 }

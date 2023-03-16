@@ -16,7 +16,7 @@ MonoBehaviour:
     JumpInputInterval: 0.05
     DashInputInterval: 0.25
   Movement:
-    MoveSpeed: 100
+    MoveSpeed: 50
     JumpSpeed: 750
     MaxSpeed: 10
     RotationSpeed: 7.5
@@ -28,7 +28,7 @@ MonoBehaviour:
     HangingStartDuration: 0.1
     HangingSpeed: 3
     CayoteJumpThreshold: 0.2
-    DashManaCost: 0
+    DashManaCost: 1
     DashData:
       DashSpeed: 35
       DashAmount: 6
@@ -62,9 +62,9 @@ MonoBehaviour:
     ManaFillAmount: 0.1
     ManaDrainAmount: 0.1
     ManaDrainMinIdleDuration: 1.5
+    ManaFillMinVelocity: 25
     ManaStackedClearSpeed: 0.25
     ManaStackedClearDelay: 0.1
-    ManaFillMinVelocity: 100
   LightVars:
     DarkenSpeed: 0.15
     BrightenSpeed: 0.01
@@ -104,4 +104,4 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    VisibilityFalloff: 0.8
+    VisibilityFalloff: 1

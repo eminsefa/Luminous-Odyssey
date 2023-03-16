@@ -6,8 +6,7 @@ Shader "Custom/LightCircle"
         _LightPos ("Light Position", Vector) = (0.5, 0.5, 0, 0)
         _LightRange ("Light Range", Range(0,5000)) = 7.5
         _VisibilityFalloff ("Visibility Falloff", Range(0, 25)) = 1
-
-
+        
         _NumberOfHalos ("Number of Halos", int) = 4
         _RotationSpeed ("Rotation Speed", Range(0, 10)) = 1
         _HaloThickness ("Halo Thickness", Range(0, 1)) = 0.1
@@ -78,7 +77,7 @@ Shader "Custom/LightCircle"
                 return o;
             }
 
-            fixed4 frag(v2f i) : SV_Target
+           fixed4 frag(v2f i) : SV_Target
             {
                 float3 diff = i.worldPos - float3(_LightPos.xy, 0);
                 float dist = length(diff);

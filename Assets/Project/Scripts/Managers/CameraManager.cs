@@ -25,16 +25,16 @@ public class CameraManager : Singleton<CameraManager>
 
         var width  = (int) ScreenData.OriginalRes.x;
         var height = (int) ScreenData.OriginalRes.y;
-        for (var i = 0; i < m_RenderTextures.Length; i++)
+        foreach (var rt in m_RenderTextures)
         {
-            m_RenderTextures[i].width  = width;
-            m_RenderTextures[i].height = height;
+            rt.width  = width;
+            rt.height = height;
         }
 
-        for (var i = 0; i < m_RenderTextures.Length; i++)
+        foreach (var rt in m_MaskRenderTextures)
         {
-            m_MaskRenderTextures[i].width  = width  /2;
-            m_MaskRenderTextures[i].height = height /2;
+            rt.width  = width  /2;
+            rt.height = height /2;
         }
     }
 }
