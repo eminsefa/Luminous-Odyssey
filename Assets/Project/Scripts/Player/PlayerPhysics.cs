@@ -68,7 +68,7 @@ public class PlayerPhysics : MonoBehaviour
     {
         m_CayoteJumpTimer = 0f;
         m_Rb.velocity     = new Vector2(m_Rb.velocity.x, 0f);
-        m_Rb.AddForce(Vector2.up * m_Movement.JumpSpeed, ForceMode2D.Impulse);
+        m_Rb.AddForce(Vector2.up * m_Movement.JumpPower, ForceMode2D.Impulse);
     }
     
 #region Hang

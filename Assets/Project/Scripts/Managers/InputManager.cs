@@ -81,7 +81,7 @@ namespace Managers
                 OnDashInput?.Invoke();
             }
             
-            if (context.control == PlayerAction.controls[1] && m_DropManaTimer > 0 && !jumpOrDash) //Interaction
+            if (context.control == PlayerAction.controls[2] && m_DropManaTimer > 0 && !jumpOrDash) //Interaction
             {
                 m_DropManaTimer = -m_InputVars.JumpInputInterval;
                 OnInteractionInput?.Invoke();

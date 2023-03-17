@@ -41,7 +41,7 @@ public class LightSetter : Singleton<LightSetter>
 
     private void calculateBrightness()
     {
-        var delta = PlayerController.Instance.VelocityMag * m_LightVars.BrightenSpeed - m_LightVars.DarkenSpeed;
+        var delta = PlayerController.Instance.Velocity.sqrMagnitude * m_LightVars.BrightenSpeed - m_LightVars.DarkenSpeed;
         m_Brightness += delta * Time.deltaTime;
         m_Brightness =  Mathf.Clamp01(m_Brightness);
     }

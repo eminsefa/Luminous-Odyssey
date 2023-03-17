@@ -2,11 +2,11 @@ using System.Collections;
 using DG.Tweening;
 using UnityEngine;
 
-public class ButtonWireDoor : MonoBehaviour
+public class WireDoor : MonoBehaviour
 {
     [SerializeField] private BasicAnimation   m_DoorAnimation;
     [SerializeField] private float            m_PointLightInterval;
-    [SerializeField] private DoorButton       m_Button;
+    [SerializeField] private DoorActivator       m_Activator;
     [SerializeField] private SpriteRenderer[] m_WirePoints;
 
     private void OnCollisionEnter2D(Collision2D i_Col)
@@ -16,12 +16,12 @@ public class ButtonWireDoor : MonoBehaviour
 
     private void OnEnable()
     {
-        m_Button.OnButtonPressed += OnButtonPressed;
+        m_Activator.OnTryOpenDoor += OnButtonPressed;
     }
 
     private void OnDisable()
     {
-        m_Button.OnButtonPressed -= OnButtonPressed;
+        m_Activator.OnTryOpenDoor -= OnButtonPressed;
     }
 
     private void OnButtonPressed()
@@ -56,7 +56,7 @@ public class ButtonWireDoor : MonoBehaviour
             m_WirePoints[i].color = Color.black;
         }
 
-        m_Button.OpenDoorFailed();
+        m_Activator.OpenDoorFailed();
     }
 
     private void openCompleted()

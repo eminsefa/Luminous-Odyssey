@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Managers;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -6,7 +7,7 @@ public class PlayerController : Singleton<PlayerController>
 {
     private eCharacterState m_CharacterState = eCharacterState.Idle;
     
-    public float VelocityMag => m_Physics.Velocity.sqrMagnitude;
+    public Vector2 Velocity => m_Physics.Velocity;
     
     private Vector2 m_MoveDir => InputManager.Instance.PlayerMovement.ReadValue<Vector2>().normalized;
 
@@ -17,6 +18,9 @@ public class PlayerController : Singleton<PlayerController>
 
     [FoldoutGroup("Refs")][SerializeField]
     private PlayerPhysics m_Physics;
+    
+    [FoldoutGroup("Refs")][SerializeField]
+    private PlayerInteraction m_Interaction;
 
 #endregion
  
@@ -55,7 +59,7 @@ public class PlayerController : Singleton<PlayerController>
                 break;
         }
     }
-    
+
     private void FixedUpdate()
     {
         m_Physics.CheckState(ref m_CharacterState, m_MoveDir);
@@ -78,11 +82,10 @@ public class PlayerController : Singleton<PlayerController>
     private void OnJumpInput()
     {
         var cayoteJump = m_CharacterState == eCharacterState.OnAir && m_Physics.CanCayoteJump;
-        if (m_CharacterState is eCharacterState.Idle or eCharacterState.Walk || cayoteJump)
-        {
-            m_CharacterState = eCharacterState.Jump;
-            m_Physics.Jump();
-        }
+        if (m_CharacterState is not (eCharacterState.Idle or eCharacterState.Walk) && !cayoteJump) return;
+        
+        m_CharacterState = eCharacterState.Jump;
+        m_Physics.Jump();
     }
 
     private void OnDashInput()
@@ -97,8 +100,7 @@ public class PlayerController : Singleton<PlayerController>
     private void OnInteractionInput()
     {
         if (m_CharacterState is not (eCharacterState.Idle or eCharacterState.Walk)) return;
-        if (!ManaManager.Instance.TryToUseMana()) return;
-
+        m_Interaction.Interact();
     }
     
     private void OnJumpCompleted()

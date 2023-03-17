@@ -12,13 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 893ebc18d674e455bb9c4d389ef1b792, type: 3}
   m_Name: GameConfig
   m_EditorClassIdentifier: 
+  Debug:
+    InfiniteMana: 0
+    GodMode: 0
   Input:
     JumpInputInterval: 0.05
     DashInputInterval: 0.25
   Movement:
     WalkSpeed: 65
     AirMoveSpeed: 35
-    JumpSpeed: 14
+    JumpPower: 14
     MaxSpeed: 10
     RotationSpeed: 7.5
     Friction: 0.4
@@ -58,6 +61,13 @@ MonoBehaviour:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
+  Interaction:
+    ManaPlaceDuration: 0.75
+    ManaPlaceJumpPower: 2
+    ManaPlaceDelay: 0.25
+    ManaPlaceEase: 9
+    ManaPlaceReturnSpeed: 35
+    ManaPlaceReturnEase: 26
   Mana:
     ManaFillAmount: 0.1
     ManaDrainAmount: 0.1

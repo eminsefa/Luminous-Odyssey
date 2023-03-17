@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ public class GameConfig : SingletonScriptableObject<GameConfig>
     public DebugVariables    Debug     = new();
     public InputVariables    Input     = new();
     public MovementVariables Movement  = new();
+    public InteractionVariables Interaction  = new();
     public ManaVariables     Mana      = new();
     public LightVariables    LightVars = new();
 }
@@ -31,7 +33,7 @@ public class MovementVariables
 {
     [BoxGroup("Movement")] public float WalkSpeed;
     [BoxGroup("Movement")] public float AirMoveSpeed;
-    [BoxGroup("Movement")] public float JumpSpeed;
+    [BoxGroup("Movement")] public float JumpPower;
     [BoxGroup("Movement")] public float MaxSpeed;
     [BoxGroup("Movement")] public float RotationSpeed;
     [BoxGroup("Movement")] public float Friction            = 0.4f;
@@ -45,6 +47,17 @@ public class MovementVariables
     [BoxGroup("Hanging")] public float CayoteTime;
 
     [BoxGroup("Dash")] public DashData DashData;
+}
+
+[Serializable]
+public class InteractionVariables
+{
+    [BoxGroup("Mana Place")] public float ManaPlaceDuration;
+    [BoxGroup("Mana Place")] public float ManaPlaceJumpPower;
+    [BoxGroup("Mana Place")] public float ManaPlaceDelay;
+    [BoxGroup("Mana Place")] public Ease  ManaPlaceEase;
+    
+    [BoxGroup("Mana Place")] public float ManaPlaceReturnSpeed;
 }
 
 [Serializable]

@@ -18,7 +18,17 @@ public class ManaManager : Singleton<ManaManager>
     [SerializeField] private Image[] m_ManaStacks;
 
 #region Unity Methods
+    
+    private void OnEnable()
+    {
+        ManaDoorActivator.OnManaReturned += OnManaReturned;
+    }
 
+    private void OnDisable()
+    {
+        ManaDoorActivator.OnManaReturned -= OnManaReturned;
+    }
+    
     private void Update()
     {
         if (!m_Wait) updateManaAmount();
@@ -26,9 +36,15 @@ public class ManaManager : Singleton<ManaManager>
 
 #endregion
 
+    private void OnManaReturned()
+    {
+        m_ManaStackCount++;
+        updateStacks();
+    }
+    
     private void updateManaAmount()
     {
-        var onManaFillSpeed = PlayerController.Instance.VelocityMag>m_ManaVars.ManaFillMinVelocity;
+        var onManaFillSpeed = PlayerController.Instance.Velocity.sqrMagnitude > m_ManaVars.ManaFillMinVelocity;
         if (!onManaFillSpeed) m_IdleSpeedTimer += Time.deltaTime;
         else m_IdleSpeedTimer                  =  0;
 
