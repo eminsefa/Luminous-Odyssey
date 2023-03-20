@@ -13,10 +13,9 @@ namespace Managers
         public static event Action OnJumpInput;
         public static event Action OnDashInput;
         public static event Action OnInteractionInput;
+        public static event Action OnFireInput;
 
-        private float m_JumpTimer;
-        private float m_DashTimer;
-        private float m_DropManaTimer;
+        private float[] m_InputTimers = new float[4];
 
         [field: SerializeField] public InputAction PlayerMovement { get; set; }
         [field: SerializeField] public InputAction PlayerAction   { get; set; }
@@ -30,8 +29,6 @@ namespace Managers
 
         private void OnEnable()
         {
-            OnLevelStarted();
-
             PlayerMovement.Enable();
             PlayerAction.Enable();
 
@@ -48,9 +45,10 @@ namespace Managers
 
         private void Update()
         {
-            m_JumpTimer     += Time.deltaTime;
-            m_DashTimer     += Time.deltaTime;
-            m_DropManaTimer += Time.deltaTime;
+            for (var i = 0; i < m_InputTimers.Length; i++)
+            {
+                m_InputTimers[i] += Time.deltaTime;
+            }
         }
 
     #endregion
@@ -62,29 +60,33 @@ namespace Managers
             ScreenData.CalculateData(logScreen);
         }
 
-        private void OnLevelStarted() { }
-
         private void OnActionInput(InputAction.CallbackContext context)
         {
             var jumpOrDash = false;
-            if (context.control == PlayerAction.controls[0] && m_JumpTimer > 0) //Jump
+            if (context.control == PlayerAction.controls[0] && m_InputTimers[0] > 0) //Jump
             {
-                jumpOrDash  = true;
-                m_JumpTimer = -m_InputVars.JumpInputInterval;
+                jumpOrDash       = true;
+                m_InputTimers[0] = -m_InputVars.InputIntervals[0].Value;
                 OnJumpInput?.Invoke();
             }
 
-            if (context.control == PlayerAction.controls[1] && m_DashTimer > 0) //Dash
+            if (context.control == PlayerAction.controls[1] && m_InputTimers[1] > 0) //Dash
             {
-                jumpOrDash  = true;
-                m_DashTimer = -m_InputVars.DashInputInterval;
+                jumpOrDash       = true;
+                m_InputTimers[0] = -m_InputVars.InputIntervals[1].Value;
                 OnDashInput?.Invoke();
             }
-            
-            if (context.control == PlayerAction.controls[2] && m_DropManaTimer > 0 && !jumpOrDash) //Interaction
+
+            if (context.control == PlayerAction.controls[2] && m_InputTimers[2] > 0 && !jumpOrDash) //Interaction
             {
-                m_DropManaTimer = -m_InputVars.JumpInputInterval;
+                m_InputTimers[2] = -m_InputVars.InputIntervals[2].Value;
                 OnInteractionInput?.Invoke();
+            }
+
+            if (context.control == PlayerAction.controls[3] && m_InputTimers[3] > 0) //Fire
+            {
+                m_InputTimers[3] = -m_InputVars.InputIntervals[3].Value;
+                OnFireInput?.Invoke();
             }
         }
 

@@ -6,12 +6,12 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "GameConfig")]
 public class GameConfig : SingletonScriptableObject<GameConfig>
 {
-    public DebugVariables    Debug     = new();
-    public InputVariables    Input     = new();
-    public MovementVariables Movement  = new();
-    public InteractionVariables Interaction  = new();
-    public ManaVariables     Mana      = new();
-    public LightVariables    LightVars = new();
+    [BoxGroup("Player"),Space(5)] public MovementVariables Movement  = new();
+    [BoxGroup("Player"),Space(5)] public ActionVariables   Action    = new();
+    [BoxGroup("Player"),Space(5)] public ManaVariables     Mana      = new();
+    [BoxGroup("Player"),Space(5)] public LightVariables    LightVars = new();
+    [BoxGroup("Others"),Space(5)] public InputVariables    Input     = new();
+    [BoxGroup("Others"),Space(5)] public DebugVariables    Debug     = new();
 }
 
 [Serializable]
@@ -24,13 +24,20 @@ public class DebugVariables
 [Serializable]
 public class InputVariables
 {
-    public float JumpInputInterval = 0.05f;
-    public float DashInputInterval = 0.05f;
+    public InputInterval[] InputIntervals;
+    
+    [Serializable]
+    public class InputInterval
+    {
+        public string Header;
+        public float  Value ;
+    }
 }
 
 [Serializable]
 public class MovementVariables
 {
+    [BoxGroup("Movement")] public float MoveSpeedThreshold = 0.05f;
     [BoxGroup("Movement")] public float WalkSpeed;
     [BoxGroup("Movement")] public float AirMoveSpeed;
     [BoxGroup("Movement")] public float JumpPower;
@@ -40,17 +47,27 @@ public class MovementVariables
     [BoxGroup("Movement")] public float GroundCheckDistance = 0.1f;
     [BoxGroup("Movement")] public float GravityScale;
     [BoxGroup("Movement")] public float AnimMaxWalkSpeed;
-    [BoxGroup("Movement")] public float WalkThreshold = 0.1f;
 
-    [BoxGroup("Hanging")] public float HangingStartDuration;
-    [BoxGroup("Hanging")] public float HangingSpeed;
-    [BoxGroup("Hanging")] public float CayoteTime;
+    [BoxGroup("Hang")] public float HangingStartDuration;
+    [BoxGroup("Hang")] public float HangingSpeed;
+    [BoxGroup("Hang")] public float CayoteTime;
 
     [BoxGroup("Dash")] public DashData DashData;
 }
 
 [Serializable]
 public class InteractionVariables
+{
+    [BoxGroup("Mana Place")] public float ManaPlaceDuration;
+    [BoxGroup("Mana Place")] public float ManaPlaceJumpPower;
+    [BoxGroup("Mana Place")] public float ManaPlaceDelay;
+    [BoxGroup("Mana Place")] public Ease  ManaPlaceEase;
+    
+    [BoxGroup("Mana Place")] public float ManaPlaceReturnSpeed;
+}
+
+[Serializable]
+public class ActionVariables
 {
     [BoxGroup("Mana Place")] public float ManaPlaceDuration;
     [BoxGroup("Mana Place")] public float ManaPlaceJumpPower;

@@ -581,6 +581,7 @@ GameObject:
   - component: {fileID: 113983054}
   - component: {fileID: 113983053}
   - component: {fileID: 113983055}
+  - component: {fileID: 113983056}
   - component: {fileID: 113983052}
   m_Layer: 6
   m_Name: Player
@@ -602,9 +603,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DontDestroyLoad: 0
+  m_Input: {fileID: 113983056}
   m_Animation: {fileID: 113983053}
   m_Physics: {fileID: 113983054}
-  m_Interaction: {fileID: 113983055}
+  m_Action: {fileID: 0}
 --- !u!4 &113983051
 Transform:
   m_ObjectHideFlags: 0
@@ -654,7 +656,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 496895be2b6b40118c64b0583efa6818, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Model: {fileID: 326100929}
   m_Animator: {fileID: 405258977}
   m_AnimEventSender: {fileID: 405258978}
 --- !u!114 &113983054
@@ -669,8 +670,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 075df2ffa536474d93e1b640a6a67c66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Rb: {fileID: 113983052}
+  m_Model: {fileID: 326100929}
   m_Col: {fileID: 405258979}
+  m_Rb: {fileID: 113983052}
   m_GroundLayer:
     serializedVersion: 2
     m_Bits: 1152
@@ -688,6 +690,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ManaPrefab: {fileID: 5368911025395834661, guid: e4404447af89f4b08af6490801e43bbe,
     type: 3}
+--- !u!114 &113983056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 113983048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3f7765ab6b24092a56c8e9f1128cc2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &116079266
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9458,6 +9472,14 @@ MonoBehaviour:
     - m_Name: 
       m_Id: a2f05201-c789-4635-8a52-3cfeb0967f1b
       m_Path: <Keyboard>/e
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Player
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 3ffc4336-0587-46f9-9211-d205d07accda
+      m_Path: <Keyboard>/r
       m_Interactions: 
       m_Processors: 
       m_Groups: 

@@ -10,7 +10,7 @@ public class PlayerPhysics : MonoBehaviour
     public  bool              CanCayoteJump => m_CayoteJumpTimer > 0f;
     public  Vector2           Velocity      => m_Rb.velocity;
     private MovementVariables m_Movement    => GameConfig.Instance.Movement;
-    
+
     private float          m_HangTimer;
     private float          m_CayoteJumpTimer;
     private Vector2        m_LastDashDir;
@@ -18,15 +18,18 @@ public class PlayerPhysics : MonoBehaviour
     private Tweener        m_TwDashRotate;
     private RaycastHit2D[] m_MoveCheckCast = new RaycastHit2D[2];
     private RaycastHit2D[] m_HangCheckCast = new RaycastHit2D[4];
-    
+
 #region Refs
+
+    [FoldoutGroup("Refs")] [SerializeField]
+    private Transform m_Model;
+
+    [FoldoutGroup("Refs")] [SerializeField]
+    private CapsuleCollider2D m_Col;
 
     [FoldoutGroup("Refs")] [SerializeField]
     private Rigidbody2D m_Rb;
 
-    [FoldoutGroup("Refs")] [SerializeField]
-    private CapsuleCollider2D m_Col;
-    
     [FoldoutGroup("Refs")] [SerializeField]
     private LayerMask m_GroundLayer;
 
@@ -37,7 +40,7 @@ public class PlayerPhysics : MonoBehaviour
         m_CayoteJumpTimer -= Time.fixedDeltaTime;
     }
 
-    public void Move(eCharacterState i_State, Vector2 i_MoveDir, ref float i_MoveSpeed)
+    public void MoveHorizontal(eCharacterState i_State, Vector2 i_MoveDir, ref float i_MoveSpeed)
     {
         if (i_State == eCharacterState.Dash) return;
 
@@ -49,7 +52,10 @@ public class PlayerPhysics : MonoBehaviour
             vel.x         = Mathf.Clamp(newVelX, -m_Movement.MaxSpeed, m_Movement.MaxSpeed);
             m_Rb.velocity = vel;
 
-            i_MoveSpeed = Mathf.Lerp(0, m_Movement.AnimMaxWalkSpeed, (Mathf.Abs(vel.x) - m_Movement.WalkThreshold) / m_Movement.MaxSpeed);
+            var moving = i_MoveDir.sqrMagnitude > m_Movement.MoveSpeedThreshold;
+            i_MoveSpeed = moving ? Mathf.Lerp(0, m_Movement.AnimMaxWalkSpeed, (Mathf.Abs(vel.x) - m_Movement.MoveSpeedThreshold) / m_Movement.MaxSpeed) : 0;
+
+            rotateBody(i_State, i_MoveDir);
         }
         else
         {
@@ -58,10 +64,9 @@ public class PlayerPhysics : MonoBehaviour
             {
                 vel.y         = Mathf.Max(vel.y, -m_Movement.HangingSpeed);
                 m_Rb.velocity = vel;
+                i_MoveSpeed   = 0;
             }
         }
-
-        rotate(i_State);
     }
 
     public void Jump()
@@ -70,7 +75,7 @@ public class PlayerPhysics : MonoBehaviour
         m_Rb.velocity     = new Vector2(m_Rb.velocity.x, 0f);
         m_Rb.AddForce(Vector2.up * m_Movement.JumpPower, ForceMode2D.Impulse);
     }
-    
+
 #region Hang
 
     private bool checkHang()
@@ -112,7 +117,7 @@ public class PlayerPhysics : MonoBehaviour
     }
 
 #endregion
-    
+
 #region Dash
 
     public void Dash(Vector2 i_DashDir)
@@ -158,20 +163,24 @@ public class PlayerPhysics : MonoBehaviour
     }
 
 #endregion
-    
+
+#region State Machine
+
     public void CheckState(ref eCharacterState i_State, Vector2 i_MoveDir)
     {
+        if (i_State != eCharacterState.Dash) flipModel(i_MoveDir);
+        if (i_State is eCharacterState.Jump or eCharacterState.Throw) return;
+
         if (m_TwDash != null && m_TwDash.IsPlaying())
         {
             i_State = eCharacterState.Dash;
         }
-        else if (i_State != eCharacterState.Jump)
+        else
         {
-            bool onAir = false;
-
             int count = checkGround();
             if (count > 0) // Touching Ground
             {
+                m_HangTimer = 0;
                 updateGroundedState(ref i_State, i_MoveDir);
             }
             else // Check if hang
@@ -182,14 +191,9 @@ public class PlayerPhysics : MonoBehaviour
                 }
                 else
                 {
-                    onAir = true;
+                    m_HangTimer = 0;
+                    i_State     = eCharacterState.OnAir;
                 }
-            }
-
-            if (onAir)
-            {
-                m_HangTimer = 0;
-                i_State     = eCharacterState.OnAir;
             }
         }
     }
@@ -211,7 +215,7 @@ public class PlayerPhysics : MonoBehaviour
             vel.y = m_MoveCheckCast[0].rigidbody.velocity.y;
             if (Mathf.Abs(i_MoveDir.x) <= 0f) vel.x = m_MoveCheckCast[0].rigidbody.velocity.x;
         }
-        else if (vel.sqrMagnitude > 0.1f) //Add friction
+        else if (vel.sqrMagnitude > m_Movement.MoveSpeedThreshold) //Add friction
         {
             vel -= vel.normalized * m_Movement.Friction;
         }
@@ -219,10 +223,9 @@ public class PlayerPhysics : MonoBehaviour
 
         m_Rb.velocity = vel;
 
-        m_HangTimer       = 0;
         m_CayoteJumpTimer = m_Movement.CayoteTime;
 
-        if (Mathf.Abs(i_MoveDir.x) > 0 || (!onMovingPlatform && Mathf.Abs(m_Rb.velocity.x) > m_Movement.WalkThreshold))
+        if (Mathf.Abs(i_MoveDir.x) > 0 || (!onMovingPlatform && Mathf.Abs(m_Rb.velocity.x) > m_Movement.MoveSpeedThreshold))
         {
             i_State = eCharacterState.Walk;
         }
@@ -230,11 +233,11 @@ public class PlayerPhysics : MonoBehaviour
         {
             i_State = eCharacterState.Idle;
         }
-
-        rotate(i_State);
     }
 
-    private void rotate(eCharacterState i_State)
+#endregion
+
+    private void rotateBody(eCharacterState i_State, Vector2 i_MoveDir)
     {
         var targetRotation = Quaternion.identity;
 
@@ -248,15 +251,38 @@ public class PlayerPhysics : MonoBehaviour
             targetRotation          = Quaternion.FromToRotation(Vector3.Lerp(Vector3.up, m_MoveCheckCast[0].normal, 0.5f), m_MoveCheckCast[0].normal);
             m_Rb.transform.rotation = Quaternion.Lerp(m_Rb.transform.rotation, targetRotation, m_Movement.RotationSpeed * Time.fixedDeltaTime);
         }
+
+        if (i_State is not (eCharacterState.Hang or eCharacterState.Throw or eCharacterState.Dash)) flipModel(i_MoveDir);
     }
-    
-    public void HitOnDash(ref eCharacterState i_State, Vector3 i_HitNormal, Vector2 i_MoveDir)
+
+    private void flipModel(Vector2 i_MoveDir)
     {
-        var angle = Vector2.Angle(m_LastDashDir, i_HitNormal);
-        if (angle > 90)
+        var rot = m_Model.localRotation.eulerAngles;
+        rot.y                 = i_MoveDir.x < 0 ? 180 : i_MoveDir.x > 0 ? 0 : rot.y;
+        m_Model.localRotation = Quaternion.Euler(rot);
+    }
+
+    public void Hit(ref eCharacterState i_State, Collision2D i_Col, Vector2 i_MoveDir)
+    {
+        switch (i_State)
         {
-            m_TwDash?.Kill();
-            CheckState(ref i_State, i_MoveDir);
+            case eCharacterState.Dash:
+                var angle = Vector2.Angle(m_LastDashDir, i_Col.GetContact(0).normal);
+                if (angle > 90)
+                {
+                    m_TwDash?.Kill();
+                    CheckState(ref i_State, i_MoveDir);
+                }
+
+                break;
+            case eCharacterState.Jump:
+                i_State = eCharacterState.Idle;
+                CheckState(ref i_State, i_MoveDir);
+                break;
+            case eCharacterState.Throw:
+                i_State = eCharacterState.Idle;
+                CheckState(ref i_State, i_MoveDir);
+                break;
         }
     }
 

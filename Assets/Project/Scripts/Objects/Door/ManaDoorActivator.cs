@@ -15,7 +15,7 @@ public class ManaDoorActivator : DoorActivator
     {
         IsInteractable = false;
         m_ActiveMana   = i_Mana;
-        var interactionVars = GameConfig.Instance.Interaction;
+        var interactionVars = GameConfig.Instance.Action;
         i_Mana.transform.DOJump(m_ManaPlacePoint.position, interactionVars.ManaPlaceJumpPower, 1, interactionVars.ManaPlaceDuration)
               .SetDelay(interactionVars.ManaPlaceDelay)
               .SetEase(interactionVars.ManaPlaceEase)
@@ -33,7 +33,7 @@ public class ManaDoorActivator : DoorActivator
 
         var lightPos = LightSetter.Instance.transform.position;
         var manaPos  = m_ActiveMana.transform.position;
-        var speed    = GameConfig.Instance.Interaction.ManaPlaceReturnSpeed;
+        var speed    = GameConfig.Instance.Action.ManaPlaceReturnSpeed;
         m_ActiveMana.transform.position = Vector2.MoveTowards(manaPos, lightPos, speed * Time.deltaTime);
 
         if ((lightPos - manaPos).sqrMagnitude < 1)

@@ -1,14 +1,11 @@
 using System;
 using System.Collections.Generic;
-using DG.Tweening;
 using UnityEngine;
 
-public class PlayerInteraction : MonoBehaviour
+public class PlayerAction : MonoBehaviour
 {
     private List<Interactable> m_InteractablesInRange = new();
-
-    private InteractionVariables m_InteractionVars => GameConfig.Instance.Interaction;
-
+    
     [SerializeField] private GameObject m_ManaPrefab;
 
 #region Unity Events
@@ -47,5 +44,10 @@ public class PlayerInteraction : MonoBehaviour
                     break;
             }
         }
+    }
+
+    public void Fire()
+    {
+        var mana = Instantiate(m_ManaPrefab, LightSetter.Instance.transform.position, m_ManaPrefab.transform.rotation);
     }
 }
