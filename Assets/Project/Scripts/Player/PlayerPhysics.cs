@@ -9,6 +9,7 @@ public class PlayerPhysics : MonoBehaviour
 
     public  bool              CanCayoteJump => m_CayoteJumpTimer > 0f;
     public  Vector2           Velocity      => m_Rb.velocity;
+    public  Vector2           LookDir       => m_Col.transform.right;
     private MovementVariables m_Movement    => GameConfig.Instance.Movement;
 
     private float          m_HangTimer;
@@ -78,7 +79,7 @@ public class PlayerPhysics : MonoBehaviour
 
 #region Hang
 
-    private bool checkHang(eCharacterState i_State)
+    private bool checkHang()
     {
         Array.Clear(m_HangCheckCast, 0, m_HangCheckCast.Length);
 
@@ -99,22 +100,23 @@ public class PlayerPhysics : MonoBehaviour
         return hitDown;
     }
 
-    private void updateHangState(ref eCharacterState i_State)
+    private eCharacterState updateHangState(eCharacterState i_State)
     {
         m_HangTimer += Time.fixedDeltaTime;
 
-        if (i_State != eCharacterState.Hang)
+        if (i_State == eCharacterState.Hang)
+        {
+            m_CayoteJumpTimer = m_Movement.CayoteTime;
+            return i_State;
+        }
+        else
         {
             var dur = Mathf.Lerp(0.05f, m_Movement.HangingStartDuration,
                                  Mathf.InverseLerp(m_Movement.HangingSpeed, m_Movement.HangingSpeed * 2, Mathf.Abs(m_Rb.velocity.y)));
             OnHangingStarted?.Invoke(dur);
 
-            i_State           = eCharacterState.Hang;
             m_CayoteJumpTimer = m_Movement.CayoteTime + dur;
-        }
-        else
-        {
-            m_CayoteJumpTimer = m_Movement.CayoteTime;
+            return eCharacterState.Hang;
         }
     }
 
@@ -168,36 +170,25 @@ public class PlayerPhysics : MonoBehaviour
 
 #region State Machine
 
-    public void CheckState(ref eCharacterState i_State, Vector2 i_MoveDir)
+    public eCharacterState CheckState(eCharacterState i_State, Vector2 i_MoveDir)
     {
         if (i_State != eCharacterState.Dash) flipModel(i_MoveDir);
-        if (i_State is eCharacterState.Jump or eCharacterState.Throw) return;
+        if (i_State is (eCharacterState.Jump or eCharacterState.Throw)) return i_State;
 
         if (m_TwDash != null && m_TwDash.IsPlaying())
         {
-            i_State = eCharacterState.Dash;
+             return eCharacterState.Dash;
         }
-        else
+        int count = checkGround();
+        if (count > 0) // Touching Ground
         {
-            int count = checkGround();
-            if (count > 0) // Touching Ground
-            {
-                m_HangTimer = 0;
-                updateGroundedState(ref i_State, i_MoveDir);
-            }
-            else // Check if hang
-            {
-                if (checkHang(i_State))
-                {
-                    updateHangState(ref i_State);
-                }
-                else
-                {
-                    m_HangTimer = 0;
-                    i_State     = eCharacterState.OnAir;
-                }
-            }
+            m_HangTimer = 0;
+            return updateGroundedState(i_State, i_MoveDir);
         }
+        if (checkHang()) return updateHangState(i_State); // Hanging
+        
+        m_HangTimer = 0;
+        return eCharacterState.OnAir;
     }
 
     private int checkGround()
@@ -207,7 +198,7 @@ public class PlayerPhysics : MonoBehaviour
         return onGround;
     }
 
-    private void updateGroundedState(ref eCharacterState i_State, Vector2 i_MoveDir)
+    private eCharacterState updateGroundedState(eCharacterState i_State, Vector2 i_MoveDir)
     {
         var onMovingPlatform = m_MoveCheckCast[0].transform.CompareTag(ObjectTags.S_MovingPlatform);
 
@@ -229,11 +220,11 @@ public class PlayerPhysics : MonoBehaviour
 
         if (Mathf.Abs(i_MoveDir.x) > 0 || (!onMovingPlatform && Mathf.Abs(m_Rb.velocity.x) > m_Movement.MoveSpeedThreshold))
         {
-            i_State = eCharacterState.Walk;
+            return eCharacterState.Walk;
         }
         else
         {
-            i_State = eCharacterState.Idle;
+            return eCharacterState.Idle;
         }
     }
 
@@ -270,7 +261,7 @@ public class PlayerPhysics : MonoBehaviour
         m_Model.localRotation = Quaternion.Euler(rot);
     }
 
-    public void Hit(ref eCharacterState i_State, Collision2D i_Col, Vector2 i_MoveDir)
+    public eCharacterState Hit(eCharacterState i_State, Collision2D i_Col, Vector2 i_MoveDir)
     {
         switch (i_State)
         {
@@ -279,19 +270,13 @@ public class PlayerPhysics : MonoBehaviour
                 if (angle > 90)
                 {
                     m_TwDash?.Kill();
-                    CheckState(ref i_State, i_MoveDir);
+                    return eCharacterState.Idle;
                 }
-
                 break;
             case eCharacterState.Jump:
-                i_State = eCharacterState.Idle;
-                CheckState(ref i_State, i_MoveDir);
-                break;
-            case eCharacterState.Throw:
-                i_State = eCharacterState.Idle;
-                CheckState(ref i_State, i_MoveDir);
-                break;
+                return eCharacterState.Idle;
         }
+        return i_State;
     }
 
     public void SetGravityScale()

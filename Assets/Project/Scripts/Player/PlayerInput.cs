@@ -8,7 +8,7 @@ public class PlayerInput : MonoBehaviour
     public event Action OnJumpInputEvent;
     public event Action OnDashInputEvent;
     public event Action OnInteractionInputEvent;
-    public event Action OnFireInputEvent;
+    public event Action OnThrowInputEvent;
 
     private void OnEnable()
     {
@@ -43,6 +43,6 @@ public class PlayerInput : MonoBehaviour
     
     private void OnFireInput()
     {
-        OnFireInputEvent?.Invoke();
+        OnThrowInputEvent?.Invoke();
     }
 }

@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Light Circle
+  m_Name: Render Visible
   m_Shader: {fileID: 4800000, guid: 63d21949f1dbe4ad0a718d4ba8e84847, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -50,6 +50,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _HaloTex:
         m_Texture: {fileID: 2800000, guid: 94dbf0f11f69c7249959a3cec030a185, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _LightTexture:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:

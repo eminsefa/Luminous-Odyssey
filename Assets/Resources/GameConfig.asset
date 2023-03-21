@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: GameConfig
   m_EditorClassIdentifier: 
   Movement:
-    MoveSpeedThreshold: 0.05
+    MoveSpeedThreshold: 0.1
     WalkSpeed: 65
     AirMoveSpeed: 35
     JumpPower: 14
@@ -61,6 +61,7 @@ MonoBehaviour:
     ManaPlaceDelay: 0.25
     ManaPlaceEase: 9
     ManaPlaceReturnSpeed: 35
+    ThrowSpeed: 25
   Mana:
     ManaFillAmount: 0.1
     ManaDrainAmount: 0.1

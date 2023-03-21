@@ -6,7 +6,10 @@ using UnityEngine;
 public class PlayerAnimation : MonoBehaviour
 {
     public event Action OnJumpCompleted;
-    public event Action OnFireAnimEvent;
+    
+    public event Action OnThrowCreateEvent;
+    public event Action OnThrowAnimEvent;
+    public event Action OnThrowAnimCompletedEvent;
 
 #region Refs
 
@@ -22,16 +25,18 @@ public class PlayerAnimation : MonoBehaviour
 
     private void OnEnable()
     {
-        m_AnimEventSender.OnJumpAnimCompleted += OnJumpAnimCompleted;
-        m_AnimEventSender.OnFireAnimEvent     += OnFireAnimInvoked;
-        m_AnimEventSender.OnFireAnimCompleted += OnFireAnimCompleted;
+        m_AnimEventSender.OnJumpAnimCompleted  += OnJumpAnimCompleted;
+        m_AnimEventSender.OnThrowCreateInvoked += OnThrowCreateInvoked;
+        m_AnimEventSender.OnThrowAnimInvoked     += OnThrowAnimInvoked;
+        m_AnimEventSender.OnThrowAnimCompleted += OnThrowAnimCompleted;
     }
 
     private void OnDisable()
     {
-        m_AnimEventSender.OnJumpAnimCompleted -= OnJumpAnimCompleted;
-        m_AnimEventSender.OnFireAnimEvent     -= OnFireAnimInvoked;
-        m_AnimEventSender.OnFireAnimCompleted -= OnFireAnimCompleted;
+        m_AnimEventSender.OnJumpAnimCompleted  -= OnJumpAnimCompleted;
+        m_AnimEventSender.OnThrowCreateInvoked -= OnThrowCreateInvoked;
+        m_AnimEventSender.OnThrowAnimInvoked     -= OnThrowAnimInvoked;
+        m_AnimEventSender.OnThrowAnimCompleted -= OnThrowAnimCompleted;
     }
 
 #endregion
@@ -42,13 +47,21 @@ public class PlayerAnimation : MonoBehaviour
     {
         OnJumpCompleted?.Invoke();
     }
-
-    private void OnFireAnimInvoked()
+    
+    private void OnThrowCreateInvoked()
     {
-        OnFireAnimEvent?.Invoke();
+        OnThrowCreateEvent?.Invoke();
     }
-
-    private void OnFireAnimCompleted() { }
+    
+    private void OnThrowAnimInvoked()
+    {
+        OnThrowAnimEvent?.Invoke();
+    }
+    
+    private void OnThrowAnimCompleted()
+    {
+        OnThrowAnimCompletedEvent?.Invoke();
+    }
 
 #endregion
 
@@ -74,12 +87,13 @@ public class PlayerAnimation : MonoBehaviour
     public void Jump(eCharacterState i_State)
     {
         SetStateAnimation(i_State);
-        m_Animator.SetTrigger(AnimationHashes.S_Jump);
+        m_Animator.CrossFade(AnimationHashes.S_Jump, 0.25f,0);
+        m_Animator.CrossFade(AnimationHashes.S_Jump, 0.1f,1);
     }
 
-    public void Fire(eCharacterState i_State)
+    public void Throw(eCharacterState i_State)
     {
         SetStateAnimation(i_State);
-        m_Animator.SetTrigger(AnimationHashes.S_Throw);
+        m_Animator.CrossFade(AnimationHashes.S_Throw, 0.25f);
     }
 }

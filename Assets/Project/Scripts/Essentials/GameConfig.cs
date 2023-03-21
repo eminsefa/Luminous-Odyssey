@@ -56,25 +56,15 @@ public class MovementVariables
 }
 
 [Serializable]
-public class InteractionVariables
-{
-    [BoxGroup("Mana Place")] public float ManaPlaceDuration;
-    [BoxGroup("Mana Place")] public float ManaPlaceJumpPower;
-    [BoxGroup("Mana Place")] public float ManaPlaceDelay;
-    [BoxGroup("Mana Place")] public Ease  ManaPlaceEase;
-    
-    [BoxGroup("Mana Place")] public float ManaPlaceReturnSpeed;
-}
-
-[Serializable]
 public class ActionVariables
 {
-    [BoxGroup("Mana Place")] public float ManaPlaceDuration;
-    [BoxGroup("Mana Place")] public float ManaPlaceJumpPower;
-    [BoxGroup("Mana Place")] public float ManaPlaceDelay;
-    [BoxGroup("Mana Place")] public Ease  ManaPlaceEase;
+    [BoxGroup("Place Mana")] public float ManaPlaceDuration;
+    [BoxGroup("Place Mana")] public float ManaPlaceJumpPower;
+    [BoxGroup("Place Mana")] public float ManaPlaceDelay;
+    [BoxGroup("Place Mana")] public Ease  ManaPlaceEase;
+    [BoxGroup("Place Mana")] public float ManaPlaceReturnSpeed;
     
-    [BoxGroup("Mana Place")] public float ManaPlaceReturnSpeed;
+    [BoxGroup("Throw Mana")] public float ThrowSpeed;
 }
 
 [Serializable]

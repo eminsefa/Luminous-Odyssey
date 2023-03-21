@@ -4,21 +4,27 @@ using UnityEngine;
 public class AnimationEventSender : MonoBehaviour
 {
     public event Action OnJumpAnimCompleted;
-    public event Action OnFireAnimEvent;
-    public event Action OnFireAnimCompleted;
+    public event Action OnThrowAnimInvoked;
+    public event Action OnThrowAnimCompleted;
+    public event Action OnThrowCreateInvoked;
     
     public void JumpCompleted()
     {
         OnJumpAnimCompleted?.Invoke();
     }
 
-    public void Fired()
+    public void ThrowCreate()
     {
-        OnFireAnimEvent?.Invoke();
+        OnThrowCreateInvoked?.Invoke();
+    }
+    
+    public void Throw()
+    {
+        OnThrowAnimInvoked?.Invoke();
     }
 
-    public void FireCompleted()
+    public void ThrowCompleted()
     {
-        OnFireAnimCompleted?.Invoke();
+        OnThrowAnimCompleted?.Invoke();
     }
 }

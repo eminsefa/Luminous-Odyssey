@@ -36,10 +36,12 @@ public class PlayerController : Singleton<PlayerController>
         m_Input.OnJumpInputEvent        += OnJumpInput;
         m_Input.OnDashInputEvent        += OnDashInput;
         m_Input.OnInteractionInputEvent += OnInteractionInput;
-        m_Input.OnFireInputEvent        += OnFireInput;
+        m_Input.OnThrowInputEvent       += OnThrowInput;
 
-        m_Animation.OnJumpCompleted += OnJumpCompleted;
-        m_Animation.OnFireAnimEvent     += OnFireAnimEvent;
+        m_Animation.OnJumpCompleted           += OnJumpCompleted;
+        m_Animation.OnThrowCreateEvent        += OnThrowCreateEvent;
+        m_Animation.OnThrowAnimEvent          += OnThrowAnimEvent;
+        m_Animation.OnThrowAnimCompletedEvent += OnThrowAnimCompletedEvent;
 
         m_Physics.OnHangingStarted += OnHangingStarted;
         m_Physics.SetGravityScale();
@@ -50,23 +52,24 @@ public class PlayerController : Singleton<PlayerController>
         m_Input.OnJumpInputEvent        -= OnJumpInput;
         m_Input.OnDashInputEvent        -= OnDashInput;
         m_Input.OnInteractionInputEvent -= OnInteractionInput;
-        m_Input.OnFireInputEvent        -= OnFireInput;
+        m_Input.OnThrowInputEvent       -= OnThrowInput;
 
-        m_Animation.OnJumpCompleted -= OnJumpCompleted;
-        m_Animation.OnFireAnimEvent     -= OnFireAnimEvent;
+        m_Animation.OnJumpCompleted           -= OnJumpCompleted;
+        m_Animation.OnThrowCreateEvent        -= OnThrowCreateEvent;
+        m_Animation.OnThrowAnimCompletedEvent -= OnThrowAnimCompletedEvent;
 
         m_Physics.OnHangingStarted -= OnHangingStarted;
     }
 
     private void OnCollisionEnter2D(Collision2D i_Col)
     {
-        m_Physics.Hit(ref m_CharacterState, i_Col, m_MoveDir);
+        m_CharacterState = m_Physics.Hit(m_CharacterState, i_Col, m_MoveDir);
     }
 
     private void FixedUpdate()
     {
-        m_Physics.CheckState(ref m_CharacterState, m_MoveDir);
-        
+        m_CharacterState = m_Physics.CheckState(m_CharacterState, m_MoveDir);
+
         m_Animation.SetStateAnimation(m_CharacterState);
 
         var walkSpeed = 0f;
@@ -104,12 +107,12 @@ public class PlayerController : Singleton<PlayerController>
         m_Action.Interact();
     }
 
-    private void OnFireInput()
+    private void OnThrowInput()
     {
         if (!ManaManager.Instance.TryToUseMana()) return;
-        
+
         m_CharacterState = eCharacterState.Throw;
-        m_Animation.Fire(m_CharacterState);
+        m_Animation.Throw(m_CharacterState);
     }
 
     private void OnJumpCompleted()
@@ -117,13 +120,29 @@ public class PlayerController : Singleton<PlayerController>
         m_CharacterState = eCharacterState.Idle;
     }
 
-    private void OnFireAnimEvent()
+    private void OnThrowCreateEvent()
     {
-        m_Action.Fire();
+        if (m_CharacterState is eCharacterState.Dash) return;
+        m_CharacterState = eCharacterState.Throw;
+        m_Action.ThrowCreateMana();
     }
 
+    private void OnThrowAnimEvent()
+    {
+        if (m_CharacterState is eCharacterState.Dash) return;
+        m_CharacterState = eCharacterState.Throw;
+        var throwDir = m_MoveDir.sqrMagnitude > 0.1f ? m_MoveDir.normalized : m_Physics.LookDir;
+        m_Action.ThrowMana(throwDir);
+    }
+    
+    private void OnThrowAnimCompletedEvent()
+    {
+        m_CharacterState = eCharacterState.Idle;
+    }
+    
     private void OnHangingStarted(float i_Dur)
     {
+        if (m_CharacterState is eCharacterState.Dash) return;
         m_Animation.Hang(i_Dur);
     }
 

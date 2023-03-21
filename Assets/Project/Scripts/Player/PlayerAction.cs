@@ -5,7 +5,12 @@ using UnityEngine;
 public class PlayerAction : MonoBehaviour
 {
     private List<Interactable> m_InteractablesInRange = new();
-    
+
+    private ActionVariables m_ActionVars => GameConfig.Instance.Action;
+
+    private                  ManaObject m_CurrentThrowMana;
+
+    [SerializeField] private Transform  m_HandThrowPoint;
     [SerializeField] private GameObject m_ManaPrefab;
 
 #region Unity Events
@@ -46,8 +51,18 @@ public class PlayerAction : MonoBehaviour
         }
     }
 
-    public void Fire()
+    public void ThrowCreateMana()
     {
-        var mana = Instantiate(m_ManaPrefab, LightSetter.Instance.transform.position, m_ManaPrefab.transform.rotation);
+        Instantiate(m_ManaPrefab, LightSetter.Instance.transform.position, m_ManaPrefab.transform.rotation).TryGetComponent(out ManaObject mana);
+        m_CurrentThrowMana = mana;
+        m_CurrentThrowMana.transform.SetParent(m_HandThrowPoint);
+        m_CurrentThrowMana.transform.localPosition=Vector3.zero;
+    }
+    
+    public void ThrowMana(Vector2 i_ThrowDir)
+    {
+        m_CurrentThrowMana.transform.SetParent(null);
+        m_CurrentThrowMana.Thrown(i_ThrowDir * m_ActionVars.ThrowSpeed);
+        m_CurrentThrowMana = null;
     }
 }

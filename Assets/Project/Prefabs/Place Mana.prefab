@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6435675084726744563}
   - component: {fileID: 4761308991573876845}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -93,8 +93,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6367424906277839164}
-  m_Layer: 0
-  m_Name: Mana
+  m_Layer: 13
+  m_Name: Place Mana
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

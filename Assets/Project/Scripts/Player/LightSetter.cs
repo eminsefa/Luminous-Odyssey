@@ -4,14 +4,10 @@ using UnityEngine;
 
 public class LightSetter : Singleton<LightSetter>
 {
-    private static readonly int s_LightPos          = Shader.PropertyToID("_LightPos");
-    private static readonly int s_LightRange        = Shader.PropertyToID("_LightRange");
-    private static readonly int s_VisibilityFalloff = Shader.PropertyToID("_VisibilityFalloff");
-
     private LightVariables m_LightVars => GameConfig.Instance.LightVars;
 
-    private float m_CamY;
-    private float m_Brightness = 1;
+    private float     m_Brightness = 1;
+    private Texture2D m_LightTexture;
 
     public float BrightnessFactor => m_LightVars.BrightnessCurve.Evaluate(m_Brightness);
 
@@ -19,16 +15,21 @@ public class LightSetter : Singleton<LightSetter>
     private Transform m_LightCircleMask;
     
     [FoldoutGroup("Refs")] [SerializeField]
-    private Material m_LightCircleMat;
+    private Material m_RenderVisibleMat;
     
     [FoldoutGroup("Refs")] [SerializeField]
     private P3dPaintSphere m_PaintSphere;
+
+    private static readonly int s_LightTexture = Shader.PropertyToID("_LightTexture");
 
 
     protected override void OnAwakeEvent()
     {
         base.OnAwakeEvent();
-        m_CamY = CameraManager.Instance.MainCam.transform.position.y;
+        m_LightTexture = new Texture2D(6 , 1, TextureFormat.RGBAFloat, false)
+                         {
+                             filterMode = FilterMode.Point
+                         };
         setLight();
     }
 
@@ -48,9 +49,10 @@ public class LightSetter : Singleton<LightSetter>
 
     private void setLight()
     {
-        m_LightCircleMat.SetVector(s_LightPos, Vector3.up               *(m_CamY-Screen.height /4f));
-        m_LightCircleMat.SetFloat(s_LightRange,        BrightnessFactor * m_LightVars.LightRange * m_LightVars.MaskRangeMult);
-        m_LightCircleMat.SetFloat(s_VisibilityFalloff, m_LightVars.VisibilityFalloff); //Later call this once
+        setLightPositions();
+
+        m_RenderVisibleMat.SetFloat(ShaderIDs.S_LightRange,        BrightnessFactor * m_LightVars.LightRange * m_LightVars.MaskRangeMult);
+        m_RenderVisibleMat.SetFloat(ShaderIDs.S_VisibilityFalloff, m_LightVars.VisibilityFalloff); //Later call this once
 
         m_LightCircleMask.localScale = Vector3.one * Mathf.Lerp(0, 14f, BrightnessFactor);
     }
@@ -63,7 +65,36 @@ public class LightSetter : Singleton<LightSetter>
     private void OnApplicationQuit()
     {
         m_Brightness                               = 1;
-        m_LightCircleMat.SetVector(s_LightPos, Vector3.up       *-264);
-        m_LightCircleMat.SetFloat(s_LightRange, BrightnessFactor * m_LightVars.LightRange * m_LightVars.MaskRangeMult);
+        m_RenderVisibleMat.SetVector(ShaderIDs.S_LightPos, Vector3.up       *-264);
+        m_RenderVisibleMat.SetFloat(ShaderIDs.S_LightRange, BrightnessFactor * m_LightVars.LightRange * m_LightVars.MaskRangeMult);
     }
+    
+    private void setLightPositions()
+    {
+        var objects = ManaObject.ActiveManaObjectList;
+        var count   = 1 + objects.Count;
+        m_RenderVisibleMat.SetFloat(ShaderIDs.S_LightCount, count);
+
+        m_LightTexture.Reinitialize(count, 1, TextureFormat.RGBAFloat, false);
+        var mainCam = CameraManager.Instance.MainCam;
+        for (int i = 0; i < count; i++)
+        {
+            Vector2 lightPos = Vector3.forward * 100;
+            if (i == 0)
+            {
+                var screenPos =mainCam.WorldToScreenPoint(new Vector3(transform.position.x,transform.position.y, mainCam.transform.position.z));
+                lightPos = new Vector2(screenPos.x - Screen.width / 2f, screenPos.y - Screen.height / 2f);
+            }
+            else if (i < count)
+            {
+                var manaPos = objects[i - 1].transform.position;
+                var screenPos    =mainCam.WorldToScreenPoint(new Vector3(manaPos.x, manaPos.y, mainCam.transform.position.z));
+                lightPos = new Vector2(screenPos.x - Screen.width / 2f, screenPos.y - Screen.height / 2f);
+            }
+            m_LightTexture.SetPixel(i, 0, new Color(lightPos.x, lightPos.y, 0, 0));
+        }
+        m_LightTexture.Apply();
+        m_RenderVisibleMat.SetTexture(s_LightTexture, m_LightTexture);
+    }
+
 }
