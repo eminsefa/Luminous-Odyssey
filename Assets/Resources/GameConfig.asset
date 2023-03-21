@@ -119,5 +119,5 @@ MonoBehaviour:
     - Header: Fire
       Value: 0.1
   Debug:
-    InfiniteMana: 0
+    InfiniteMana: 1
     GodMode: 0

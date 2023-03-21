@@ -56,7 +56,7 @@ public class PlayerAnimation : MonoBehaviour
     {
         m_Animator.SetBool(AnimationHashes.S_Dash,  i_State == eCharacterState.Dash);
         m_Animator.SetBool(AnimationHashes.S_Hang,  i_State == eCharacterState.Hang);
-        m_Animator.SetBool(AnimationHashes.S_OnAir, i_State is eCharacterState.OnAir);
+        m_Animator.SetBool(AnimationHashes.S_OnAir, i_State is eCharacterState.OnAir or eCharacterState.Jump);
         m_Animator.SetBool(AnimationHashes.S_Walk,  i_State == eCharacterState.Walk);
         m_Animator.SetBool(AnimationHashes.s_Idle,  i_State == eCharacterState.Idle);
     }

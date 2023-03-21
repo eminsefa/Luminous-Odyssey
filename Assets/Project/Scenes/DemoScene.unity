@@ -606,7 +606,7 @@ MonoBehaviour:
   m_Input: {fileID: 113983056}
   m_Animation: {fileID: 113983053}
   m_Physics: {fileID: 113983054}
-  m_Action: {fileID: 0}
+  m_Action: {fileID: 113983055}
 --- !u!4 &113983051
 Transform:
   m_ObjectHideFlags: 0

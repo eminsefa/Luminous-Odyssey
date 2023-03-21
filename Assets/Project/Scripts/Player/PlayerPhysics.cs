@@ -35,9 +35,9 @@ public class PlayerPhysics : MonoBehaviour
 
 #endregion
 
-    private void FixedUpdate()
+    private void Update()
     {
-        m_CayoteJumpTimer -= Time.fixedDeltaTime;
+        m_CayoteJumpTimer -= Time.deltaTime;
     }
 
     public void MoveHorizontal(eCharacterState i_State, Vector2 i_MoveDir, ref float i_MoveSpeed)
@@ -78,23 +78,25 @@ public class PlayerPhysics : MonoBehaviour
 
 #region Hang
 
-    private bool checkHang()
+    private bool checkHang(eCharacterState i_State)
     {
         Array.Clear(m_HangCheckCast, 0, m_HangCheckCast.Length);
 
         var angle           = Quaternion.AngleAxis(m_Col.transform.eulerAngles.z, Vector3.forward).eulerAngles.z;
         var raycastDistance = Mathf.Abs(m_Col.size.x / Mathf.Cos(Mathf.Deg2Rad * angle));
+        var dir             = m_Col.transform.right;
 
         var hitUp = Physics2D.RaycastNonAlloc(m_Col.bounds.center,
-                                              m_Col.transform.right, m_HangCheckCast,
+                                              dir, m_HangCheckCast,
                                               raycastDistance,
                                               m_GroundLayer) > 0;
 
+        if (!hitUp) return false;
         var hitDown = Physics2D.RaycastNonAlloc((Vector2) m_Col.bounds.center - (Vector2) m_Col.transform.up * (m_Col.size.y * 0.25f),
-                                                m_Col.transform.right, m_HangCheckCast,
+                                                dir, m_HangCheckCast,
                                                 raycastDistance,
                                                 m_GroundLayer) > 0;
-        return hitUp && hitDown;
+        return hitDown;
     }
 
     private void updateHangState(ref eCharacterState i_State)
@@ -185,7 +187,7 @@ public class PlayerPhysics : MonoBehaviour
             }
             else // Check if hang
             {
-                if (checkHang())
+                if (checkHang(i_State))
                 {
                     updateHangState(ref i_State);
                 }
@@ -243,13 +245,19 @@ public class PlayerPhysics : MonoBehaviour
 
         if (i_State is not (eCharacterState.Idle or eCharacterState.Walk))
         {
-            var newRotation = Quaternion.Lerp(m_Rb.transform.rotation, targetRotation, m_Movement.RotationSpeed * Time.fixedDeltaTime);
-            m_Rb.transform.rotation = newRotation;
+            if (Quaternion.Angle(targetRotation, m_Rb.transform.rotation) > 1)
+            {
+                var newRotation = Quaternion.Lerp(m_Rb.transform.rotation, targetRotation, m_Movement.RotationSpeed * Time.fixedDeltaTime);
+                m_Rb.transform.rotation = newRotation;
+            }
         }
         else
         {
-            targetRotation          = Quaternion.FromToRotation(Vector3.Lerp(Vector3.up, m_MoveCheckCast[0].normal, 0.5f), m_MoveCheckCast[0].normal);
-            m_Rb.transform.rotation = Quaternion.Lerp(m_Rb.transform.rotation, targetRotation, m_Movement.RotationSpeed * Time.fixedDeltaTime);
+            if (Vector2.Angle(m_Rb.transform.up, m_MoveCheckCast[0].normal) > 1)
+            {
+                targetRotation          = Quaternion.FromToRotation(Vector3.Lerp(Vector3.up, m_MoveCheckCast[0].normal, 0.5f), m_MoveCheckCast[0].normal);
+                m_Rb.transform.rotation = Quaternion.Lerp(m_Rb.transform.rotation, targetRotation, m_Movement.RotationSpeed * Time.fixedDeltaTime);
+            }
         }
 
         if (i_State is not (eCharacterState.Hang or eCharacterState.Throw or eCharacterState.Dash)) flipModel(i_MoveDir);
