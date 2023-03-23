@@ -21,12 +21,12 @@ public class ManaManager : Singleton<ManaManager>
     
     private void OnEnable()
     {
-        ManaDoorActivator.OnManaReturned += OnManaReturned;
+        ManaObject.OnManaReturned += OnManaReturned;
     }
 
     private void OnDisable()
     {
-        ManaDoorActivator.OnManaReturned -= OnManaReturned;
+        ManaObject.OnManaReturned -= OnManaReturned;
     }
     
     private void Update()
@@ -36,7 +36,7 @@ public class ManaManager : Singleton<ManaManager>
 
 #endregion
 
-    private void OnManaReturned()
+    private void OnManaReturned(ManaObject i_ManaObject)
     {
         m_ManaStackCount++;
         updateStacks();

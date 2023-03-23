@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class MovingPlatform : MonoBehaviour
 {
-    private static readonly int s_LightPos   = Shader.PropertyToID("_LightPos");
-    private static readonly int s_LightRange = Shader.PropertyToID("_LightRange");
-
     private float   m_RealDur;
     private Vector3 m_ClosestLightPos = Vector3.one * 999;
     
@@ -29,7 +26,7 @@ public class MovingPlatform : MonoBehaviour
             m_Renderers[i].material = m_Mat;
         }
 
-        m_Mat.SetFloat(s_LightRange, LightSetter.Instance.BrightnessFactor * GameConfig.Instance.LightVars.LightRange);
+        m_Mat.SetFloat(ShaderIDs.S_LightRange, PlayerLight.BrightnessFactor * GameConfig.Instance.LightVars.LightRange);
     }
 
     private void OnEnable()
@@ -71,18 +68,20 @@ public class MovingPlatform : MonoBehaviour
 
     private void Update()
     {
-        var relLightPos = transform.InverseTransformPoint(LightSetter.Instance.transform.position);
-        if (relLightPos.sqrMagnitude < m_ClosestLightPos.sqrMagnitude)
+        var lightObjects = LightObject.ActiveLightObjects;
+        var oldRange     = m_Mat.GetFloat(ShaderIDs.S_LightRange);
+        for (var i = 0; i < lightObjects.Count; i++)
         {
-            var oldRange = m_Mat.GetFloat(s_LightRange);
-            var newRange = LightSetter.Instance.BrightnessFactor * GameConfig.Instance.LightVars.LightRange;
+            var lightObject      = lightObjects[i];
+            var relLightPos      = transform.InverseTransformPoint(lightObject.position);
+            var newRange         = PlayerLight.BrightnessFactor * GameConfig.Instance.LightVars.LightRange;
+            if (i != 0) newRange /= 2;
             if (relLightPos.magnitude - newRange < m_ClosestLightPos.magnitude - oldRange)
             {
                 m_ClosestLightPos = relLightPos;
-                m_Mat.SetFloat(s_LightRange, newRange);
+                m_Mat.SetFloat(ShaderIDs.S_LightRange, newRange);
             }
         }
-
-        m_Mat.SetVector(s_LightPos, transform.TransformPoint(m_ClosestLightPos));
+        m_Mat.SetVector(ShaderIDs.S_LightPos, transform.TransformPoint(m_ClosestLightPos));
     }
 }

@@ -230,7 +230,7 @@ GameObject:
   - component: {fileID: 6368080140665335331}
   - component: {fileID: 5948878474796804649}
   m_Layer: 13
-  m_Name: Throw Mana
+  m_Name: ManaObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

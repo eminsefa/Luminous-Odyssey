@@ -82,13 +82,16 @@ public class ManaVariables
 [Serializable]
 public class LightVariables
 {
-    public               float          DarkenSpeed;
-    public               float          BrightenSpeed;
-    public               float          LightRange     = 7;
-    public               float          PaintRangeMult = 1;
-    public               float          MaskRangeMult  = 60;
-    public               AnimationCurve BrightnessCurve;
-    [Range(0, 2)] public float          VisibilityFalloff = 1;
+    public                          float          DarkenSpeed;
+    public                          float          BrightenSpeed;
+    public                          float          LightRange     = 7;
+    public                          float          PaintRangeMult = 1;
+    public                          float          MaskRangeMult  = 60;
+    public                          AnimationCurve BrightnessCurve;
+    [Range(0, 2)]            public float          VisibilityFalloff       = 1;
+
+    public float ThrowManaLightRangeMult = 0.5f;
+    public float ThrowManaLightRange => LightRange * MaskRangeMult*ThrowManaLightRangeMult;
 }
 
 [Serializable]

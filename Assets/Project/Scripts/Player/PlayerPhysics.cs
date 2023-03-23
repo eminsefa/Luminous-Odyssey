@@ -53,8 +53,12 @@ public class PlayerPhysics : MonoBehaviour
             vel.x         = Mathf.Clamp(newVelX, -m_Movement.MaxSpeed, m_Movement.MaxSpeed);
             m_Rb.velocity = vel;
 
-            var moving = i_MoveDir.sqrMagnitude > m_Movement.MoveSpeedThreshold;
-            i_MoveSpeed = moving ? Mathf.Lerp(0, m_Movement.AnimMaxWalkSpeed, (Mathf.Abs(vel.x) - m_Movement.MoveSpeedThreshold) / m_Movement.MaxSpeed) : 0;
+            var useMoveDir = i_State is eCharacterState.Jump or eCharacterState.OnAir;
+            var velX       = useMoveDir ? Mathf.Abs(i_MoveDir.x) : Mathf.Abs(vel.x);
+            var moving     = velX > m_Movement.MoveSpeedThreshold;
+            i_MoveSpeed = moving ? Mathf.Lerp(0, m_Movement.AnimMaxWalkSpeed, 
+                                              (velX - m_Movement.MoveSpeedThreshold) /
+                                              (useMoveDir ? 1 : m_Movement.MaxSpeed)) : 0;
 
             rotateBody(i_State, i_MoveDir);
         }
@@ -126,14 +130,14 @@ public class PlayerPhysics : MonoBehaviour
 
     public void Dash(Vector2 i_DashDir)
     {
-        m_LastDashDir = i_DashDir;
+        m_LastDashDir = i_DashDir.normalized;
         var dashData = m_Movement.DashData;
-        m_TwDash = m_Rb.DOMove(i_DashDir * dashData.DashAmount, dashData.DashSpeed)
+        m_TwDash = m_Rb.DOMove(m_LastDashDir * dashData.DashAmount, dashData.DashSpeed)
                        .SetSpeedBased()
                        .SetUpdate(UpdateType.Fixed)
                        .SetRelative(true)
                        .SetEase(dashData.DashCurve)
-                       .OnStart(() => dashStarted(i_DashDir, dashData))
+                       .OnStart(() => dashStarted(m_LastDashDir, dashData))
                        .OnKill(dashCompleted);
     }
 
@@ -177,16 +181,18 @@ public class PlayerPhysics : MonoBehaviour
 
         if (m_TwDash != null && m_TwDash.IsPlaying())
         {
-             return eCharacterState.Dash;
+            return eCharacterState.Dash;
         }
+
         int count = checkGround();
         if (count > 0) // Touching Ground
         {
             m_HangTimer = 0;
             return updateGroundedState(i_State, i_MoveDir);
         }
+
         if (checkHang()) return updateHangState(i_State); // Hanging
-        
+
         m_HangTimer = 0;
         return eCharacterState.OnAir;
     }
@@ -270,12 +276,14 @@ public class PlayerPhysics : MonoBehaviour
                 if (angle > 90)
                 {
                     m_TwDash?.Kill();
-                    return eCharacterState.Idle;
+                    return eCharacterState.Null;
                 }
+
                 break;
             case eCharacterState.Jump:
-                return eCharacterState.Idle;
+                return eCharacterState.Null;
         }
+
         return i_State;
     }
 

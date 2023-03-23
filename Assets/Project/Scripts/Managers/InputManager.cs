@@ -63,31 +63,36 @@ namespace Managers
         private void OnActionInput(InputAction.CallbackContext context)
         {
             var jumpOrDash = false;
-            if (context.control == PlayerAction.controls[0] && m_InputTimers[0] > 0) //Jump
+            if (context.control == PlayerAction.controls[0] && m_InputTimers[0] > 0.1f) //Jump
             {
+                m_InputTimers[0] = 0;
                 jumpOrDash       = true;
-                m_InputTimers[0] = -m_InputVars.InputIntervals[0].Value;
                 OnJumpInput?.Invoke();
             }
 
-            if (context.control == PlayerAction.controls[1] && m_InputTimers[1] > 0) //Dash
+            if (context.control == PlayerAction.controls[1] && m_InputTimers[1] > 0.1f) //Dash
             {
+                m_InputTimers[1] = 0;
                 jumpOrDash       = true;
-                m_InputTimers[0] = -m_InputVars.InputIntervals[1].Value;
                 OnDashInput?.Invoke();
             }
 
-            if (context.control == PlayerAction.controls[2] && m_InputTimers[2] > 0 && !jumpOrDash) //Interaction
+            if (context.control == PlayerAction.controls[2] && m_InputTimers[2] > 0.1f && !jumpOrDash) //Interaction
             {
-                m_InputTimers[2] = -m_InputVars.InputIntervals[2].Value;
+                m_InputTimers[2] = 0;
                 OnInteractionInput?.Invoke();
             }
 
-            if (context.control == PlayerAction.controls[3] && m_InputTimers[3] > 0) //Fire
+            if (context.control == PlayerAction.controls[3] && m_InputTimers[3] > 0.1f) //Fire
             {
-                m_InputTimers[3] = -m_InputVars.InputIntervals[3].Value;
+                m_InputTimers[3] = 0;
                 OnFireInput?.Invoke();
             }
+        }
+
+        public void SetInputTimer(int i_Index)
+        {
+            m_InputTimers[i_Index] = -m_InputVars.InputIntervals[i_Index].Value;
         }
 
     #endregion

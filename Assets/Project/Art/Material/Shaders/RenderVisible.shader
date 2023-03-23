@@ -3,9 +3,8 @@ Shader "Custom/RenderVisible"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-        _LightTexture ("Light Texture", 2D) = "white" {}
-        [HideInInspector]_LightPos ("Light Position", Vector) = (0.5, 0.5, 0, 0)
-
+        _MaskTex ("Mask Texture", 2D) = "white" {}
+        [HideInInspector]_LightTexture ("Light Texture", 2D) = "white" {}
         _LightRange ("Light Range", Range(0,5000)) = 7.5
         _VisibilityFalloff ("Visibility Falloff", Range(0, 25)) = 1
 
@@ -55,11 +54,13 @@ Shader "Custom/RenderVisible"
             };
 
             sampler2D _MainTex;
+            sampler2D _MaskTex;
             sampler2D _LightTexture;
             float4 _MainTex_ST;
-            float4 _LightPos[6];
+            float4 _MaskTex_ST;
             float _LightCount;
             float _LightRange;
+            float _ManaObjectLightRange;
             float _VisibilityFalloff;
 
             int _NumberOfHalos;
@@ -85,6 +86,8 @@ Shader "Custom/RenderVisible"
             fixed4 frag(v2f i) : SV_Target
             {
                 fixed4 col;
+                fixed4 maskCol = tex2D(_MaskTex, TRANSFORM_TEX(i.uv, _MaskTex));
+
                 for (int m = 0; m < _LightCount; m++)
                 {
                     float4 lightPos = tex2D(_LightTexture, float2((float(m) + 0.5) / _LightCount, 0.5));
@@ -93,7 +96,7 @@ Shader "Custom/RenderVisible"
                     float currentLightRange = _LightRange;
                     if (m != 0)
                     {
-                        currentLightRange /= 2;
+                        currentLightRange =_ManaObjectLightRange;
                     }
                     float dist = length(diff);
                     float visRange = currentLightRange * currentLightRange;
@@ -101,11 +104,11 @@ Shader "Custom/RenderVisible"
                     visibility = pow(visibility, _VisibilityFalloff);
 
                     col.rgb = max(col.rgb, tex2D(_MainTex, i.uv).rgb * lerp(1, visibility, dist / currentLightRange));
-
-                    float2 normDiff = normalize(diff.xy);
+                    col.a = visibility * maskCol.a;
 
                     if (m == 0)
                     {
+                        float2 normDiff = normalize(diff.xy);
                         for (int n = 0; n < _NumberOfHalos; n++)
                         {
                             float randomStartAngle = frac(sin(float(n) * 1.618 + _HaloRandomSeed) * 43758.5453) * 2.0 * 3.14159265f;

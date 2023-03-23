@@ -62,6 +62,7 @@ MonoBehaviour:
     ManaPlaceEase: 9
     ManaPlaceReturnSpeed: 35
     ThrowSpeed: 25
+    ThrowManaLightRange: 3.5
   Mana:
     ManaFillAmount: 0.1
     ManaDrainAmount: 0.1
@@ -70,10 +71,10 @@ MonoBehaviour:
     ManaStackedClearSpeed: 0.25
     ManaStackedClearDelay: 0.1
   LightVars:
-    DarkenSpeed: 0.15
+    DarkenSpeed: 0.1
     BrightenSpeed: 0.01
     LightRange: 7
-    PaintRangeMult: 1
+    PaintRangeMult: 1.05
     MaskRangeMult: 60
     BrightnessCurve:
       serializedVersion: 2
@@ -112,13 +113,13 @@ MonoBehaviour:
   Input:
     InputIntervals:
     - Header: Jump
-      Value: 0.1
+      Value: 0.5
     - Header: Dash
-      Value: 0.1
+      Value: 0.5
     - Header: Interaction
-      Value: 0.1
+      Value: 0.5
     - Header: Fire
-      Value: 0.1
+      Value: 0.5
   Debug:
     InfiniteMana: 1
     GodMode: 0
