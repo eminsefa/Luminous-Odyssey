@@ -12,7 +12,7 @@ public class PlayerController : Singleton<PlayerController>
     public Vector2 LightPos => m_Light.transform.position;
     public Vector2 Velocity => m_Physics.Velocity;
 
-    private Vector2 m_MoveDir => InputManager.Instance.PlayerMovement.ReadValue<Vector2>().normalized;
+    private Vector2 m_MoveDir => InputManager.Instance.PlayerMovement.ReadValue<Vector2>();
 
 #region Refs
 
@@ -68,7 +68,7 @@ public class PlayerController : Singleton<PlayerController>
 
     private void OnCollisionEnter2D(Collision2D i_Col)
     {
-        m_CharacterState = m_Physics.Hit(m_CharacterState, i_Col, m_MoveDir);
+        m_CharacterState = m_Physics.Hit(m_CharacterState, i_Col, m_MoveDir.normalized);
     }
 
     private void FixedUpdate()

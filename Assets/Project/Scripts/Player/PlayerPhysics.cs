@@ -53,9 +53,10 @@ public class PlayerPhysics : MonoBehaviour
             vel.x         = Mathf.Clamp(newVelX, -m_Movement.MaxSpeed, m_Movement.MaxSpeed);
             m_Rb.velocity = vel;
 
-            var useMoveDir = i_State is eCharacterState.Jump or eCharacterState.OnAir;
-            var velX       = useMoveDir ? Mathf.Abs(i_MoveDir.x) : Mathf.Abs(vel.x);
-            var moving     = velX > m_Movement.MoveSpeedThreshold;
+            bool onMovingPlatform = checkGround() > 0 && m_MoveCheckCast[0].transform.CompareTag(ObjectTags.S_MovingPlatform);
+            var  useMoveDir       = i_State is eCharacterState.Jump or eCharacterState.OnAir || onMovingPlatform;
+            var  velX             = useMoveDir ? Mathf.Abs(i_MoveDir.x) : Mathf.Abs(vel.x);
+            var  moving           = velX > m_Movement.MoveSpeedThreshold;
             i_MoveSpeed = moving ? Mathf.Lerp(0, m_Movement.AnimMaxWalkSpeed, 
                                               (velX - m_Movement.MoveSpeedThreshold) /
                                               (useMoveDir ? 1 : m_Movement.MaxSpeed)) : 0;

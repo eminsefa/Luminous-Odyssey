@@ -55,28 +55,18 @@ public class LightSetter : Singleton<LightSetter>
     private void setLightPositions()
     {
         var objects = LightObject.ActiveLightObjects;
-        var count   = 1 + objects.Count;
+        var count   = objects.Count;
         m_RenderVisibleMat.SetFloat(ShaderIDs.S_LightCount, count);
         m_RenderMemoryMat.SetFloat(ShaderIDs.S_LightCount, count);
 
         m_LightTexture.Reinitialize(count, 1, TextureFormat.RGBAFloat, false);
         for (int i = 0; i < count; i++)
         {
-            Vector2 lightPos = Vector3.forward * 100;
-            if (i == 0)
-            {
-                var playerLightPos = PlayerController.Instance.LightPos;
-                var screenPos      = m_MainCam.WorldToScreenPoint(new Vector3(playerLightPos.x, playerLightPos.y, m_MainCam.transform.position.z));
-                lightPos = new Vector2(screenPos.x - Screen.width / 2f, screenPos.y - Screen.height / 2f);
-            }
-            else if (i < count)
-            {
-                var manaPos   = objects[i - 1].transform.position;
-                var screenPos = m_MainCam.WorldToScreenPoint(new Vector3(manaPos.x, manaPos.y, m_MainCam.transform.position.z));
-                lightPos = new Vector2(screenPos.x - Screen.width / 2f, screenPos.y - Screen.height / 2f);
-            }
+            var     manaPos   = objects[i ].transform.position;
+            var     screenPos = m_MainCam.WorldToScreenPoint(new Vector3(manaPos.x, manaPos.y, m_MainCam.transform.position.z));
+            var lightPos = new Vector2(screenPos.x - Screen.width / 2f, screenPos.y - Screen.height / 2f);
 
-            m_LightTexture.SetPixel(i, 0, new Color(lightPos.x, lightPos.y, 0, 0));
+            m_LightTexture.SetPixel(i, 0, new Color(lightPos.x / Screen.width, lightPos.y / Screen.height, 0, 0));
         }
 
         m_LightTexture.Apply();

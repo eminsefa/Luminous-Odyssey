@@ -16,6 +16,7 @@ public class ManaObject : LightObject
 
     public void Placed()
     {
+        transform.SetParent(null);
         m_IsThrown = false;
         m_LightObject.SetActive(false);
     }

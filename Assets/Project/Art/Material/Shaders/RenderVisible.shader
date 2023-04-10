@@ -90,7 +90,8 @@ Shader "Custom/RenderVisible"
 
                 for (int m = 0; m < _LightCount; m++)
                 {
-                    float4 lightPos = tex2D(_LightTexture, float2((float(m) + 0.5) / _LightCount, 0.5));
+                    // float4 lightPos = tex2D(_LightTexture, float2((float(m) + 0.5) / _LightCount, 0.5));
+                    float4 lightPos = tex2D(_LightTexture, float2((float(m) + 0.5) / _LightCount, 0.5)) * float4(_ScreenParams.x, _ScreenParams.y, 1, 1);
                     float3 diff = i.worldPos - float3(lightPos.xy, 0);
 
                     float currentLightRange = _LightRange;
