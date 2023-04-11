@@ -6,7 +6,8 @@ public class PlayerAction : MonoBehaviour
 {
     private List<Interactable> m_InteractablesInRange = new();
 
-    private ActionVariables m_ActionVars => GameConfig.Instance.Action;
+    public  Transform       ManaObjectsHolder => m_ManaObjectsHolder;
+    private ActionVariables m_ActionVars      => GameConfig.Instance.Action;
 
     private ManaObject       m_CurrentThrowMana;
     private List<ManaObject> m_ActiveManaObjects;
@@ -86,7 +87,7 @@ public class PlayerAction : MonoBehaviour
 
     private void queueMana(ManaObject i_ManaObject)
     {
-        i_ManaObject.ResetObject(m_ManaObjectsHolder);
+        i_ManaObject.ResetObject();
         i_ManaObject.gameObject.SetActive(false);
         m_ActiveManaObjects.Add(i_ManaObject);
     }

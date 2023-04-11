@@ -9,8 +9,9 @@ public class PlayerController : Singleton<PlayerController>
 {
     [ShowInInspector] private eCharacterState m_CharacterState = eCharacterState.Null;
 
-    public Vector2 LightPos => m_Light.transform.position;
-    public Vector2 Velocity => m_Physics.Velocity;
+    public Transform ManaObjectsHolder => m_Action.ManaObjectsHolder;
+    public Vector2   LightPos          => m_Light.transform.position;
+    public Vector2   Velocity          => m_Physics.Velocity;
 
     private Vector2 m_MoveDir => InputManager.Instance.PlayerMovement.ReadValue<Vector2>();
 
@@ -159,7 +160,7 @@ public class PlayerController : Singleton<PlayerController>
 
     private void OnHangingStarted(float i_Dur)
     {
-        if (m_CharacterState is eCharacterState.Dash) return;
+        // if (m_CharacterState is eCharacterState.Dash) return;
         m_Animation.Hang(m_CharacterState,i_Dur);
         m_CharacterState = eCharacterState.Hang;
     }

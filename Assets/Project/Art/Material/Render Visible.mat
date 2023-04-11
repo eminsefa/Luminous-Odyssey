@@ -57,7 +57,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: c79fa54689197e04caa35ef524d4c035, type: 3}
+        m_Texture: {fileID: 2800000, guid: a40dc0d6372a9084fb45976308087290, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MaskTex:
@@ -116,12 +116,12 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _HaloBendRange: 0.574
-    - _HaloRandomSeed: 25.8
+    - _HaloBendRange: 0.375
+    - _HaloRandomSeed: 16
     - _HaloSizeMultiplier: 0.5
     - _HaloThickness: 0.053
     - _HaloThicknessMultiplier: 0.35
-    - _LightRange: 35.507385
+    - _LightRange: 0
     - _Metallic: 0
     - _NumberOfHalos: 3
     - _OcclusionStrength: 1

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: GameConfig
   m_EditorClassIdentifier: 
   Movement:
-    MoveSpeedThreshold: 0.1
+    MoveSpeedThreshold: 0.5
     WalkSpeed: 65
     AirMoveSpeed: 35
     JumpPower: 14
@@ -62,7 +62,6 @@ MonoBehaviour:
     ManaPlaceEase: 9
     ManaPlaceReturnSpeed: 35
     ThrowSpeed: 25
-    ThrowManaLightRange: 3.5
   Mana:
     ManaFillAmount: 0.1
     ManaDrainAmount: 0.1
@@ -71,10 +70,10 @@ MonoBehaviour:
     ManaStackedClearSpeed: 0.25
     ManaStackedClearDelay: 0.1
   LightVars:
-    DarkenSpeed: 0.1
+    DarkenSpeed: 0.25
     BrightenSpeed: 0.01
     LightRange: 7
-    PaintRangeMult: 1.05
+    PaintRangeMult: 1.1
     MaskRangeMult: 60
     BrightnessCurve:
       serializedVersion: 2
@@ -110,6 +109,7 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     VisibilityFalloff: 1
+    ThrowManaLightRangeMult: 0.5
   Input:
     InputIntervals:
     - Header: Jump

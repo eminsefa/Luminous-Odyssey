@@ -83,7 +83,8 @@ public class PlayerAnimation : MonoBehaviour
 
     public void Hang(eCharacterState i_State,float i_Dur)
     {
-        m_Animator.CrossFade(AnimationHashes.S_Hang, i_Dur);
+        m_Animator.CrossFade(AnimationHashes.S_Hang, i_Dur,0);
+        m_Animator.CrossFade(AnimationHashes.S_Hang, i_Dur,1);
     }
 
     public void Jump(eCharacterState i_State)
