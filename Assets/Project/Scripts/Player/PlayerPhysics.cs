@@ -11,6 +11,7 @@ public class PlayerPhysics : MonoBehaviour
     public  Vector2           Velocity      => m_Rb.velocity;
     public  Vector2           LookDir       => m_Col.transform.right;
     private MovementVariables m_Movement    => GameConfig.Instance.Movement;
+    private bool              m_OnMovingPlatform;
 
     private float          m_HangTimer;
     private float          m_CayoteJumpTimer;
@@ -41,6 +42,8 @@ public class PlayerPhysics : MonoBehaviour
         m_CayoteJumpTimer -= Time.deltaTime;
     }
 
+#region Rigidbody Moves
+
     public void MoveHorizontal(eCharacterState i_State, Vector2 i_MoveDir, ref float i_MoveSpeed)
     {
         if (i_State == eCharacterState.Dash) return;
@@ -53,13 +56,14 @@ public class PlayerPhysics : MonoBehaviour
             vel.x         = Mathf.Clamp(newVelX, -m_Movement.MaxSpeed, m_Movement.MaxSpeed);
             m_Rb.velocity = vel;
 
-            bool onMovingPlatform = checkGround() > 0 && m_MoveCheckCast[0].transform.CompareTag(ObjectTags.S_MovingPlatform);
-            var  useMoveDir       = i_State is eCharacterState.Jump or eCharacterState.OnAir || onMovingPlatform;
-            var  velX             = useMoveDir ? Mathf.Abs(i_MoveDir.x) : Mathf.Abs(vel.x);
-            var  moving           = velX > m_Movement.MoveSpeedThreshold;
-            i_MoveSpeed = moving ? Mathf.Lerp(0, m_Movement.AnimMaxWalkSpeed, 
-                                              (velX - m_Movement.MoveSpeedThreshold) /
-                                              (useMoveDir ? 1 : m_Movement.MaxSpeed)) : 0;
+            var useMoveDir = i_State is eCharacterState.Jump or eCharacterState.OnAir || m_OnMovingPlatform;
+            var velX       = useMoveDir ? Mathf.Abs(i_MoveDir.x) : Mathf.Abs(vel.x);
+            var moving     = velX > m_Movement.MoveSpeedThreshold;
+            i_MoveSpeed = moving
+                              ? Mathf.Lerp(0, m_Movement.AnimMaxWalkSpeed,
+                                           (velX - m_Movement.MoveSpeedThreshold) /
+                                           (useMoveDir ? 1 : m_Movement.MaxSpeed))
+                              : 0;
 
             rotateBody(i_State, i_MoveDir);
         }
@@ -81,6 +85,27 @@ public class PlayerPhysics : MonoBehaviour
         m_Rb.velocity     = new Vector2(m_Rb.velocity.x, 0f);
         m_Rb.AddForce(Vector2.up * m_Movement.JumpPower, ForceMode2D.Impulse);
     }
+
+    private void addVelocityEffects(Vector2 i_MoveDir)
+    {
+        var vel = m_Rb.velocity;
+        if (m_OnMovingPlatform)
+        {
+            vel.y = m_MoveCheckCast[0].rigidbody.velocity.y;
+            if (Mathf.Abs(i_MoveDir.x) <= 0f) vel.x = m_MoveCheckCast[0].rigidbody.velocity.x;
+        }
+        else if (vel.sqrMagnitude > m_Movement.MoveSpeedThreshold) //Add friction
+        {
+            vel -= vel.normalized * m_Movement.Friction;
+        }
+        else vel = Vector2.zero;
+
+        m_Rb.velocity = vel;
+
+        m_CayoteJumpTimer = m_Movement.CayoteTime;
+    }
+
+#endregion
 
 #region Hang
 
@@ -178,7 +203,12 @@ public class PlayerPhysics : MonoBehaviour
     public eCharacterState CheckState(eCharacterState i_State, Vector2 i_MoveDir)
     {
         if (i_State != eCharacterState.Dash) flipModel(i_MoveDir);
-        if (i_State is (eCharacterState.Jump or eCharacterState.Throw)) return i_State;
+        if (i_State is (eCharacterState.Jump)) return i_State;
+        if (i_State is (eCharacterState.Throw))
+        {
+            addVelocityEffects(i_MoveDir);
+            return i_State;
+        }
 
         if (m_TwDash != null && m_TwDash.IsPlaying())
         {
@@ -189,6 +219,7 @@ public class PlayerPhysics : MonoBehaviour
         if (count > 0) // Touching Ground
         {
             m_HangTimer = 0;
+            addVelocityEffects(i_MoveDir);
             return updateGroundedState(i_State, i_MoveDir);
         }
 
@@ -201,31 +232,15 @@ public class PlayerPhysics : MonoBehaviour
     private int checkGround()
     {
         Array.Clear(m_MoveCheckCast, 0, m_MoveCheckCast.Length);
-        var onGround = Physics2D.RaycastNonAlloc(m_Col.bounds.center, -m_Col.transform.up, m_MoveCheckCast, m_Movement.GroundCheckDistance + m_Col.size.y / 2f, m_GroundLayer);
+        var onGround                       = Physics2D.RaycastNonAlloc(m_Col.bounds.center, -m_Col.transform.up, m_MoveCheckCast, m_Movement.GroundCheckDistance + m_Col.size.y / 2f, m_GroundLayer);
+        m_OnMovingPlatform = onGround > 0 && m_MoveCheckCast[0].transform.CompareTag(ObjectTags.S_MovingPlatform);
         return onGround;
     }
 
     private eCharacterState updateGroundedState(eCharacterState i_State, Vector2 i_MoveDir)
     {
-        var onMovingPlatform = m_MoveCheckCast[0].transform.CompareTag(ObjectTags.S_MovingPlatform);
-
-        var vel = m_Rb.velocity;
-        if (onMovingPlatform)
-        {
-            vel.y = m_MoveCheckCast[0].rigidbody.velocity.y;
-            if (Mathf.Abs(i_MoveDir.x) <= 0f) vel.x = m_MoveCheckCast[0].rigidbody.velocity.x;
-        }
-        else if (vel.sqrMagnitude > m_Movement.MoveSpeedThreshold) //Add friction
-        {
-            vel -= vel.normalized * m_Movement.Friction;
-        }
-        else vel = Vector2.zero;
-
-        m_Rb.velocity = vel;
-
-        m_CayoteJumpTimer = m_Movement.CayoteTime;
-
-        if (Mathf.Abs(i_MoveDir.x) > 0 || (!onMovingPlatform && Mathf.Abs(m_Rb.velocity.x) > m_Movement.MoveSpeedThreshold))
+        if (i_State == eCharacterState.Throw) return i_State;
+        if (Mathf.Abs(i_MoveDir.x) > 0 || (!m_OnMovingPlatform && Mathf.Abs(m_Rb.velocity.x) > m_Movement.MoveSpeedThreshold))
         {
             return eCharacterState.Walk;
         }

@@ -78,8 +78,8 @@ Shader "Custom/SpaceStars"
 
                 float maskAlpha = maskCol.a;
                 float maskLightAlpha = 1 - maskLightCol.a;
-                // col.a *= maskLightAlpha;
-                col.a *= lerp(maskAlpha, maskLightAlpha, maskLightCol.a);
+                col.a *= maskLightAlpha;
+                // col.a *= lerp(maskAlpha, maskLightAlpha, maskLightCol.a);
 
                 UNITY_APPLY_FOG(i.fogCoord, col);
                 return col;
