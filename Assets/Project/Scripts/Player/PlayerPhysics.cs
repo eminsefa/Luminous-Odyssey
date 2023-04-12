@@ -203,19 +203,17 @@ public class PlayerPhysics : MonoBehaviour
     public eCharacterState CheckState(eCharacterState i_State, Vector2 i_MoveDir)
     {
         if (i_State != eCharacterState.Dash) flipModel(i_MoveDir);
+
         if (i_State is (eCharacterState.Jump)) return i_State;
+        if (m_TwDash != null && m_TwDash.IsPlaying()) return eCharacterState.Dash;
+
+        int count = checkGround();
         if (i_State is (eCharacterState.Throw))
         {
-            addVelocityEffects(i_MoveDir);
+            if (count > 0) addVelocityEffects(i_MoveDir);
             return i_State;
         }
 
-        if (m_TwDash != null && m_TwDash.IsPlaying())
-        {
-            return eCharacterState.Dash;
-        }
-
-        int count = checkGround();
         if (count > 0) // Touching Ground
         {
             m_HangTimer = 0;
@@ -232,7 +230,7 @@ public class PlayerPhysics : MonoBehaviour
     private int checkGround()
     {
         Array.Clear(m_MoveCheckCast, 0, m_MoveCheckCast.Length);
-        var onGround                       = Physics2D.RaycastNonAlloc(m_Col.bounds.center, -m_Col.transform.up, m_MoveCheckCast, m_Movement.GroundCheckDistance + m_Col.size.y / 2f, m_GroundLayer);
+        var onGround = Physics2D.RaycastNonAlloc(m_Col.bounds.center, -m_Col.transform.up, m_MoveCheckCast, m_Movement.GroundCheckDistance + m_Col.size.y / 2f, m_GroundLayer);
         m_OnMovingPlatform = onGround > 0 && m_MoveCheckCast[0].transform.CompareTag(ObjectTags.S_MovingPlatform);
         return onGround;
     }

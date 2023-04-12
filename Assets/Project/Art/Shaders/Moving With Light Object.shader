@@ -3,12 +3,9 @@ Shader "Unlit/Moving With Light Object"
     Properties
     {
         _MainTex ("Main Texture", 2D) = "white" {}
+        _Intensity ("Intensity",float)=1
         _ColorChangeSpeed ("Color Change Speed", Range(0, 10)) = 1
         _ColorStrength ("Color Strength", Range(0, 1)) = 0.5
-        _NumCirclesRange ("Number of Circles Range", Vector) = (1, 5,0,0)
-        _CircleSizeRange ("Circle Size Range", Vector) = (0.1, 0.3,0,0)
-        _SpawnIntervalRange ("Spawn Interval Range", Vector) = (0.5, 2,0,0)
-        _MaxBrightnessPlus ("Max Brightness Plus", Range(0, 5)) = 1
     }
 
     SubShader
@@ -41,10 +38,7 @@ Shader "Unlit/Moving With Light Object"
             sampler2D _MainTex;
             float _ColorChangeSpeed;
             float _ColorStrength;
-            float2 _NumCirclesRange;
-            float2 _CircleSizeRange;
-            float2 _SpawnIntervalRange;
-            float _MaxBrightnessPlus;
+            float _Intensity;
 
             float3 rgb2hsv(float3 c)
             {
@@ -69,13 +63,6 @@ Shader "Unlit/Moving With Light Object"
                 return frac(sin(seed * 12345.6789) * 98765.4321);
             }
 
-            float smoothcircle(float2 uv, float2 center, float radius)
-            {
-                float dist = length(uv - center);
-                float edgeDist = max(0.0, 1.0 - (dist / radius));
-                return _MaxBrightnessPlus * pow(edgeDist, 3.0);
-            }
-
             v2f vert(appdata v)
             {
                 v2f o;
@@ -91,29 +78,7 @@ Shader "Unlit/Moving With Light Object"
                 hsv.x += _Time.y * _ColorChangeSpeed;
                 float3 gradientColor = hsv2rgb(hsv);
 
-                float shine = 0.0;
-                float time = _Time.y;
-                
-                int numCircles = int(lerp(_NumCirclesRange.x, _NumCirclesRange.y, random(0.0)));
-
-                float interval = lerp(_SpawnIntervalRange.x, _SpawnIntervalRange.y, random(0.0));
-                float t = fmod(time, interval) / interval;
-                if (t < 1.0 && shine==0)
-                {
-                    for (int j = 0; j < numCircles; j++)
-                    {
-                        float seed = float(j) * 47.0;
-                        float2 randomPos = float2(random(seed + 10.0 * t), random(seed + 1.0 + 10.0 * t));
-                        float circleSize = lerp(_CircleSizeRange.x, _CircleSizeRange.y, random(seed + 2.0 + 10.0 * t));
-                        float fadeInOut = (1.0 - abs(2.0 * t - 1.0));
-                        shine += fadeInOut * smoothcircle(i.uv, randomPos, circleSize);
-                    }
-                }
-
-
-                shine /= float(numCircles);
-
-                col.rgb = lerp(col.rgb, gradientColor, _ColorStrength) + col.rgb * shine;
+                col.rgb = lerp(col.rgb, gradientColor, _ColorStrength) + col.rgb *_Intensity;
 
                 return col;
             }

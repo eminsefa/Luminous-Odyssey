@@ -38,11 +38,19 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _CircleSize: 1
+    - _ColorChangeSpeed: 0.35
+    - _ColorStrength: 0.5
     - _EnableExternalAlpha: 0
-    - _Intensity: 2
-    - _Speed: 5
+    - _Intensity: 0.5
+    - _MaxBrightnessPlus: 1
+    - _NumCircles: 5.97
+    - _Speed: 4.59
     m_Colors:
+    - _CircleSizeRange: {r: 0.1, g: 1, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
+    - _NumCirclesRange: {r: 1, g: 3, b: 0, a: 0}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
+    - _SpawnIntervalRange: {r: 1, g: 3, b: 0, a: 0}
   m_BuildTextureStacks: []
