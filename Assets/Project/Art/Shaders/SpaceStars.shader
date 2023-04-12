@@ -6,7 +6,9 @@ Shader "Custom/SpaceStars"
         _MaskTex ("Texture", 2D) = "white" {}
         _MaskTexLight ("Texture", 2D) = "white" {}
         _StarAmount ("Star Amount", Range(0, 1000)) = 100
-        _StarSize ("Star Size", Range(0.01, 1)) = 0.05
+        _StarSize ("Star Size", float) = 1
+        _FlickerFrequency("Flicker Frequency",float)=2
+        _FlickerIntensity("Flicker Intensity",float)=0.5
     }
 
     SubShader
@@ -46,6 +48,8 @@ Shader "Custom/SpaceStars"
             float4 _MaskTexLight_ST;
             float _StarAmount;
             float _StarSize;
+            float _FlickerFrequency;
+            float _FlickerIntensity;
 
             v2f vert(appdata v)
             {
@@ -59,27 +63,27 @@ Shader "Custom/SpaceStars"
             {
                 float2 uv = i.uv;
 
-                // Generate random stars
-                float rnd = frac(sin(dot(uv, float2(12.9898, 78.233))) * 43758.5453);
+                float rndStar = frac(sin(dot(uv, float2(12.9898, 78.233))) * 43758.5453);
+                float rndFlicker = frac(sin(dot(uv, float2(12.9898 * 3.33, 78.233 * 3.33))) * 43758.5453);
+
                 float starThreshold = 1.0 - _StarAmount / 1000.0;
 
+                float timeOffset = rndFlicker * 1000.0; 
+                float timeBasedFlicker = sin((_Time.y + timeOffset) * _FlickerFrequency) * _FlickerIntensity + (1.0 - _FlickerIntensity);
+
                 float4 col = 0;
-                float alpha = 0;
-                if (rnd > starThreshold)
+                if (rndStar > starThreshold)
                 {
-                    float flicker = rnd * 0.5 + 0.5;
-                    float starSize = step(rnd, starThreshold + _StarSize);
-                    col = flicker * starSize;
-                    alpha = starSize;
+                    col = float4(1.0, 1.0, 1.0, 1.0) * 1 * timeBasedFlicker;
                 }
                 fixed4 maskLightCol = tex2D(_MaskTexLight, TRANSFORM_TEX(i.uv, _MaskTexLight));
-                fixed4 maskCol = tex2D(_MaskTex, TRANSFORM_TEX(i.uv, _MaskTex));
-
-
-                float maskAlpha = maskCol.a;
                 float maskLightAlpha = 1 - maskLightCol.a;
-                col.a *= maskLightAlpha;
+
+                // fixed4 maskCol = tex2D(_MaskTex, TRANSFORM_TEX(i.uv, _MaskTex));
+                // float maskAlpha = maskCol.a;
+
                 // col.a *= lerp(maskAlpha, maskLightAlpha, maskLightCol.a);
+                col.a *= maskLightAlpha;
 
                 UNITY_APPLY_FOG(i.fogCoord, col);
                 return col;

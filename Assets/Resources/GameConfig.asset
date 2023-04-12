@@ -16,7 +16,7 @@ MonoBehaviour:
     MoveSpeedThreshold: 0.5
     WalkSpeed: 65
     AirMoveSpeed: 35
-    JumpPower: 14
+    JumpPower: 16
     MaxSpeed: 10
     RotationSpeed: 7.5
     Friction: 0.4

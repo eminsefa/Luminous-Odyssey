@@ -125,7 +125,7 @@ Material:
     - _HaloSizeMultiplier: 0.5
     - _HaloThickness: 0.053
     - _HaloThicknessMultiplier: 0.35
-    - _LightRange: 0
+    - _LightRange: 375.20914
     - _Metallic: 0
     - _NumberOfHalos: 3
     - _OcclusionStrength: 1
@@ -153,7 +153,7 @@ Material:
     - _CircleCenter: {r: 0, g: 0, b: 0, a: 0}
     - _CirclePos: {r: 0, g: 0, b: 0, a: 0}
     - _CirclePosition: {r: 0, g: 0, b: 0, a: 0}
-    - _Color: {r: 0.14, g: 0.24937494, b: 0.56, a: 1}
+    - _Color: {r: 0.100000024, g: 0.31529427, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _HaloMinMaxSize: {r: 0.35, g: 0.75, b: 0, a: 0}
     - _HaloSizeMultiplier: {r: 0.25, g: 0.5, b: 0, a: 0}

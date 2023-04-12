@@ -9,6 +9,7 @@ Shader "Custom/RenderVisible"
         _VisibilityFalloff ("Visibility Falloff", Range(0, 25)) = 1
 
         _NumberOfHalos ("Number of Halos", int) = 4
+        _HaloColor("Halo Color",Color)=(1,1,1,1)
         _RotationSpeed ("Rotation Speed", Range(0, 10)) = 1
         _HaloThickness ("Halo Thickness", Range(0, 1)) = 0.1
         _SizeChangeSpeed ("Size Change Speed", Range(0, 10)) = 1
@@ -64,6 +65,7 @@ Shader "Custom/RenderVisible"
             float _VisibilityFalloff;
 
             int _NumberOfHalos;
+            float4 _HaloColor;
             float _RotationSpeed;
             float _HaloThickness;
             float _SizeChangeSpeed;
@@ -97,7 +99,7 @@ Shader "Custom/RenderVisible"
                     float currentLightRange = _LightRange;
                     if (m != 0)
                     {
-                        currentLightRange =_ManaObjectLightRange;
+                        currentLightRange = _ManaObjectLightRange;
                     }
                     float dist = length(diff);
                     float visRange = currentLightRange * currentLightRange;
@@ -131,7 +133,7 @@ Shader "Custom/RenderVisible"
 
                             haloVisibility *= currentHaloThickness;
 
-                            col.rgb += haloVisibility * visibility;
+                            col.rgb += haloVisibility * visibility * _HaloColor.rgb;
                         }
                     }
                     UNITY_APPLY_FOG(i.fogCoord, col);

@@ -53,7 +53,7 @@ public class WireDoor : MonoBehaviour
         for (var i = i_LastTry; i >= 0; i--)
         {
             yield return new WaitForSeconds(m_PointLightInterval / 2f);
-            m_WirePoints[i].color = Color.black;
+            m_WirePoints[i].color = Color.white;
         }
 
         m_Activator.OpenDoorFailed();
