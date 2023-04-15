@@ -6,7 +6,7 @@ public class WireDoor : MonoBehaviour
 {
     [SerializeField] private BasicAnimation   m_DoorAnimation;
     [SerializeField] private float            m_PointLightInterval;
-    [SerializeField] private DoorActivator       m_Activator;
+    [SerializeField] private DoorActivator    m_Activator;
     [SerializeField] private SpriteRenderer[] m_WirePoints;
 
     private void OnCollisionEnter2D(Collision2D i_Col)
@@ -50,6 +50,12 @@ public class WireDoor : MonoBehaviour
 
     private IEnumerator openFailed(int i_LastTry)
     {
+        m_WirePoints[i_LastTry].color = Color.red;
+
+        var punchDur = 0.2f;
+        m_WirePoints[i_LastTry].transform.DOPunchScale(Vector3.one * 0.1f, punchDur);
+        yield return new WaitForSeconds(punchDur);
+
         for (var i = i_LastTry; i >= 0; i--)
         {
             yield return new WaitForSeconds(m_PointLightInterval / 2f);
@@ -61,7 +67,7 @@ public class WireDoor : MonoBehaviour
 
     private void openCompleted()
     {
-        m_DoorAnimation.transform.DOShakePosition(0.5f,0.25f)
+        m_DoorAnimation.transform.DOShakePosition(0.5f, 0.25f)
                        .OnComplete(() => m_DoorAnimation.Animate());
     }
 }

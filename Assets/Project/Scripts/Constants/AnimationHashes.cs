@@ -10,4 +10,5 @@ public struct AnimationHashes
     public static readonly int S_Dash      = Animator.StringToHash("Dash");
     public static readonly int s_Idle      = Animator.StringToHash("Idle");
     public static readonly int S_Throw      = Animator.StringToHash("Throw");
+    public static readonly int S_SlowWalk      = Animator.StringToHash("SlowWalk");
 }

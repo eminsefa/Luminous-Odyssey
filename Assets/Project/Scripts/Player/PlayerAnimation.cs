@@ -2,6 +2,7 @@ using System;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using Util;
 
 public class PlayerAnimation : MonoBehaviour
 {
@@ -11,8 +12,9 @@ public class PlayerAnimation : MonoBehaviour
     public event Action OnThrowAnimEvent;
     public event Action OnThrowAnimCompletedEvent;
 
+    
 #region Refs
-
+    
     [FoldoutGroup("Refs")] [SerializeField]
     private Animator m_Animator;
 
@@ -76,9 +78,11 @@ public class PlayerAnimation : MonoBehaviour
         m_Animator.SetBool(AnimationHashes.s_Idle,  i_State == eCharacterState.Idle);
     }
 
-    public void SetWalkAnimSpeed(float i_Speed)
+    public void SetWalkAnimSpeed(float i_Speed, float i_BlendIter)
     {
-        m_Animator.SetFloat(AnimationHashes.S_WalkSpeed, i_Speed);
+        var speed = Mathf.Clamp(i_Speed,0.5f, 1);
+        m_Animator.SetFloat(AnimationHashes.S_WalkSpeed, speed);
+        m_Animator.SetFloat(AnimationHashes.S_SlowWalk,  i_BlendIter);
     }
 
     public void Hang(eCharacterState i_State,float i_Dur)

@@ -23,8 +23,10 @@ public class ManaObject : LightObject
     public void Placed()
     {
         m_Tr.SetParent(null);
-        m_IsThrown = false;
-        m_LightObject.SetActive(false);
+        m_IsThrown     = false;
+        m_Rb.simulated = false;
+        m_Col.enabled  = false;
+        // m_LightObject.SetActive(false);
     }
 
     public void Thrown(Vector2 i_Force)
@@ -65,7 +67,7 @@ public class ManaObject : LightObject
         {
             Vector3 viewPos = m_MainCamera.WorldToViewportPoint(m_Tr.position);
 
-            if (viewPos.x < -0.1f || viewPos.x > 1.1f || viewPos.y < -0.1f || viewPos.y > 1.1f)
+            if (viewPos.x is < -0.1f or > 1.1f || viewPos.y is < -0.1f or > 1.1f)
             {
                 disappeared();
             }
@@ -95,5 +97,15 @@ public class ManaObject : LightObject
     {
         m_IsThrown = false;
         OnManaReturned?.Invoke(this);
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        other.transform.TryGetComponent(out ManaDoorActivator manaDoor);
+        if (m_IsThrown && manaDoor!=null)
+        {
+            Placed();
+            manaDoor.PlaceMana(this);
+        }
     }
 }

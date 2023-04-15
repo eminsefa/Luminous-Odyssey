@@ -9,6 +9,7 @@ public class PlayerInput : MonoBehaviour
     public event Action OnDashInputEvent;
     public event Action OnInteractionInputEvent;
     public event Action OnThrowInputEvent;
+    public event Action<bool> OnSlowWalkInputEvent;
 
     private void OnEnable()
     {
@@ -16,6 +17,7 @@ public class PlayerInput : MonoBehaviour
         InputManager.OnDashInput        += OnDashInput;
         InputManager.OnInteractionInput += OnInteractionInput;
         InputManager.OnFireInput        += OnFireInput;
+        InputManager.OnSlowWalkInput    += OnSlowWalkInput;
     }
 
     private void OnDisable()
@@ -24,6 +26,7 @@ public class PlayerInput : MonoBehaviour
         InputManager.OnDashInput        -= OnDashInput;
         InputManager.OnInteractionInput -= OnInteractionInput;
         InputManager.OnFireInput        -= OnFireInput;
+        InputManager.OnSlowWalkInput    -= OnSlowWalkInput;
     }
 
     private void OnJumpInput()
@@ -44,5 +47,10 @@ public class PlayerInput : MonoBehaviour
     private void OnFireInput()
     {
         OnThrowInputEvent?.Invoke();
+    }
+
+    private void OnSlowWalkInput(bool i_Start)
+    {
+        OnSlowWalkInputEvent?.Invoke(i_Start);
     }
 }

@@ -74,8 +74,7 @@ public class MemoryBlockManager : Singleton<MemoryBlockManager>
             }
         }
     }
-
-
+    
     private void MoveBlockPosition(MemoryBlock i_MemoryBlock, Vector2 i_MovePos)
     {
         var copyTex = convertRenderTextureToTexture2D(i_MemoryBlock.TempMemoryTexture);

@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using Managers;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class PlayerController : Singleton<PlayerController>
 {
     [ShowInInspector] private eCharacterState m_CharacterState = eCharacterState.Null;
 
-    public Transform ManaObjectsHolder => m_Action.ManaObjectsHolder;
-    public Vector2   LightPos          => m_Light.transform.position;
-    public Vector2   Velocity          => m_Physics.Velocity;
-
-    private Vector2 m_MoveDir => InputManager.Instance.PlayerMovement.ReadValue<Vector2>();
+    public  bool      IsBlind           => Input.GetKey(KeyCode.LeftShift) && m_Light.CloseEyeIter > 0.95f;
+    public  Transform ManaObjectsHolder => m_Action.ManaObjectsHolder;
+    public  Vector2   LightPos          => m_Light.transform.position;
+    public  Vector2   Velocity          => m_Physics.Velocity;
+    private Vector2   m_MoveVector      => InputManager.Instance.PlayerMovement.ReadValue<Vector2>();
 
 #region Refs
 
@@ -43,6 +42,7 @@ public class PlayerController : Singleton<PlayerController>
         m_Input.OnDashInputEvent        += OnDashInput;
         m_Input.OnInteractionInputEvent += OnInteractionInput;
         m_Input.OnThrowInputEvent       += OnThrowInput;
+        m_Input.OnSlowWalkInputEvent    += OnSlowWalkInput;
 
         m_Animation.OnJumpCompleted           += OnJumpCompleted;
         m_Animation.OnThrowCreateEvent        += OnThrowCreateEvent;
@@ -59,6 +59,7 @@ public class PlayerController : Singleton<PlayerController>
         m_Input.OnDashInputEvent        -= OnDashInput;
         m_Input.OnInteractionInputEvent -= OnInteractionInput;
         m_Input.OnThrowInputEvent       -= OnThrowInput;
+        m_Input.OnSlowWalkInputEvent    -= OnSlowWalkInput;
 
         m_Animation.OnJumpCompleted           -= OnJumpCompleted;
         m_Animation.OnThrowCreateEvent        -= OnThrowCreateEvent;
@@ -69,18 +70,26 @@ public class PlayerController : Singleton<PlayerController>
 
     private void OnCollisionEnter2D(Collision2D i_Col)
     {
-        m_CharacterState = m_Physics.Hit(m_CharacterState, i_Col, m_MoveDir.normalized);
+        m_CharacterState = m_Physics.Hit(m_CharacterState, i_Col, m_MoveVector.normalized);
     }
 
     private void FixedUpdate()
     {
-        m_CharacterState = m_Physics.CheckState(m_CharacterState, m_MoveDir);
+        m_CharacterState = m_Physics.CheckState(m_CharacterState, m_MoveVector);
 
         m_Animation.SetStateAnimation(m_CharacterState);
 
-        var walkSpeed = 0f;
-        m_Physics.MoveHorizontal(m_CharacterState, m_MoveDir, ref walkSpeed);
-        m_Animation.SetWalkAnimSpeed(walkSpeed);
+        m_Physics.MoveHorizontal(m_CharacterState, m_MoveVector);
+    }
+
+    private void Update()
+    {
+        var isBlind = Input.GetKey(KeyCode.LeftShift);
+        var walking   = m_CharacterState is eCharacterState.Walk;
+        m_Physics.SetSlowWalk(isBlind && walking);
+
+        m_Light.SetMoveSpeed(m_Physics.Velocity.x, isBlind);
+        m_Animation.SetWalkAnimSpeed(m_Physics.VelAnimSpeedIter, m_Physics.SlowWalkBlendIter);
     }
 
 #endregion
@@ -93,10 +102,10 @@ public class PlayerController : Singleton<PlayerController>
         if (m_CharacterState is not (eCharacterState.Idle or eCharacterState.Walk) && !cayoteJump) return;
 
         InputManager.Instance.SetInputTimer(0);
-        
+
         m_Animation.Jump(m_CharacterState);
         m_CharacterState = eCharacterState.Jump;
-        
+
         m_Physics.Jump();
     }
 
@@ -108,7 +117,7 @@ public class PlayerController : Singleton<PlayerController>
         m_CharacterState = eCharacterState.Dash;
         m_Animation.SetStateAnimation(m_CharacterState);
 
-        var dashDir = m_MoveDir.sqrMagnitude > 0.1f ? m_MoveDir : m_Physics.LookDir;
+        var dashDir = m_MoveVector.sqrMagnitude > 0.1f ? m_MoveVector : m_Physics.LookDir;
         m_Physics.Dash(dashDir);
     }
 
@@ -123,10 +132,17 @@ public class PlayerController : Singleton<PlayerController>
     {
         if (m_CharacterState is eCharacterState.Throw) return;
         if (!ManaManager.Instance.TryToUseMana()) return;
-        
+
         InputManager.Instance.SetInputTimer(3);
         m_Animation.Throw(m_CharacterState);
         m_CharacterState = eCharacterState.Throw;
+    }
+
+    private void OnSlowWalkInput(bool i_Started)
+    {
+        // if(m_CharacterState!=eCharacterState.Walk) return;
+        // m_Physics.GetSlowWalkVel(i_Started);
+        // m_Animation.SetSlowWalk(i_Started);
     }
 
     private void OnJumpCompleted()
@@ -145,7 +161,7 @@ public class PlayerController : Singleton<PlayerController>
 
     private void OnThrowAnimEvent()
     {
-        var throwDir = m_MoveDir.sqrMagnitude > 0.1f ? m_MoveDir.normalized : m_Physics.LookDir;
+        var throwDir = m_MoveVector.sqrMagnitude > 0.1f ? m_MoveVector.normalized : m_Physics.LookDir;
         m_Action.ThrowMana(throwDir);
     }
 
@@ -161,7 +177,7 @@ public class PlayerController : Singleton<PlayerController>
     private void OnHangingStarted(float i_Dur)
     {
         // if (m_CharacterState is eCharacterState.Dash) return;
-        m_Animation.Hang(m_CharacterState,i_Dur);
+        m_Animation.Hang(m_CharacterState, i_Dur);
         m_CharacterState = eCharacterState.Hang;
     }
 

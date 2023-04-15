@@ -47,6 +47,7 @@ namespace Util
         {
             x,
             y,
+            z,
         }
         public static void SetPos(this Transform i_Tr, Axis i_Axis, float i_Value)
         {
@@ -61,6 +62,24 @@ namespace Util
                     break;
             }
             i_Tr.position = pos;
+        }
+        
+        public static void SetLocalScale(this Transform i_Tr, Axis i_Axis, float i_Value)
+        {
+            var scale = i_Tr.localScale;
+            switch (i_Axis)
+            {
+                case Axis.x:
+                    scale.x = i_Value;
+                    break;
+                case Axis.y:
+                    scale.y = i_Value;
+                    break;
+                case Axis.z:
+                    scale.z = i_Value;
+                    break;
+            }
+            i_Tr.localScale = scale;
         }
     }
 }

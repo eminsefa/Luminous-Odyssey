@@ -39,14 +39,15 @@ public class MovementVariables
 {
     [BoxGroup("Movement")] public float MoveSpeedThreshold = 0.05f;
     [BoxGroup("Movement")] public float WalkSpeed;
+    [BoxGroup("Movement")] public float MaxSpeed;
+    [BoxGroup("Movement")] public float SlowWalkMaxSpeed;
+    [BoxGroup("Movement")] public float SlowWalkSpeed;
     [BoxGroup("Movement")] public float AirMoveSpeed;
     [BoxGroup("Movement")] public float JumpPower;
-    [BoxGroup("Movement")] public float MaxSpeed;
     [BoxGroup("Movement")] public float RotationSpeed;
     [BoxGroup("Movement")] public float Friction            = 0.4f;
     [BoxGroup("Movement")] public float GroundCheckDistance = 0.1f;
     [BoxGroup("Movement")] public float GravityScale;
-    [BoxGroup("Movement")] public float AnimMaxWalkSpeed;
 
     [BoxGroup("Hang")] public float HangingStartDuration;
     [BoxGroup("Hang")] public float HangingSpeed;
@@ -90,8 +91,10 @@ public class LightVariables
     public                          AnimationCurve BrightnessCurve;
     [Range(0, 2)]            public float          VisibilityFalloff       = 1;
 
+    public float MoveLightThreshold      = 0.1f;
     public float ThrowManaLightRangeMult = 0.5f;
-    public float ThrowManaLightRange => LightRange * MaskRangeMult*ThrowManaLightRangeMult;
+    public float SlowWalkDarkenSpeed     = 0.5f;
+    public float ThrowManaLightRange => LightRange * MaskRangeMult *ThrowManaLightRangeMult;
 }
 
 [Serializable]

@@ -7,12 +7,15 @@ public class PlayerPhysics : MonoBehaviour
 {
     public event Action<float> OnHangingStarted;
 
-    public  bool              CanCayoteJump => m_CayoteJumpTimer > 0f;
-    public  Vector2           Velocity      => m_Rb.velocity;
-    public  Vector2           LookDir       => m_Col.transform.right;
-    private MovementVariables m_Movement    => GameConfig.Instance.Movement;
-    private bool              m_OnMovingPlatform;
+    public  bool              CanCayoteJump     => m_CayoteJumpTimer > 0f;
+    public  Vector2           Velocity          => m_Rb.velocity;
+    public  Vector2           LookDir           => m_Col.transform.right;
+    public  float             VelAnimSpeedIter  { get; private set; }
+    public  float             SlowWalkBlendIter { get; private set; }
+    private MovementVariables m_Movement        => GameConfig.Instance.Movement;
 
+    private bool           m_OnMovingPlatform;
+    private bool           m_OnSlowWalk;
     private float          m_HangTimer;
     private float          m_CayoteJumpTimer;
     private Vector2        m_LastDashDir;
@@ -44,26 +47,54 @@ public class PlayerPhysics : MonoBehaviour
 
 #region Rigidbody Moves
 
-    public void MoveHorizontal(eCharacterState i_State, Vector2 i_MoveDir, ref float i_MoveSpeed)
+    public void MoveHorizontal(eCharacterState i_State, Vector2 i_MoveDir)
     {
         if (i_State == eCharacterState.Dash) return;
 
         var vel = m_Rb.velocity;
         if (i_State != eCharacterState.Hang)
         {
-            var speed   = i_State == eCharacterState.OnAir ? m_Movement.AirMoveSpeed : m_Movement.WalkSpeed;
-            var newVelX = vel.x + i_MoveDir.x * speed * Time.fixedDeltaTime;
-            vel.x         = Mathf.Clamp(newVelX, -m_Movement.MaxSpeed, m_Movement.MaxSpeed);
+            var speed = i_State == eCharacterState.OnAir ? m_Movement.AirMoveSpeed :
+                        m_OnSlowWalk                     ? m_Movement.SlowWalkSpeed : m_Movement.WalkSpeed;
+            var delta = speed * i_MoveDir.x;
+
+            if (m_OnSlowWalk)
+            {
+                var dif = Mathf.Abs(vel.x) - m_Movement.SlowWalkMaxSpeed;
+
+                if (dif > 0)
+                {
+                    var amount               = speed;
+                    if (amount > dif) amount = dif;
+                    delta += -Mathf.Sign(vel.x) * amount;
+                }
+            }
+
+            var newVelX = vel.x + delta;
+
+            var maxSpeed = m_Movement.MaxSpeed;
+            if (m_OnSlowWalk)
+            {
+                SlowWalkBlendIter += 0.075f;
+            }
+            else
+            {
+                SlowWalkBlendIter -= 0.075f;
+                if (m_OnMovingPlatform)
+                {
+                    var platformSpeed = m_MoveCheckCast[0].rigidbody.velocity;
+                    maxSpeed = Mathf.Max(Mathf.Abs(vel.x) + Mathf.Abs(platformSpeed.x), m_Movement.MaxSpeed);
+                }
+            }
+
+
+            vel.x = Mathf.Clamp(newVelX, -maxSpeed, maxSpeed);
+
             m_Rb.velocity = vel;
 
-            var useMoveDir = i_State is eCharacterState.Jump or eCharacterState.OnAir || m_OnMovingPlatform;
-            var velX       = useMoveDir ? Mathf.Abs(i_MoveDir.x) : Mathf.Abs(vel.x);
-            var moving     = velX > m_Movement.MoveSpeedThreshold;
-            i_MoveSpeed = moving
-                              ? Mathf.Lerp(0, m_Movement.AnimMaxWalkSpeed,
-                                           (velX - m_Movement.MoveSpeedThreshold) /
-                                           (useMoveDir ? 1 : m_Movement.MaxSpeed))
-                              : 0;
+            var useMoveDir = (i_State is eCharacterState.Jump or eCharacterState.OnAir || m_OnMovingPlatform) && !m_OnSlowWalk;
+            VelAnimSpeedIter  = useMoveDir ? Mathf.Abs(i_MoveDir.x) : (Mathf.Abs(vel.x) / maxSpeed);
+            SlowWalkBlendIter = Mathf.Clamp(SlowWalkBlendIter, 0, 1);
 
             rotateBody(i_State, i_MoveDir);
         }
@@ -72,9 +103,9 @@ public class PlayerPhysics : MonoBehaviour
             var check = Mathf.Lerp(0.05f, m_Movement.HangingStartDuration, Mathf.InverseLerp(m_Movement.HangingSpeed, m_Movement.HangingSpeed * 2, Mathf.Abs(m_Rb.velocity.y)));
             if (m_HangTimer >= check)
             {
-                vel.y         = Mathf.Max(vel.y, -m_Movement.HangingSpeed);
-                m_Rb.velocity = vel;
-                i_MoveSpeed   = 0;
+                vel.y            = Mathf.Max(vel.y, -m_Movement.HangingSpeed);
+                m_Rb.velocity    = vel;
+                VelAnimSpeedIter = 0;
             }
         }
     }
@@ -91,8 +122,14 @@ public class PlayerPhysics : MonoBehaviour
         var vel = m_Rb.velocity;
         if (m_OnMovingPlatform)
         {
-            vel.y = m_MoveCheckCast[0].rigidbody.velocity.y;
-            if (Mathf.Abs(i_MoveDir.x) <= 0f) vel.x = m_MoveCheckCast[0].rigidbody.velocity.x;
+            var platformSpeed = m_MoveCheckCast[0].rigidbody.velocity;
+
+            if (Mathf.Abs(i_MoveDir.y) < 0.01f) vel.y = platformSpeed.y;
+            if (Mathf.Abs(i_MoveDir.x) < 0.01f) vel.x = platformSpeed.x;
+            else
+            {
+                if ((int) Mathf.Sign(platformSpeed.x) == (int) Mathf.Sign(i_MoveDir.x)) vel.x += platformSpeed.x;
+            }
         }
         else if (vel.sqrMagnitude > m_Movement.MoveSpeedThreshold) //Add friction
         {
@@ -258,7 +295,7 @@ public class PlayerPhysics : MonoBehaviour
         {
             if (Quaternion.Angle(targetRotation, m_Rb.transform.rotation) > 1)
             {
-                var newRotation = Quaternion.Lerp(m_Rb.transform.rotation, targetRotation, m_Movement.RotationSpeed * Time.fixedDeltaTime);
+                var newRotation = Quaternion.Lerp(m_Rb.transform.rotation, targetRotation, m_Movement.RotationSpeed);
                 m_Rb.transform.rotation = newRotation;
             }
         }
@@ -267,7 +304,7 @@ public class PlayerPhysics : MonoBehaviour
             if (Vector2.Angle(m_Rb.transform.up, m_MoveCheckCast[0].normal) > 1)
             {
                 targetRotation          = Quaternion.FromToRotation(Vector3.Lerp(Vector3.up, m_MoveCheckCast[0].normal, 0.5f), m_MoveCheckCast[0].normal);
-                m_Rb.transform.rotation = Quaternion.Lerp(m_Rb.transform.rotation, targetRotation, m_Movement.RotationSpeed * Time.fixedDeltaTime);
+                m_Rb.transform.rotation = Quaternion.Lerp(m_Rb.transform.rotation, targetRotation, m_Movement.RotationSpeed);
             }
         }
 
@@ -299,6 +336,11 @@ public class PlayerPhysics : MonoBehaviour
         }
 
         return i_State;
+    }
+
+    public void SetSlowWalk(bool i_IsBlind)
+    {
+        m_OnSlowWalk = i_IsBlind;
     }
 
     public void SetGravityScale()

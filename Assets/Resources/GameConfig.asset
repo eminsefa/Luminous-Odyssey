@@ -13,16 +13,17 @@ MonoBehaviour:
   m_Name: GameConfig
   m_EditorClassIdentifier: 
   Movement:
-    MoveSpeedThreshold: 0.5
-    WalkSpeed: 65
-    AirMoveSpeed: 35
-    JumpPower: 16
+    MoveSpeedThreshold: 0.1
+    WalkSpeed: 1
     MaxSpeed: 10
-    RotationSpeed: 7.5
+    SlowWalkMaxSpeed: 2
+    SlowWalkSpeed: 0.5
+    AirMoveSpeed: 1
+    JumpPower: 16
+    RotationSpeed: 0.075
     Friction: 0.4
     GroundCheckDistance: 0.4
     GravityScale: 3
-    AnimMaxWalkSpeed: 1
     HangingStartDuration: 0.1
     HangingSpeed: 3
     CayoteTime: 0.2
@@ -81,35 +82,37 @@ MonoBehaviour:
       - serializedVersion: 3
         time: 0
         value: 0
-        inSlope: 2
-        outSlope: 2
-        tangentMode: 0
+        inSlope: 1.0204082
+        outSlope: 1.0054291
+        tangentMode: 1
         weightedMode: 0
         inWeight: 0
-        outWeight: 0
+        outWeight: 0.06558865
       - serializedVersion: 3
-        time: 0.2
-        value: 0.5
-        inSlope: 0.76606023
-        outSlope: 0.76606023
-        tangentMode: 0
+        time: 0.98
+        value: 1
+        inSlope: 0.034737825
+        outSlope: 0
+        tangentMode: 65
         weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.05723534
+        inWeight: 0.1498701
+        outWeight: 0.33333334
       - serializedVersion: 3
         time: 1
         value: 1
-        inSlope: 0.42743832
-        outSlope: 0.42743832
-        tangentMode: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 34
         weightedMode: 0
-        inWeight: 0.11734902
+        inWeight: 0.33333334
         outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
     VisibilityFalloff: 1
+    MoveLightThreshold: 0.01
     ThrowManaLightRangeMult: 0.5
+    SlowWalkDarkenSpeed: 15
   Input:
     InputIntervals:
     - Header: Jump
@@ -120,6 +123,8 @@ MonoBehaviour:
       Value: 0.5
     - Header: Fire
       Value: 0.5
+    - Header: Slow Walk
+      Value: -0.1
   Debug:
     InfiniteMana: 1
     GodMode: 0

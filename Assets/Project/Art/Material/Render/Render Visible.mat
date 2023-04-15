@@ -121,7 +121,7 @@ Material:
     - _HaloSizeMultiplier: 0.5
     - _HaloThickness: 0.053
     - _HaloThicknessMultiplier: 0.35
-    - _LightRange: 365.0879
+    - _LightRange: 0
     - _Metallic: 0
     - _NumberOfHalos: 3
     - _OcclusionStrength: 1

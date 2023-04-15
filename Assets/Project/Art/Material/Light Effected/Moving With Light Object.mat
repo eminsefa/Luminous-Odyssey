@@ -39,10 +39,10 @@ Material:
     m_Ints: []
     m_Floats:
     - _CircleSize: 1
-    - _ColorChangeSpeed: 0.35
-    - _ColorStrength: 0.5
+    - _ColorChangeSpeed: 0.4
+    - _ColorStrength: 0.6
     - _EnableExternalAlpha: 0
-    - _Intensity: 0.5
+    - _Intensity: 1
     - _MaxBrightnessPlus: 1
     - _NumCircles: 5.97
     - _Speed: 4.59

@@ -18,6 +18,8 @@ public class ManaDoorActivator : DoorActivator
               .SetDelay(interactionVars.ManaPlaceDelay)
               .SetEase(interactionVars.ManaPlaceEase)
               .OnComplete(Interact);
+        i_Mana.transform.DOScale(Vector3.zero, interactionVars.ManaPlaceDuration)
+              .SetDelay(interactionVars.ManaPlaceDelay);
     }
 
     public override void OpenDoorFailed()

@@ -14,8 +14,10 @@ namespace Managers
         public static event Action OnDashInput;
         public static event Action OnInteractionInput;
         public static event Action OnFireInput;
+        public static event Action<bool> OnSlowWalkInput;
 
-        private float[] m_InputTimers = new float[4];
+        private float[] m_InputTimers = new float[5];
+        private bool    m_OnSlowWalk;
 
         [field: SerializeField] public InputAction PlayerMovement { get; set; }
         [field: SerializeField] public InputAction PlayerAction   { get; set; }
@@ -40,7 +42,7 @@ namespace Managers
             PlayerMovement.Disable();
             PlayerAction.Disable();
 
-            PlayerAction.performed -= OnActionInput;
+            PlayerAction.performed   -= OnActionInput;
         }
 
         private void Update()
@@ -88,8 +90,14 @@ namespace Managers
                 m_InputTimers[3] = 0;
                 OnFireInput?.Invoke();
             }
-        }
 
+            if (context.control == PlayerAction.controls[4] && m_InputTimers[4]>0 &&!jumpOrDash) //Slow Walk
+            {
+                m_OnSlowWalk = !m_OnSlowWalk;
+                OnSlowWalkInput?.Invoke(m_OnSlowWalk);
+            }
+        }
+        
         public void SetInputTimer(int i_Index)
         {
             m_InputTimers[i_Index] = -m_InputVars.InputIntervals[i_Index].Value;
