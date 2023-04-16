@@ -39,8 +39,8 @@ Material:
     m_Ints: []
     m_Floats:
     - _CircleSize: 1
-    - _ColorChangeSpeed: 0.4
-    - _ColorStrength: 0.6
+    - _ColorChangeSpeed: 0.5
+    - _ColorStrength: 0.8
     - _EnableExternalAlpha: 0
     - _Intensity: 1
     - _MaxBrightnessPlus: 1

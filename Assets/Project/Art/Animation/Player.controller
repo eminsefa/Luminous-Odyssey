@@ -261,7 +261,7 @@ AnimatorStateTransition:
     m_EventTreshold: 0
   - m_ConditionMode: 4
     m_ConditionEvent: WalkSpeed
-    m_EventTreshold: 0.5
+    m_EventTreshold: 0.75
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 6636167744678868942}
   m_Solo: 0
@@ -394,7 +394,7 @@ AnimatorStateTransition:
     m_EventTreshold: 0
   - m_ConditionMode: 4
     m_ConditionEvent: WalkSpeed
-    m_EventTreshold: 0.5
+    m_EventTreshold: 0.75
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1320523406859520144}
   m_Solo: 0
@@ -726,7 +726,7 @@ AnimatorStateTransition:
     m_EventTreshold: 0
   - m_ConditionMode: 4
     m_ConditionEvent: WalkSpeed
-    m_EventTreshold: 0.5
+    m_EventTreshold: 0.75
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 2837265443808570090}
   m_Solo: 0
@@ -811,7 +811,7 @@ AnimatorStateTransition:
     m_EventTreshold: 0
   - m_ConditionMode: 4
     m_ConditionEvent: WalkSpeed
-    m_EventTreshold: 0.5
+    m_EventTreshold: 0.75
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 6636167744678868942}
   m_Solo: 0
@@ -964,7 +964,7 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 3
     m_ConditionEvent: WalkSpeed
-    m_EventTreshold: 0.5
+    m_EventTreshold: 0.75
   - m_ConditionMode: 2
     m_ConditionEvent: Hang
     m_EventTreshold: 0
@@ -1020,7 +1020,7 @@ AnimatorStateTransition:
     m_EventTreshold: 0
   - m_ConditionMode: 4
     m_ConditionEvent: WalkSpeed
-    m_EventTreshold: 0.5
+    m_EventTreshold: 0.75
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1320523406859520144}
   m_Solo: 0
@@ -1071,7 +1071,7 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 3
     m_ConditionEvent: WalkSpeed
-    m_EventTreshold: 0.5
+    m_EventTreshold: 0.75
   - m_ConditionMode: 2
     m_ConditionEvent: OnAir
     m_EventTreshold: 0
@@ -1108,7 +1108,7 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 4
     m_ConditionEvent: WalkSpeed
-    m_EventTreshold: 0.5
+    m_EventTreshold: 0.75
   - m_ConditionMode: 1
     m_ConditionEvent: OnAir
     m_EventTreshold: 0
@@ -1164,7 +1164,7 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 4
     m_ConditionEvent: WalkSpeed
-    m_EventTreshold: 0.5
+    m_EventTreshold: 0.75
   - m_ConditionMode: 1
     m_ConditionEvent: OnAir
     m_EventTreshold: 0
@@ -1192,7 +1192,7 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 3
     m_ConditionEvent: WalkSpeed
-    m_EventTreshold: 0.5
+    m_EventTreshold: 0.75
   - m_ConditionMode: 2
     m_ConditionEvent: Dash
     m_EventTreshold: 0
@@ -1257,7 +1257,7 @@ AnimatorStateTransition:
     m_EventTreshold: 0
   - m_ConditionMode: 4
     m_ConditionEvent: WalkSpeed
-    m_EventTreshold: 0.5
+    m_EventTreshold: 0.75
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 2837265443808570090}
   m_Solo: 0

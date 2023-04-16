@@ -36,6 +36,7 @@ public class BasicAnimation : MonoBehaviour
     [HideIf(nameof(m_AnimateSelf))] [SerializeField]
     private Transform m_TargetTransform;
 
+    //Convert to Local
     public void Animate()
     {
         var tr = m_AnimateSelf ? transform : m_TargetTransform;

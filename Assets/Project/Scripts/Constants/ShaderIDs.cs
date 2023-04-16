@@ -8,4 +8,5 @@ public struct ShaderIDs
     public static readonly int S_VisibilityFalloff    = Shader.PropertyToID("_VisibilityFalloff");
     public static readonly int S_LightTexture         = Shader.PropertyToID("_LightTexture");
     public static readonly int S_ManaObjectLightRange = Shader.PropertyToID("_ManaObjectLightRange");
+    public static readonly int S_BlindFactor = Shader.PropertyToID("_BlindFactor");
 }

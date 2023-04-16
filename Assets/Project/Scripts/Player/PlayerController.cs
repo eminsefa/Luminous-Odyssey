@@ -8,7 +8,8 @@ public class PlayerController : Singleton<PlayerController>
 {
     [ShowInInspector] private eCharacterState m_CharacterState = eCharacterState.Null;
 
-    public  bool      IsBlind           => Input.GetKey(KeyCode.LeftShift) && m_Light.CloseEyeIter > 0.95f;
+    public  bool      IsBlind           => Input.GetKey(KeyCode.LeftShift) && m_Light.BlindFactor > 0.95f;
+    public  float     BlindFactor         => m_Light.BlindFactor;
     public  Transform ManaObjectsHolder => m_Action.ManaObjectsHolder;
     public  Vector2   LightPos          => m_Light.transform.position;
     public  Vector2   Velocity          => m_Physics.Velocity;
@@ -76,16 +77,15 @@ public class PlayerController : Singleton<PlayerController>
     private void FixedUpdate()
     {
         m_CharacterState = m_Physics.CheckState(m_CharacterState, m_MoveVector);
-
-        m_Animation.SetStateAnimation(m_CharacterState);
-
         m_Physics.MoveHorizontal(m_CharacterState, m_MoveVector);
     }
 
     private void Update()
     {
-        var isBlind = Input.GetKey(KeyCode.LeftShift);
-        var walking   = m_CharacterState is eCharacterState.Walk;
+        m_Animation.SetStateAnimation(m_CharacterState);
+
+        var isBlind = Input.GetKey(KeyCode.LeftShift); //Todo fix
+        var walking = m_CharacterState is eCharacterState.Walk;
         m_Physics.SetSlowWalk(isBlind && walking);
 
         m_Light.SetMoveSpeed(m_Physics.Velocity.x, isBlind);

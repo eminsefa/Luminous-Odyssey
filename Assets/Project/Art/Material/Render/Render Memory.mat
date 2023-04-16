@@ -24,6 +24,14 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _BlindShineNTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BlindShineTex:
+        m_Texture: {fileID: 2800000, guid: 3387efc3bcf474e89bbf44cee98d7bc3, type: 3}
+        m_Scale: {x: 0.001, y: 0.001}
+        m_Offset: {x: 0, y: 0}
     - _BumpMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -72,6 +80,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _NoiseTex:
+        m_Texture: {fileID: 2800000, guid: 3387efc3bcf474e89bbf44cee98d7bc3, type: 3}
+        m_Scale: {x: 0.01, y: 0.01}
+        m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -100,6 +112,8 @@ Material:
     m_Floats:
     - _AlphaClip: 0
     - _Blend: 0
+    - _BlindShineIntensity: 0.2
+    - _BlindShineSpeed: 0.5
     - _BumpScale: 1
     - _CircleFalloff: 1
     - _CircleObject: 0.31
@@ -110,6 +124,7 @@ Material:
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _Col: 1.25
+    - _ColorOscillationSpeed: 0
     - _Cull: 2
     - _Cutoff: 0
     - _DetailAlbedoMapScale: 1
@@ -125,6 +140,7 @@ Material:
     - _HaloSizeMultiplier: 0.5
     - _HaloThickness: 0.053
     - _HaloThicknessMultiplier: 0.35
+    - _Intensity: 1
     - _LightRange: 0
     - _Metallic: 0
     - _NumberOfHalos: 3
@@ -135,6 +151,7 @@ Material:
     - _ReceiveShadows: 1
     - _Reverse: 0
     - _RotationSpeed: 1.66
+    - _ShineIntensity: 0.075
     - _SizeChangeSpeed: 0.5
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
@@ -145,11 +162,14 @@ Material:
     - _StencilOp: 0
     - _Surface: 0
     - _VisibilityFalloff: 1
+    - _WaveFrequency: 0.01
+    - _WaveOffset: 0
     - _WorkflowMode: 1
     - _ZTest: 2
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _BlindShineColor: {r: 0, g: 0.11538458, b: 0.5, a: 1}
     - _CircleCenter: {r: 0, g: 0, b: 0, a: 0}
     - _CirclePos: {r: 0, g: 0, b: 0, a: 0}
     - _CirclePosition: {r: 0, g: 0, b: 0, a: 0}

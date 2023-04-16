@@ -8,7 +8,7 @@ public class ManaManager : Singleton<ManaManager>
     private bool  m_OnDashManaDecrease;
     private float m_IdleSpeedTimer;
     private bool  m_Wait;
-    private int   m_ManaStackCount = 5;
+    private int   m_ManaStackCount = 0;
 
     private ManaVariables m_ManaVars => GameConfig.Instance.Mana;
 
@@ -22,6 +22,8 @@ public class ManaManager : Singleton<ManaManager>
     private void OnEnable()
     {
         ManaObject.OnManaReturned += OnManaReturned;
+
+        updateStacks();
     }
 
     private void OnDisable()

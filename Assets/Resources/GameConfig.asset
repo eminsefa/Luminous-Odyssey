@@ -126,5 +126,5 @@ MonoBehaviour:
     - Header: Slow Walk
       Value: -0.1
   Debug:
-    InfiniteMana: 1
+    InfiniteMana: 0
     GodMode: 0

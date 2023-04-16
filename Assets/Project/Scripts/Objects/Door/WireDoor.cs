@@ -31,6 +31,7 @@ public class WireDoor : MonoBehaviour
 
     private IEnumerator tryToOpenDoor()
     {
+        m_Activator.SetInteractable(false);
         for (var i = 0; i < m_WirePoints.Length; i++)
         {
             var p = m_WirePoints[i];
@@ -63,6 +64,7 @@ public class WireDoor : MonoBehaviour
         }
 
         m_Activator.OpenDoorFailed();
+        m_Activator.SetInteractable(true);
     }
 
     private void openCompleted()

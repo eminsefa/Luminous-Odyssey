@@ -26,7 +26,7 @@ public class LightSetter : Singleton<LightSetter>
         setStartLight();
     }
 
-    private void LateUpdate()
+    private void Update()
     {
         setLight();
     }
@@ -34,8 +34,8 @@ public class LightSetter : Singleton<LightSetter>
     private void setStartLight()
     {
         m_RenderVisibleMat.SetFloat(ShaderIDs.S_ManaObjectLightRange, m_LightVars.ThrowManaLightRange);
-        m_RenderVisibleMat.SetFloat(ShaderIDs.S_VisibilityFalloff,    m_LightVars.VisibilityFalloff); //Later call this once
-        m_RenderMemoryMat.SetFloat(ShaderIDs.S_VisibilityFalloff, m_LightVars.VisibilityFalloff);     //Later call this once
+        m_RenderVisibleMat.SetFloat(ShaderIDs.S_VisibilityFalloff,    m_LightVars.VisibilityFalloff); 
+        m_RenderMemoryMat.SetFloat(ShaderIDs.S_VisibilityFalloff, m_LightVars.VisibilityFalloff);     
     }
 
     private void setLight()
@@ -43,7 +43,9 @@ public class LightSetter : Singleton<LightSetter>
         setLightPositions();
 
         m_RenderVisibleMat.SetFloat(ShaderIDs.S_LightRange, PlayerLight.BrightnessFactor * m_LightVars.LightRange * m_LightVars.MaskRangeMult);
-        m_RenderMemoryMat.SetFloat(ShaderIDs.S_LightRange, PlayerLight.BrightnessFactor  * m_LightVars.LightRange * m_LightVars.MaskRangeMult);
+        m_RenderMemoryMat.SetFloat(ShaderIDs.S_LightRange,  PlayerLight.BrightnessFactor * m_LightVars.LightRange * m_LightVars.MaskRangeMult);
+        
+        m_RenderMemoryMat.SetFloat(ShaderIDs.S_BlindFactor,  PlayerController.Instance.BlindFactor);
     }
 
     private void OnApplicationQuit()

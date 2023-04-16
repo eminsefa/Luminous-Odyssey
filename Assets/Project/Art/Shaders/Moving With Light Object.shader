@@ -78,7 +78,7 @@ Shader "Unlit/Moving With Light Object"
                 hsv.x += _Time.y * _ColorChangeSpeed;
                 float3 gradientColor = hsv2rgb(hsv);
 
-                col.rgb = lerp(col.rgb, gradientColor, _ColorStrength) + col.rgb *_Intensity;
+                col.rgb = lerp(col.rgb, gradientColor, _ColorStrength) *_Intensity+ col.rgb ;
 
                 return col;
             }

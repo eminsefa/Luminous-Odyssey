@@ -10,6 +10,7 @@ public class ManaObject : LightObject
     private bool      m_IsThrown;
     private bool      m_MoveToPlayer;
     private Transform m_Tr;
+    public  Vector2   Velocity => m_Rb.velocity;
 
     [SerializeField] private GameObject  m_LightObject;
     [SerializeField] private Collider2D  m_Col;
@@ -59,6 +60,7 @@ public class ManaObject : LightObject
         m_Tr.SetParent(PlayerController.Instance.ManaObjectsHolder);
         m_Tr.localPosition = Vector3.zero;
         m_Tr.localRotation = Quaternion.identity;
+        m_Tr.localScale    = Vector3.one * 0.5f;
     }
     
     private void Update()
@@ -102,10 +104,10 @@ public class ManaObject : LightObject
     private void OnTriggerEnter2D(Collider2D other)
     {
         other.transform.TryGetComponent(out ManaDoorActivator manaDoor);
-        if (m_IsThrown && manaDoor!=null)
+        if (m_IsThrown && manaDoor!=null && manaDoor.IsInteractable)
         {
             Placed();
-            manaDoor.PlaceMana(this);
+            manaDoor.ThrowToPlaceMana(this);
         }
     }
 }

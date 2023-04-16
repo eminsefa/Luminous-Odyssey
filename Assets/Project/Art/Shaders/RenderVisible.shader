@@ -4,7 +4,6 @@ Shader "Custom/RenderVisible"
     {
         _MainTex ("Texture", 2D) = "white" {}
         _MaskTex ("Mask Texture", 2D) = "white" {}
-        [HideInInspector]_LightTexture ("Light Texture", 2D) = "white" {}
         _LightRange ("Light Range", Range(0,5000)) = 7.5
         _VisibilityFalloff ("Visibility Falloff", Range(0, 25)) = 1
 

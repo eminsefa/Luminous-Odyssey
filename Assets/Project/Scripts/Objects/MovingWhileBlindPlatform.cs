@@ -13,6 +13,7 @@ public class MovingWhileBlindPlatform : MonoBehaviour
     [SerializeField] private float          m_MaxSpeed;
     [SerializeField] private float          m_SpeedAcceleration;
     [SerializeField] private ParticleSystem m_MoveParticle;
+    [SerializeField] private LayerMask      m_PlayerLayer;
 
     private void FixedUpdate()
     {
@@ -30,16 +31,27 @@ public class MovingWhileBlindPlatform : MonoBehaviour
         if (m_IsPlayerBlind)
         {
             if (!m_MoveParticle.isPlaying) m_MoveParticle.Play();
+
+            //Temporary
+            if (Physics2D.Raycast(m_Col.bounds.center, Vector2.up, m_Col.size.y, m_PlayerLayer))
+            {
+                m_IsPlayerOn = true;
+            }
         }
         else if (m_MoveParticle.isPlaying) m_MoveParticle.Stop();
     }
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        collision.rigidbody.TryGetComponent(out PlayerController player);
-        var isPlayerOn    = player                         != null;
-        var isObjectAbove =collision.GetContact(0).point.y > m_Col.bounds.center.y;
-        m_IsPlayerOn = isPlayerOn && isObjectAbove;
+        // var isPlayerOn = false;
+        // if (collision.rigidbody != null)
+        // {
+        //     collision.rigidbody.TryGetComponent(out PlayerController player);
+        //     isPlayerOn = player != null;
+        // }
+        // var isObjectAbove =collision.GetContact(0).point.y > m_Col.bounds.center.y;
+        // m_IsPlayerOn = isPlayerOn && isObjectAbove;
+        // m_IsPlayerOn = isObjectAbove;
     }
 
     private void OnCollisionExit2D(Collision2D other)

@@ -6,9 +6,13 @@ Shader "Unlit/RenderMemory"
         _MaskTex ("Mask Texture", 2D) = "white" {}
         _MaskTexLight ("Mask Texture Visible", 2D) = "white" {}
         _Color ("Color", Color) = (1,1,1,1)
-        [HideInInspector]_LightTexture ("Light Texture", 2D) = "white" {}
         _LightRange ("Light Range", Range(0,5000)) = 7.5
         _VisibilityFalloff ("Visibility Falloff", Range(0, 25)) = 1
+        _BlindShineColor ("Blind Shine Color",Color)=(1,1,1,1)
+        _BlindShineIntensity ("Blind Shine Intensity",float)=1
+        _BlindShineTex ("Blind Shine Texture", 2D) = "white" {}
+        _BlindShineSpeed ("Blind Shine Speed", Range(0, 10)) = 1
+        _WaveFrequency ("Wave Frequency", Range(0, 10)) = 1
     }
 
     SubShader
@@ -58,6 +62,14 @@ Shader "Unlit/RenderMemory"
             float _LightRange;
             float _VisibilityFalloff;
 
+            sampler2D _BlindShineTex;
+            float4 _BlindShineTex_ST;;
+            float4 _BlindShineColor;;
+            float _BlindShineIntensity;
+            float _BlindShineSpeed;
+            float _BlindFactor;
+            float _WaveFrequency;
+
             v2f vert(appdata v)
             {
                 v2f o;
@@ -75,7 +87,15 @@ Shader "Unlit/RenderMemory"
                 fixed4 col = tex2D(_MainTex, TRANSFORM_TEX(i.uv, _MainTex)) * _Color;
 
                 float maskAlpha = maskCol.a;
-                float maskLightAlpha = 1 - pow(maskLightCol.a,_VisibilityFalloff);
+                float maskLightAlpha = 1 - pow(maskLightCol.a, _VisibilityFalloff);
+
+                float waveX = _WaveFrequency * sin(_Time.y * _BlindShineSpeed );
+                float waveY = _WaveFrequency * cos(_Time.y * _BlindShineSpeed );
+                float2 noiseUV = TRANSFORM_TEX(i.uv, _BlindShineTex) + float2(waveX, waveY);
+                fixed4 noise = tex2D(_BlindShineTex, noiseUV);
+
+                float intensity=lerp(0,_BlindShineIntensity,_BlindFactor);
+                col.rgb += noise.r * _BlindShineColor * intensity ;
 
                 col.a *= lerp(maskAlpha, maskLightAlpha, maskLightCol.a);
                 UNITY_APPLY_FOG(i.fogCoord, col);

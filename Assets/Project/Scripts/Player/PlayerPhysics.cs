@@ -56,10 +56,12 @@ public class PlayerPhysics : MonoBehaviour
         {
             var speed = i_State == eCharacterState.OnAir ? m_Movement.AirMoveSpeed :
                         m_OnSlowWalk                     ? m_Movement.SlowWalkSpeed : m_Movement.WalkSpeed;
-            var delta = speed * i_MoveDir.x;
+            var delta    = speed * i_MoveDir.x;
+            var maxSpeed = m_Movement.MaxSpeed;
 
             if (m_OnSlowWalk)
             {
+                SlowWalkBlendIter += 0.075f; //Temporary
                 var dif = Mathf.Abs(vel.x) - m_Movement.SlowWalkMaxSpeed;
 
                 if (dif > 0)
@@ -69,25 +71,17 @@ public class PlayerPhysics : MonoBehaviour
                     delta += -Mathf.Sign(vel.x) * amount;
                 }
             }
-
-            var newVelX = vel.x + delta;
-
-            var maxSpeed = m_Movement.MaxSpeed;
-            if (m_OnSlowWalk)
-            {
-                SlowWalkBlendIter += 0.075f;
-            }
             else
             {
                 SlowWalkBlendIter -= 0.075f;
-                if (m_OnMovingPlatform)
+                if (m_OnMovingPlatform && i_State != eCharacterState.Jump)
                 {
                     var platformSpeed = m_MoveCheckCast[0].rigidbody.velocity;
                     maxSpeed = Mathf.Max(Mathf.Abs(vel.x) + Mathf.Abs(platformSpeed.x), m_Movement.MaxSpeed);
                 }
             }
-
-
+            var newVelX = vel.x + delta;
+            
             vel.x = Mathf.Clamp(newVelX, -maxSpeed, maxSpeed);
 
             m_Rb.velocity = vel;
@@ -124,11 +118,11 @@ public class PlayerPhysics : MonoBehaviour
         {
             var platformSpeed = m_MoveCheckCast[0].rigidbody.velocity;
 
-            if (Mathf.Abs(i_MoveDir.y) < 0.01f) vel.y = platformSpeed.y;
-            if (Mathf.Abs(i_MoveDir.x) < 0.01f) vel.x = platformSpeed.x;
+            if (Mathf.Abs(i_MoveDir.y) <= 0) vel.y = platformSpeed.y;
+            if (Mathf.Abs(i_MoveDir.x) <= 0) vel.x = platformSpeed.x;
             else
             {
-                if ((int) Mathf.Sign(platformSpeed.x) == (int) Mathf.Sign(i_MoveDir.x)) vel.x += platformSpeed.x;
+                // if ((int) Mathf.Sign(platformSpeed.x) == (int) Mathf.Sign(i_MoveDir.x)) vel.x += platformSpeed.x;
             }
         }
         else if (vel.sqrMagnitude > m_Movement.MoveSpeedThreshold) //Add friction

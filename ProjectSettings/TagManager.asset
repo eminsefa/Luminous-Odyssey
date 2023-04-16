@@ -17,11 +17,11 @@ TagManager:
   - Environment
   - MemoryMap
   - MovingObject
-  - MovingObjectMemory
+  - Platform
   - Background
   - Mana
   - Button
-  - MovingWithLightObject
+  - AlwaysVisible
   - LightTrigger
   - 
   - 
