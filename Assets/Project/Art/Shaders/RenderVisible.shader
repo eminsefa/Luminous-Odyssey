@@ -96,6 +96,7 @@ Shader "Custom/RenderVisible"
                     float3 diff = i.worldPos - float3(lightPos.xy, 0);
 
                     float currentLightRange = _LightRange;
+                    
                     if (m != 0)
                     {
                         currentLightRange = _ManaObjectLightRange;
@@ -116,22 +117,22 @@ Shader "Custom/RenderVisible"
                             float randomStartAngle = frac(sin(float(n) * 1.618 + _HaloRandomSeed) * 43758.5453) * 2.0 * 3.14159265f;
                             float directionMultiplier = (n % 2 == 0) ? 1.0 : -1.0;
                             float currentAngle = _Time.y * _RotationSpeed * directionMultiplier + randomStartAngle;
-
+                    
                             float2 haloDirection = float2(cos(currentAngle), sin(currentAngle));
                             float haloRadius = lerp(_LightRange, _LightRange * (1 - _HaloBendRange), float(n) / float(_NumberOfHalos));
                             float haloAngle = acos(dot(normDiff, haloDirection));
-
+                    
                             float randomScale = (sin(float(n) * 12.9898 + 78.233 + _Time.y * _SizeChangeSpeed) + 1) * 0.5;
                             float haloSize = lerp(_HaloMinMaxSize.x, _HaloMinMaxSize.y, randomScale) * 3.14159265f * pow(_HaloSizeMultiplier, n);
-
+                    
                             float haloVisibility = saturate(1.0 - abs(haloAngle) / haloSize);
-
+                    
                             float edgeDist = abs(dist - haloRadius);
                             float currentHaloThickness = _HaloThickness * _LightRange * pow(_HaloThicknessMultiplier, n);
                             haloVisibility *= saturate((currentHaloThickness - edgeDist) / currentHaloThickness);
-
+                    
                             haloVisibility *= currentHaloThickness;
-
+                    
                             col.rgb += haloVisibility * visibility * _HaloColor.rgb;
                         }
                     }

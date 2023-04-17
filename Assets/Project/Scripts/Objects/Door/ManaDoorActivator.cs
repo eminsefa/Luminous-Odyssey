@@ -28,13 +28,11 @@ public class ManaDoorActivator : DoorActivator
     {
         IsInteractable = false;
         m_ActiveMana   = i_Mana;
-        i_Mana.transform.DOMove(m_ManaPlacePoint.position, i_Mana.Velocity.magnitude)
-              .SetSpeedBased()
+        var dur = (i_Mana.transform.position - m_ManaPlacePoint.position).magnitude / i_Mana.Velocity.magnitude;
+        i_Mana.transform.DOMove(m_ManaPlacePoint.position, dur)
               .OnComplete(Interact);
-        i_Mana.transform.DORotate(m_ManaPlacePoint.transform.rotation.eulerAngles, i_Mana.Velocity.magnitude)
-              .SetSpeedBased();
-        i_Mana.transform.DOScale(0.75f, i_Mana.Velocity.magnitude)
-              .SetSpeedBased();
+        i_Mana.transform.DORotate(m_ManaPlacePoint.transform.rotation.eulerAngles, dur);
+        i_Mana.transform.DOScale(0.75f, dur);
     }
 
     public override void OpenDoorFailed()

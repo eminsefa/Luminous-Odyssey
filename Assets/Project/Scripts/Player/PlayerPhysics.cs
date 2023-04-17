@@ -118,12 +118,8 @@ public class PlayerPhysics : MonoBehaviour
         {
             var platformSpeed = m_MoveCheckCast[0].rigidbody.velocity;
 
-            if (Mathf.Abs(i_MoveDir.y) <= 0) vel.y = platformSpeed.y;
+            vel.y = platformSpeed.y;
             if (Mathf.Abs(i_MoveDir.x) <= 0) vel.x = platformSpeed.x;
-            else
-            {
-                // if ((int) Mathf.Sign(platformSpeed.x) == (int) Mathf.Sign(i_MoveDir.x)) vel.x += platformSpeed.x;
-            }
         }
         else if (vel.sqrMagnitude > m_Movement.MoveSpeedThreshold) //Add friction
         {

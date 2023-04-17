@@ -84,11 +84,11 @@ public class PlayerController : Singleton<PlayerController>
     {
         m_Animation.SetStateAnimation(m_CharacterState);
 
-        var isBlind = Input.GetKey(KeyCode.LeftShift); //Todo fix
+        var isBlind = Input.GetKey(KeyCode.LeftShift); //Todo take from input
         var walking = m_CharacterState is eCharacterState.Walk;
         m_Physics.SetSlowWalk(isBlind && walking);
 
-        m_Light.SetMoveSpeed(m_Physics.Velocity.x, isBlind);
+        m_Light.SetMoveSpeed(m_Physics.Velocity.sqrMagnitude, isBlind);
         m_Animation.SetWalkAnimSpeed(m_Physics.VelAnimSpeedIter, m_Physics.SlowWalkBlendIter);
     }
 
@@ -140,9 +140,7 @@ public class PlayerController : Singleton<PlayerController>
 
     private void OnSlowWalkInput(bool i_Started)
     {
-        // if(m_CharacterState!=eCharacterState.Walk) return;
-        // m_Physics.GetSlowWalkVel(i_Started);
-        // m_Animation.SetSlowWalk(i_Started);
+        // Convert get key to here
     }
 
     private void OnJumpCompleted()
@@ -176,7 +174,6 @@ public class PlayerController : Singleton<PlayerController>
 
     private void OnHangingStarted(float i_Dur)
     {
-        // if (m_CharacterState is eCharacterState.Dash) return;
         m_Animation.Hang(m_CharacterState, i_Dur);
         m_CharacterState = eCharacterState.Hang;
     }

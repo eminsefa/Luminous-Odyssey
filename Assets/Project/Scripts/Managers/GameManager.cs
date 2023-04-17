@@ -9,5 +9,10 @@ namespace Managers
     [ExecutionOrder(eExecutionOrder.GameManager)]
     public class GameManager : Singleton<GameManager>
     {
+        protected override void OnAwakeEvent()
+        {
+            base.OnAwakeEvent();
+            Application.targetFrameRate = 60;
+        }
     }
 }

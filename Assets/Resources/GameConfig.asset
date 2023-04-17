@@ -15,7 +15,7 @@ MonoBehaviour:
   Movement:
     MoveSpeedThreshold: 0.1
     WalkSpeed: 1
-    MaxSpeed: 10
+    MaxSpeed: 12.5
     SlowWalkMaxSpeed: 2
     SlowWalkSpeed: 0.5
     AirMoveSpeed: 1
@@ -64,15 +64,16 @@ MonoBehaviour:
     ManaPlaceReturnSpeed: 35
     ThrowSpeed: 25
   Mana:
-    ManaFillAmount: 0.1
+    ManaFillAmount: 0.2
     ManaDrainAmount: 0.1
     ManaDrainMinIdleDuration: 1.5
-    ManaFillMinVelocity: 25
+    ManaFillMinVelocity: 5
     ManaStackedClearSpeed: 0.25
     ManaStackedClearDelay: 0.1
   LightVars:
-    DarkenSpeed: 0.25
-    BrightenSpeed: 0.01
+    DarkenSubtleSpeed: 0.25
+    BrightenSubtleSpeed: 0.1
+    BrightenSpeed: 10
     LightRange: 7
     PaintRangeMult: 1.1
     MaskRangeMult: 60
@@ -83,28 +84,19 @@ MonoBehaviour:
         time: 0
         value: 0
         inSlope: 1.0204082
-        outSlope: 1.0054291
+        outSlope: 3.1189976
         tangentMode: 1
         weightedMode: 0
         inWeight: 0
-        outWeight: 0.06558865
-      - serializedVersion: 3
-        time: 0.98
-        value: 1
-        inSlope: 0.034737825
-        outSlope: 0
-        tangentMode: 65
-        weightedMode: 0
-        inWeight: 0.1498701
-        outWeight: 0.33333334
+        outWeight: 0.02472188
       - serializedVersion: 3
         time: 1
         value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 34
+        inSlope: 0.025998453
+        outSlope: 0.025998453
+        tangentMode: 0
         weightedMode: 0
-        inWeight: 0.33333334
+        inWeight: 0.23733002
         outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
@@ -124,7 +116,7 @@ MonoBehaviour:
     - Header: Fire
       Value: 0.5
     - Header: Slow Walk
-      Value: -0.1
+      Value: 0.1
   Debug:
     InfiniteMana: 0
     GodMode: 0

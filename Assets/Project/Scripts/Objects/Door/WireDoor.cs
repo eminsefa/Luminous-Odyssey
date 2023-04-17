@@ -51,10 +51,11 @@ public class WireDoor : MonoBehaviour
 
     private IEnumerator openFailed(int i_LastTry)
     {
-        m_WirePoints[i_LastTry].color = Color.red;
+        var lastSuccess = i_LastTry - 1;
+        m_WirePoints[lastSuccess].color = Color.red;
 
         var punchDur = 0.2f;
-        m_WirePoints[i_LastTry].transform.DOPunchScale(Vector3.one * 0.1f, punchDur);
+        m_WirePoints[lastSuccess].transform.DOPunchScale(Vector3.one * 0.1f, punchDur);
         yield return new WaitForSeconds(punchDur);
 
         for (var i = i_LastTry; i >= 0; i--)

@@ -1,8 +1,9 @@
+using System;
 using PaintIn3D;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public class LightSetter : Singleton<LightSetter>
+public class LightManager : Singleton<LightManager>
 {
     private LightVariables m_LightVars => GameConfig.Instance.LightVars;
 
@@ -26,7 +27,7 @@ public class LightSetter : Singleton<LightSetter>
         setStartLight();
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         setLight();
     }
@@ -47,13 +48,7 @@ public class LightSetter : Singleton<LightSetter>
         
         m_RenderMemoryMat.SetFloat(ShaderIDs.S_BlindFactor,  PlayerController.Instance.BlindFactor);
     }
-
-    private void OnApplicationQuit()
-    {
-        m_RenderVisibleMat.SetVector(ShaderIDs.S_LightPos, Vector3.up                    * -264);
-        m_RenderVisibleMat.SetFloat(ShaderIDs.S_LightRange, PlayerLight.BrightnessFactor * m_LightVars.LightRange * m_LightVars.MaskRangeMult);
-    }
-
+    
     private void setLightPositions()
     {
         var objects = LightObject.ActiveLightObjects;
@@ -74,5 +69,11 @@ public class LightSetter : Singleton<LightSetter>
         m_LightTexture.Apply();
         m_RenderVisibleMat.SetTexture(ShaderIDs.S_LightTexture, m_LightTexture);
         m_RenderMemoryMat.SetTexture(ShaderIDs.S_LightTexture, m_LightTexture);
+    }
+    
+    private void OnApplicationQuit()
+    {
+        m_RenderVisibleMat.SetVector(ShaderIDs.S_LightPos, Vector3.up                    * -264);
+        m_RenderVisibleMat.SetFloat(ShaderIDs.S_LightRange, PlayerLight.BrightnessFactor * m_LightVars.LightRange * m_LightVars.MaskRangeMult);
     }
 }

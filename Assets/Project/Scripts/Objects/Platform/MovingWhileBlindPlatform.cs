@@ -33,7 +33,7 @@ public class MovingWhileBlindPlatform : MonoBehaviour
             if (!m_MoveParticle.isPlaying) m_MoveParticle.Play();
 
             //Temporary
-            if (Physics2D.Raycast(m_Col.bounds.center, Vector2.up, m_Col.size.y, m_PlayerLayer))
+            if (Physics2D.BoxCast(m_Col.bounds.center, m_Col.size,0,Vector2.up, m_Col.size.y, m_PlayerLayer))
             {
                 m_IsPlayerOn = true;
             }
