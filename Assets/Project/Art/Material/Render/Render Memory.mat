@@ -112,8 +112,8 @@ Material:
     m_Floats:
     - _AlphaClip: 0
     - _Blend: 0
-    - _BlindShineIntensity: 0.2
-    - _BlindShineSpeed: 0.25
+    - _BlindShineIntensity: 0.25
+    - _BlindShineSpeed: 0.5
     - _BumpScale: 1
     - _CircleFalloff: 1
     - _CircleObject: 0.31
@@ -141,7 +141,7 @@ Material:
     - _HaloThickness: 0.053
     - _HaloThicknessMultiplier: 0.35
     - _Intensity: 1
-    - _LightRange: 0
+    - _LightRange: 76.43698
     - _Metallic: 0
     - _NumberOfHalos: 3
     - _OcclusionStrength: 1

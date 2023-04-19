@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Moving With Light Object
-  m_Shader: {fileID: 4800000, guid: 7151d7645c50b4fc1b765e3cef1f28e3, type: 3}
+  m_Name: MovingWhileBlindObject
+  m_Shader: {fileID: 4800000, guid: 7c83a104a552b4155a058146e5428871, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -42,13 +42,13 @@ Material:
     - _ColorChangeSpeed: 1
     - _ColorStrength: 0.5
     - _EnableExternalAlpha: 0
-    - _Intensity: 2
+    - _Intensity: 1.5
     - _MaxBrightnessPlus: 1
     - _NumCircles: 5.97
     - _Speed: 4.59
     m_Colors:
     - _CircleSizeRange: {r: 0.1, g: 1, b: 0, a: 0}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0, g: 0.10994744, b: 0.7, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
     - _NumCirclesRange: {r: 1, g: 3, b: 0, a: 0}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}

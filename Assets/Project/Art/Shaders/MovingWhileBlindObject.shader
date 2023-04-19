@@ -1,10 +1,10 @@
-Shader "Unlit/Moving With Light Object"
+Shader "Unlit/MovingWhileBlindObject"
 {
     Properties
     {
         _MainTex ("Main Texture", 2D) = "white" {}
         _Intensity ("Intensity",float)=1
-        _ColorChangeSpeed ("Color Change Speed", Range(0, 10)) = 1
+        _Color("Color",Color)=(1,1,1,1)
         _ColorStrength ("Color Strength", Range(0, 1)) = 0.5
     }
 
@@ -36,9 +36,9 @@ Shader "Unlit/Moving With Light Object"
             };
 
             sampler2D _MainTex;
-            float _ColorChangeSpeed;
             float _ColorStrength;
             float _Intensity;
+            float4 _Color;
 
             float3 rgb2hsv(float3 c)
             {
@@ -74,11 +74,9 @@ Shader "Unlit/Moving With Light Object"
             fixed4 frag(v2f i) : SV_Target
             {
                 fixed4 col = tex2D(_MainTex, i.uv);
-                float3 hsv = rgb2hsv(col.rgb);
-                hsv.x += _Time.y * _ColorChangeSpeed;
-                float3 gradientColor = hsv2rgb(hsv);
+                float3 gradientColor = _Color*_Intensity;
 
-                col.rgb = lerp(col.rgb, gradientColor, _ColorStrength) *_Intensity+ col.rgb ;
+                col.rgb = lerp(col.rgb, gradientColor, _ColorStrength) ;
 
                 return col;
             }

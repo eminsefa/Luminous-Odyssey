@@ -44,14 +44,15 @@ public class PlayerLight : LightObject
         var delta = deltaMove * m_LightVars.BrightenSubtleSpeed - m_LightVars.DarkenSubtleSpeed;
 
         m_Brightness += delta * Time.deltaTime;
-        m_Brightness =  Mathf.Clamp(m_Brightness, 0, 1);
+        m_Brightness =  Mathf.Clamp01(m_Brightness);
 
         BrightnessFactor = m_LightVars.BrightnessCurve.Evaluate(m_Brightness);
     }
 
     private void setMaskScale()
     {
-        m_LightCircleMask.localScale = Vector3.one * Mathf.Lerp(0, 16f, BrightnessFactor);
+        var mult = Mathf.Lerp(1, 0.67f, PlayerController.Instance.BlindFactor);
+        m_LightCircleMask.localScale = Vector3.one * Mathf.Lerp(0, m_LightVars.CircleMaskMaxScale *mult, BrightnessFactor);
     }
 
     private void setPaint()
@@ -65,10 +66,10 @@ public class PlayerLight : LightObject
         var blindDarkenSpeed                   = m_LightVars.SlowWalkDarkenSpeed;
         m_LightSpeed = i_IsBlind ? -blindDarkenSpeed : i_Speed;
 
-        var delta = (i_IsBlind ? 1 : -1) * blindDarkenSpeed * 0.5f * Time.deltaTime;
+        var delta = (i_IsBlind ? 1 : -1) * blindDarkenSpeed * 0.15f * Time.deltaTime;
 
         BlindFactor += delta;
-        BlindFactor =  Mathf.Clamp(BlindFactor, 0, 1);
+        BlindFactor =  Mathf.Clamp01(BlindFactor);
         m_EyeClosers.SetLocalScale(ExtensionMethods.Axis.x, BlindFactor);
     }
 

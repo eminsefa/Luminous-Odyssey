@@ -6,7 +6,8 @@ using Util;
 
 public class PlayerAnimation : MonoBehaviour
 {
-    public event Action OnJumpCompleted;
+    public event Action OnJumpCompletedEvent;
+    public event Action OnJumpAnimEvent;
 
     public event Action OnThrowCreateEvent;
     public event Action OnThrowAnimEvent;
@@ -27,6 +28,7 @@ public class PlayerAnimation : MonoBehaviour
 
     private void OnEnable()
     {
+        m_AnimEventSender.OnJumpAnimInvoked    += OnJumpAnimInvoked;
         m_AnimEventSender.OnJumpAnimCompleted  += OnJumpAnimCompleted;
         m_AnimEventSender.OnThrowCreateInvoked += OnThrowCreateInvoked;
         m_AnimEventSender.OnThrowAnimInvoked   += OnThrowAnimInvoked;
@@ -35,6 +37,7 @@ public class PlayerAnimation : MonoBehaviour
 
     private void OnDisable()
     {
+        m_AnimEventSender.OnJumpAnimInvoked    -= OnJumpAnimInvoked;
         m_AnimEventSender.OnJumpAnimCompleted  -= OnJumpAnimCompleted;
         m_AnimEventSender.OnThrowCreateInvoked -= OnThrowCreateInvoked;
         m_AnimEventSender.OnThrowAnimInvoked   -= OnThrowAnimInvoked;
@@ -45,9 +48,14 @@ public class PlayerAnimation : MonoBehaviour
 
 #region Events
 
+    private void OnJumpAnimInvoked()
+    {
+        OnJumpAnimEvent?.Invoke();
+    }
+    
     private void OnJumpAnimCompleted()
     {
-        OnJumpCompleted?.Invoke();
+        OnJumpCompletedEvent?.Invoke();
     }
 
     private void OnThrowCreateInvoked()

@@ -5,6 +5,7 @@ using UnityEngine;
 public class ManaObject : LightObject
 {
     public static event Action<ManaObject> OnManaReturned;
+    public static event Action<ManaObject> OnManaDisappeared;
 
     private Camera    m_MainCamera;
     private bool      m_IsThrown;
@@ -98,7 +99,7 @@ public class ManaObject : LightObject
     private void disappeared()
     {
         m_IsThrown = false;
-        OnManaReturned?.Invoke(this);
+        OnManaDisappeared?.Invoke(this);
     }
 
     private void OnTriggerEnter2D(Collider2D other)

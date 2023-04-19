@@ -33,25 +33,12 @@ public class MovingWhileBlindPlatform : MonoBehaviour
             if (!m_MoveParticle.isPlaying) m_MoveParticle.Play();
 
             //Temporary
-            if (Physics2D.BoxCast(m_Col.bounds.center, m_Col.size,0,Vector2.up, m_Col.size.y, m_PlayerLayer))
+            if (Physics2D.BoxCast(m_Col.bounds.center, m_Col.size,0,Vector2.up, m_Col.size.y,m_PlayerLayer))
             {
                 m_IsPlayerOn = true;
             }
         }
         else if (m_MoveParticle.isPlaying) m_MoveParticle.Stop();
-    }
-
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        // var isPlayerOn = false;
-        // if (collision.rigidbody != null)
-        // {
-        //     collision.rigidbody.TryGetComponent(out PlayerController player);
-        //     isPlayerOn = player != null;
-        // }
-        // var isObjectAbove =collision.GetContact(0).point.y > m_Col.bounds.center.y;
-        // m_IsPlayerOn = isPlayerOn && isObjectAbove;
-        // m_IsPlayerOn = isObjectAbove;
     }
 
     private void OnCollisionExit2D(Collision2D other)

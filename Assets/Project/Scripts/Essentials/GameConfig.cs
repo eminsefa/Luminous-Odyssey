@@ -86,9 +86,10 @@ public class LightVariables
     public               float          DarkenSubtleSpeed   = 0.25f;
     public               float          BrightenSubtleSpeed = 0.1f;
     public               float          BrightenSpeed;
-    public               float          LightRange          = 7;
-    public               float          PaintRangeMult      = 1;
-    public               float          MaskRangeMult       = 60;
+    public               float          LightRange         = 7;
+    public               float          PaintRangeMult     = 1;
+    public               float          MaskRangeMult      = 60;
+    public               float          CircleMaskMaxScale = 17;
     public               AnimationCurve BrightnessCurve;
     [Range(0, 2)] public float          VisibilityFalloff = 1;
 

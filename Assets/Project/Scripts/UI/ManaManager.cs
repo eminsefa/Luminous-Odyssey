@@ -21,14 +21,14 @@ public class ManaManager : Singleton<ManaManager>
     
     private void OnEnable()
     {
-        ManaObject.OnManaReturned += OnManaReturned;
+        ManaObject.OnManaReturned    += OnManaReturned;
 
         updateStacks();
     }
 
     private void OnDisable()
     {
-        ManaObject.OnManaReturned -= OnManaReturned;
+        ManaObject.OnManaReturned    -= OnManaReturned;
     }
     
     private void Update()

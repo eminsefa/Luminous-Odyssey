@@ -45,7 +45,8 @@ public class PlayerController : Singleton<PlayerController>
         m_Input.OnThrowInputEvent       += OnThrowInput;
         m_Input.OnSlowWalkInputEvent    += OnSlowWalkInput;
 
-        m_Animation.OnJumpCompleted           += OnJumpCompleted;
+        m_Animation.OnJumpAnimEvent           += OnJumpAnimEvent;
+        m_Animation.OnJumpCompletedEvent      += OnJumpCompletedEvent;
         m_Animation.OnThrowCreateEvent        += OnThrowCreateEvent;
         m_Animation.OnThrowAnimEvent          += OnThrowAnimEvent;
         m_Animation.OnThrowAnimCompletedEvent += OnThrowAnimCompletedEvent;
@@ -62,7 +63,8 @@ public class PlayerController : Singleton<PlayerController>
         m_Input.OnThrowInputEvent       -= OnThrowInput;
         m_Input.OnSlowWalkInputEvent    -= OnSlowWalkInput;
 
-        m_Animation.OnJumpCompleted           -= OnJumpCompleted;
+        m_Animation.OnJumpAnimEvent           -= OnJumpAnimEvent;
+        m_Animation.OnJumpCompletedEvent      -= OnJumpCompletedEvent;
         m_Animation.OnThrowCreateEvent        -= OnThrowCreateEvent;
         m_Animation.OnThrowAnimCompletedEvent -= OnThrowAnimCompletedEvent;
 
@@ -90,6 +92,8 @@ public class PlayerController : Singleton<PlayerController>
 
         m_Light.SetMoveSpeed(m_Physics.Velocity.sqrMagnitude, isBlind);
         m_Animation.SetWalkAnimSpeed(m_Physics.VelAnimSpeedIter, m_Physics.SlowWalkBlendIter);
+
+        CameraManager.Instance.SetOrtSize(m_Light.BlindFactor);
     }
 
 #endregion
@@ -105,10 +109,13 @@ public class PlayerController : Singleton<PlayerController>
 
         m_Animation.Jump(m_CharacterState);
         m_CharacterState = eCharacterState.Jump;
-
+    }
+    
+    private void OnJumpAnimEvent()
+    {
         m_Physics.Jump();
     }
-
+    
     private void OnDashInput()
     {
         if (m_CharacterState is eCharacterState.Dash or eCharacterState.Throw) return;
@@ -143,7 +150,7 @@ public class PlayerController : Singleton<PlayerController>
         // Convert get key to here
     }
 
-    private void OnJumpCompleted()
+    private void OnJumpCompletedEvent()
     {
         if (m_CharacterState == eCharacterState.Jump)
         {

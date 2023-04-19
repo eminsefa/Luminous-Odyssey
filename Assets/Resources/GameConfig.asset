@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Movement:
     MoveSpeedThreshold: 0.1
-    WalkSpeed: 1
+    WalkSpeed: 0.75
     MaxSpeed: 12.5
     SlowWalkMaxSpeed: 2
     SlowWalkSpeed: 0.5
-    AirMoveSpeed: 1
+    AirMoveSpeed: 0.5
     JumpPower: 16
     RotationSpeed: 0.075
     Friction: 0.4
@@ -67,7 +67,7 @@ MonoBehaviour:
     ManaFillAmount: 0.2
     ManaDrainAmount: 0.1
     ManaDrainMinIdleDuration: 1.5
-    ManaFillMinVelocity: 5
+    ManaFillMinVelocity: 10
     ManaStackedClearSpeed: 0.25
     ManaStackedClearDelay: 0.1
   LightVars:
@@ -76,7 +76,8 @@ MonoBehaviour:
     BrightenSpeed: 10
     LightRange: 7
     PaintRangeMult: 1.1
-    MaskRangeMult: 60
+    MaskRangeMult: 42
+    CircleMaskMaxScale: 16.5
     BrightnessCurve:
       serializedVersion: 2
       m_Curve:
@@ -104,7 +105,7 @@ MonoBehaviour:
     VisibilityFalloff: 1
     MoveLightThreshold: 0.01
     ThrowManaLightRangeMult: 0.5
-    SlowWalkDarkenSpeed: 15
+    SlowWalkDarkenSpeed: 20
   Input:
     InputIntervals:
     - Header: Jump

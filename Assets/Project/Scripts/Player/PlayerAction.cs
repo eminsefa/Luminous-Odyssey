@@ -21,12 +21,14 @@ public class PlayerAction : MonoBehaviour
     private void OnEnable()
     {
         m_ActiveManaObjects          =  new List<ManaObject>(m_AllManaObjects);
-        ManaObject.OnManaReturned += OnManaReturned;
+        ManaObject.OnManaReturned    += OnManaReturned;
+        ManaObject.OnManaDisappeared += OnManaReturned;
     }
 
     private void OnDisable()
     {
-        ManaObject.OnManaReturned -= OnManaReturned;
+        ManaObject.OnManaReturned    -= OnManaReturned;
+        ManaObject.OnManaDisappeared -= OnManaReturned;
     }
 
     private void OnTriggerEnter2D(Collider2D i_Other)
@@ -53,7 +55,7 @@ public class PlayerAction : MonoBehaviour
     {
         if(!m_ActiveManaObjects.Contains(i_ManaObject)) queueMana(i_ManaObject);
     }
-    
+
     public void Interact()
     {
         foreach (var i in m_InteractablesInRange)

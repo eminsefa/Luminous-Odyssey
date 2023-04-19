@@ -74,7 +74,7 @@ public class PlayerPhysics : MonoBehaviour
             else
             {
                 SlowWalkBlendIter -= 0.075f;
-                if (m_OnMovingPlatform && i_State != eCharacterState.Jump)
+                if (m_OnMovingPlatform)
                 {
                     var platformSpeed = m_MoveCheckCast[0].rigidbody.velocity;
                     maxSpeed = Mathf.Max(Mathf.Abs(vel.x) + Mathf.Abs(platformSpeed.x), m_Movement.MaxSpeed);
@@ -109,6 +109,7 @@ public class PlayerPhysics : MonoBehaviour
         m_CayoteJumpTimer = 0f;
         m_Rb.velocity     = new Vector2(m_Rb.velocity.x, 0f);
         m_Rb.AddForce(Vector2.up * m_Movement.JumpPower, ForceMode2D.Impulse);
+        m_OnMovingPlatform = false;
     }
 
     private void addVelocityEffects(Vector2 i_MoveDir)
@@ -118,7 +119,7 @@ public class PlayerPhysics : MonoBehaviour
         {
             var platformSpeed = m_MoveCheckCast[0].rigidbody.velocity;
 
-            vel.y = platformSpeed.y;
+            if (Mathf.Abs(i_MoveDir.y) <= 0) vel.y  = platformSpeed.y;
             if (Mathf.Abs(i_MoveDir.x) <= 0) vel.x = platformSpeed.x;
         }
         else if (vel.sqrMagnitude > m_Movement.MoveSpeedThreshold) //Add friction
@@ -337,4 +338,5 @@ public class PlayerPhysics : MonoBehaviour
     {
         m_Rb.gravityScale = m_Movement.GravityScale;
     }
+
 }
